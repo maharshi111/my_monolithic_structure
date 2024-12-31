@@ -6,52 +6,104 @@ const {ValidationMsgs, TableNames, TableFields, UserTypes} = require("../../util
 const employeeSchema = new Schema({
     [TableFields.firstName]:{
         type:String,
-        required: true
+        required: [true, ValidationMsgs.FirstNameEmpty]
     },
     [TableFields.lastName]:{
         type:String,
-        required: true
+        required: [true, ValidationMsgs.LastNameEmpty]
     },
     [TableFields.email]:{
         type:String,
-        required: true
+         trim: true,
+        lowercase: true,
+        validate(value) {
+        if (!validator.isEmail(value)) {
+            throw new ValidationError(ValidationMsgs.EmailInvalid);
+        }
+        },
+        required: [true, ValidationMsgs.EmailEmpty]
     },
     [TableFields.workEmail]:{
         type:String,
-        required: true  
+        trim: true,
+        lowercase: true,
+        validate(value) {
+        if (!validator.isEmail(value)) {
+            throw new ValidationError(ValidationMsgs.EmailInvalid);
+        }
+        },
+        required: [true, ValidationMsgs.EmailEmpty]
     },
     [TableFields.password]:{
         type:String,
-        required: true 
+        trim: true,
+        required: [true, ValidationMsgs.PasswordEmpty] 
     },
     [TableFields.phone]:{
         type:Number,
-        required: true  
+        validate(value) {
+                if (!validator.isNumeric(value)) {
+                  throw new ValidationError(ValidationMsgs.NumericInvalid);
+                }
+                if(value.length()!=10){
+                    throw new ValidationError(ValidationMsgs.PhoneInvalid);
+                }
+            },
+        required: [true, ValidationMsgs.PhoneEmpty]   
     },
     [TableFields.address]:{
         type:String,
-        required: true 
+        required:[true, ValidationMsgs.AddressEmpty]  
     },
     [TableFields.dateOfBirth]:{
         type: Date,
-        required: true  
+         validate(value) {
+              if (!validator.isDate(value)) {
+                throw new ValidationError(ValidationMsgs.DateInvalid);
+              }
+            },
+            required: [true, ValidationMsgs.DateEmpty]
     },
     [TableFields.basicSalary]:{
         type:Number,
-        required: true  
+        validate(value) {
+            if (!validator.isNumeric(value)) {
+              throw new ValidationError(ValidationMsgs.NumericInvalid);
+            }
+        },
+        required: [true, ValidationMsgs.SalaryEmpty]  
     },
     [TableFields.bonuses]:[{
         // BonusType: {type:String, required: true},
         // BonusAmount:{type:Number, required: true }
         [TableFields.bonusType]: {type:String},
-        [TableFields.bonusAmount]:{type:Number},
-        [TableFields.dateGranted]:{type: Date}
+        [TableFields.bonusAmount]:{
+            type:Number,
+            validate(value) {
+                if (!validator.isNumeric(value)) {
+                  throw new ValidationError(ValidationMsgs.NumericInvalid);
+                }
+            }
+        },
+        [TableFields.dateGranted]:{
+            type: Date,
+            validate(value) {
+                if (!validator.isDate(value)) {
+                  throw new ValidationError(ValidationMsgs.DateInvalid);
+                }
+              }
+        }
     }
     ],
 
     [TableFields.joiningDate]:  {
         type: Date,
-        required: true    
+        validate(value) {
+            if (!validator.isDate(value)) {
+              throw new ValidationError(ValidationMsgs.DateInvalid);
+            }
+          },
+        required: [true, ValidationMsgs.DateEmpty]    
     },
     [TableFields.department]:{
         [TableFields.reference]:{ 
@@ -61,17 +113,17 @@ const employeeSchema = new Schema({
        },
        [TableFields.name]:{
             type:String,
-             required: true 
+            required: [true, ValidationMsgs.DepNameEmpty]    
        }
     },
     [TableFields.role]:{
         type:String,
-        required:true
+        required:[true, ValidationMsgs.RoleEmpty]
     },
     [TableFields.organisationId]:{
         type:Schema.Types.ObjectId,
         ref:'Organisation',
-        required:true
+        required:[true, ValidationMsgs.OrganisationIdEmpty]
     }
 
 

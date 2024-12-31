@@ -65,6 +65,14 @@ const organisationSchema = new Schema({
     },
     [TableFields.postalCode]: {
       type: Number,
+      validate(value) {
+        if (!validator.isNumeric(value)) {
+          throw new ValidationError(ValidationMsgs.NumericInvalid);
+        }
+        if(value.length()!=6){
+            throw new ValidationError(ValidationMsgs.PostalCodeInvalid);
+        }
+    },
       required: [true, ValidationMsgs.PostalCodeEmpty],
     },
   },
@@ -87,6 +95,11 @@ const organisationSchema = new Schema({
   },
   [TableFields.employeeStrength]: {
     type: Number,
+    validate(value) {
+        if (!validator.isNumeric(value)) {
+          throw new ValidationError(ValidationMsgs.NumericInvalid);
+        }
+    },
     required: [true, ValidationMsgs.EmployeeStrengthEmpty],
   },
   [TableFields.startDateOfSubscription]: {
@@ -100,18 +113,34 @@ const organisationSchema = new Schema({
   },
   [TableFields.subscriptionPeriod]: {
     type: Number,
+    validate(value) {
+        if (!validator.isNumeric(value)) {
+          throw new ValidationError(ValidationMsgs.NumericInvalid);
+        }
+        if(value <= 0 || value > 60){
+            throw new ValidationError(ValidationMsgs.SubscriptionPeriodInvalid); 
+        }
+       
+      },
     required: [true, ValidationMsgs.SubscriptionPeriodEmpty],
   },
   [TableFields.subscriptionCharge]: {
     type: Number,
-    required: true,
+    validate(value) {
+        if (!validator.isNumeric(value)) {
+          throw new ValidationError(ValidationMsgs.NumericInvalid);
+        }
+      },
+    required: [true, ValidationMsgs.SubscriptionPeriodEmpty],
   },
   [TableFields.superAdminResponsible]: {
     type: Schema.Types.ObjectId,
     ref: "SuperAdmin",
+    required: [true, ValidationMsgs.SuperAdminResponsibleEmpty]
   },
   [TableFields.uniqueId]: {
     type: String,
+    required: [true, ValidationMsgs.UniqueIdEmpty]
   },
 });
 

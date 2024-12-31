@@ -72,7 +72,25 @@ const ValidationMsgs = (function () {
   ValidationMsgs.DateInvalid = "Date is invalid.";
   ValidationMsgs.DateEmpty = "Date is required!";
   ValidationMsgs.SubscriptionPeriodEmpty = "Subscription Period is required!";
-  
+  ValidationMsgs.NumericInvalid =
+    "The entered number should be a whole number!";
+  ValidationMsgs.SubscriptionPeriodInvalid =
+    "The entered number should be a greater than 0 and less than or equal to 60.";
+  ValidationMsgs.SuperAdminResponsibleEmpty = "Super Admin Id is requied!!";
+  ValidationMsgs.UniqueIdEmpty = "UniqueId is requied!!";
+  ValidationMsgs.FirstNameEmpty = "First Name is requied!!";
+  ValidationMsgs.LastNameEmpty = "Last Name is requied!!";
+  ValidationMsgs.PhoneInvalid = "Phone number must be of 10 digits.";
+  ValidationMsgs.PostalCodeInvalid = "Postal Code must be of 6 digits.";
+  ValidationMsgs.PhoneEmpty = "Phone Number is requied!!";
+  ValidationMsgs.AddressEmpty = "Address is requied!";
+  ValidationMsgs.SalaryEmpty = "Basic salary is requied!";
+  ValidationMsgs.DepNameEmpty = "Department name is requied!";
+  ValidationMsgs.RoleEmpty = "Role is requied!";
+  ValidationMsgs.OrganisationIdEmpty = "Organisation Id is requied!";
+  ValidationMsgs.ManagerReferenceEmpty = `Manager's reference is requied!`;
+  ValidationMsgs.ManagerNameEmpty = `Manager's name is requied!`;
+
   return ValidationMsgs;
 })();
 
