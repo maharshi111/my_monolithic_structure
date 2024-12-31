@@ -8,3 +8,4 @@ config/dev.env
 !.elasticbeanstalk/*.global.yml
 .ebextensions/*
 .vscode/settings.json
+config/firebase_default.json
