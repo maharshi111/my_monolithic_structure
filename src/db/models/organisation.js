@@ -16,7 +16,7 @@ const organisationSchema = new Schema({
   },
   [TableFields.orgAdmin]: {
     //  OrgAdminId:{type:Schema.Types.ObjectId, required:true, ref:'Employee'},
-    [TableFields.reference]: { type: Schema.Types.ObjectId, ref: "Employee" },
+    [TableFields.reference]: { type: Schema.Types.ObjectId, ref: TableNames.Employee },
     [TableFields.email]: {
       type: String,
       trim: true,
@@ -135,7 +135,7 @@ const organisationSchema = new Schema({
   },
   [TableFields.superAdminResponsible]: {
     type: Schema.Types.ObjectId,
-    ref: "SuperAdmin",
+    ref: TableNames.SuperAdmin,
     required: [true, ValidationMsgs.SuperAdminResponsibleEmpty]
   },
   [TableFields.uniqueId]: {

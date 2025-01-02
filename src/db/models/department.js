@@ -17,7 +17,7 @@ const departmentSchema = new Schema({
     [TableFields.reference]: {
       type: Schema.Types.ObjectId,
       required: [true, ValidationMsgs.ManagerReferenceEmpty],
-      ref: "Employee",
+      ref: TableNames.Employee,
     },
     [TableFields.name]: {
       type: String,
@@ -38,7 +38,7 @@ const departmentSchema = new Schema({
   },
   [TableFields.organisationId]: {
     type: Schema.Types.ObjectId,
-    ref: "Organisation",
+    ref: TableNames.Organisation,
     required: [true, ValidationMsgs.OrganisationIdEmpty],
   },
 });

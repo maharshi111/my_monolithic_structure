@@ -173,6 +173,12 @@ class AdminService {
             });
         }
     };
+
+    static addDept = async()=>{}
+    static addEmp = async(addEmpData)=>{
+        const empData = new Employee(addEmpData)
+        await empData.save()
+    }
 }
 
 const ProjectionBuilder = class {

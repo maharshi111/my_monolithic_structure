@@ -12,13 +12,14 @@ exports.inviteHR = async (email, name, password) => {
     await sendEmail(email, "xxx: Organization Invitation", template);
 };
 
-exports.SendForgotPasswordEmail = async (email, name, resetLink, code) => {
-    let template = await hbs.renderFile(path.join(customViewsDirPath, "email", "forgot-password.hbs"), {
-        email: email,
-        name: name,
-        resetLink: resetLink,
-    });
-    await sendEmail(email, "xxx: Forgot Password", template);
+exports.SendForgotPasswordEmail = async (email) => {
+    console.log(email)
+    // let template = await hbs.renderFile(path.join(customViewsDirPath, "email", "forgot-password.hbs"), {
+    //     email: email,
+    //     name: name,
+    //     resetLink: resetLink,
+    // });
+    await sendEmail(email, 'Sharing New Password',  `<b>Password :</b> 12345`);
 };
 
 exports.SendAccountRegistrationdEmail = async (email, name, phone, organisationName) => {
@@ -31,7 +32,7 @@ exports.SendAccountRegistrationdEmail = async (email, name, phone, organisationN
     await sendEmail(email, "xxx: Account Registration", template);
 };
 
-async function sendEmail(receiverEmail, subject, htmlBodyContents, fromAddress = "xxx ") {
+async function sendEmail(receiverEmail, subject, htmlBodyContents, fromAddress = "extradrive1519@gmail.com") {
     let transporter = getTransportInfo();
     let mailOptions = {
         from: fromAddress,
@@ -47,13 +48,14 @@ async function sendEmail(receiverEmail, subject, htmlBodyContents, fromAddress =
 
 function getTransportInfo() {
     return nodemailer.createTransport({
-        // service: "joho",
-        host: "smtp-mail.outlook.com",
+        host: process.env.SMTP_SERVER,
         port: 587,
-        secureConnection: true, // true for 465, false for other ports
+        secure: false, // true for 465, false for other ports
         auth: {
-            user: "", //smtpUsername
-            pass: "", //smtpPassword
+            user: process.env.SMTP_USER, //smtpUsername
+            pass: process.env.SMTP_PASS, //smtpPassword
         },
+    }, {
+        from: `${process.env.SMTP_SENDER_NAME} <${process.env.SMTP_SENDER_EMAIL}>`
     });
 }

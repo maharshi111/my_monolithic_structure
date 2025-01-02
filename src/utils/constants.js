@@ -90,7 +90,10 @@ const ValidationMsgs = (function () {
   ValidationMsgs.OrganisationIdEmpty = "Organisation Id is requied!";
   ValidationMsgs.ManagerReferenceEmpty = `Manager's reference is requied!`;
   ValidationMsgs.ManagerNameEmpty = `Manager's name is requied!`;
-
+  ValidationMsgs.UserNameLength = `User name should not be more than 70 characters`;
+  ValidationMsgs.EmailLength = `Email should not be more than 30 characters`;
+  ValidationMsgs.PasswordLength = `Password's length should be a minimum of 5 characters and a maximum of 15 characters`;
+  ValidationMsgs.PasswordInvalid = "Password is invalid.";
   return ValidationMsgs;
 })();
 
@@ -105,8 +108,12 @@ const ResponseMessages = (function () {
 
 const TableNames = (function () {
   function TableNames() {}
-  TableNames.Admin = "admins";
-  TableNames.College = "colleges";
+  //   TableNames.Admin = "admins";
+  //   TableNames.College = "colleges";
+  TableNames.SuperAdmin = "superadmins";
+  TableNames.Organisation = "organisations";
+  TableNames.Employee = "employees";
+  TableNames.Department = "departments";
   return TableNames;
 })();
 
@@ -161,7 +168,7 @@ const TableFields = (function () {
   TableFields.country = "country";
   TableFields.postalCode = "postalCode";
   TableFields.orgCEO = "orgCEO";
-  TableFields.name = "name"; // emp, org and dep table
+  TableFields.name_ = "name"; // emp, org and dep table
   TableFields.employeeStrength = "employeeStrength";
   TableFields.startDateOfSubscription = "startDateOfSubscription";
   TableFields.subscriptionPeriod = "subscriptionPeriod";
