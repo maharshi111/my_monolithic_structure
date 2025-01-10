@@ -56,10 +56,11 @@ const ValidationMsgs = (function () {
   //     "User not active, unable to reset password.";
   //   ValidationMsgs.OldPasswordIncorrect = "Entered old password is incorrect.";
   ValidationMsgs.UserNameEmpty = "User Name is a required field!";
+  ValidationMsgs.AuthFail = "Please authenticate!";
   ValidationMsgs.EmailEmpty = "Email required!";
   ValidationMsgs.EmailInvalid = "Email is invalid.";
   ValidationMsgs.PasswordEmpty = "Password required!";
-  ValidationMsgs.orgNameEmpty = "organisation name is required!";
+  ValidationMsgs.OrgNameEmpty = "organisation name is required!";
   ValidationMsgs.LinkedinUrlEmpty = "Linkedin url  is required!";
   ValidationMsgs.WebsiteUrlEmpty = "Website url  is required!";
   ValidationMsgs.UrlInvalid = "Url is invalid.";
@@ -73,9 +74,9 @@ const ValidationMsgs = (function () {
   ValidationMsgs.DateEmpty = "Date is required!";
   ValidationMsgs.SubscriptionPeriodEmpty = "Subscription Period is required!";
   ValidationMsgs.NumericInvalid =
-    "The entered number should be a whole number!";
+    "only digits should be entered.";
   ValidationMsgs.SubscriptionPeriodInvalid =
-    "The entered number should be a greater than 0 and less than or equal to 60.";
+    "Subscription period should be a greater than 0 and less than or equal to 60.";
   ValidationMsgs.SuperAdminResponsibleEmpty = "Super Admin Id is requied!!";
   ValidationMsgs.UniqueIdEmpty = "UniqueId is requied!!";
   ValidationMsgs.FirstNameEmpty = "First Name is requied!!";
@@ -94,8 +95,42 @@ const ValidationMsgs = (function () {
   ValidationMsgs.EmailLength = `Email should not be more than 30 characters`;
   ValidationMsgs.PasswordLength = `Password's length should be a minimum of 5 characters and a maximum of 15 characters`;
   ValidationMsgs.PasswordInvalid = "Password is invalid.";
+  ValidationMsgs.OrgNameLength =
+    "The length of Organisation name should be minimum of 3 charcaters and maximum of 30 characters";
+  ValidationMsgs.IsAlphaInvalidCountry =
+    "Only Alphabets are allowed in country name.";
+  ValidationMsgs.IsAlphaInvalidCity =
+    "Only Alphabets are allowed in city name.";
+  ValidationMsgs.OrgCeoInvalidLength = `Organisation ceo's name must not me more than 30 charcahters`;
+  ValidationMsgs.EmployeeStrengthInvalid = `maximum 7 digits are allowed`;
+  ValidationMsgs.SubscriptionChargeEmpty = "Subscription Charge is required!";
+  ValidationMsgs.SubscriptionChargeInvalid =
+    "subscription charge shouldnot exceed 999,999";
+  ValidationMsgs.UnableToLogin = "Incorrect email and/or password.";
+  ValidationMsgs.notNumber = "The Entered value is not a number";
+  ValidationMsgs.invalidDate = "Please enter date in valid format yyyy-mm-dd";
+  ValidationMsgs.invalidCharge = "Subscription charge must be a number";
   return ValidationMsgs;
 })();
+
+// const ValidationMsgsLength = (function (maxlen,minlen) {
+//     function ValidationMsgsLength(maxlen,minlen){}
+//     ValidationMsgsLength.msg = `The maximum and the minimum characters allowed for this field are ${maxlen} and ${minlen} respectively`;
+//     ValidationMsgsLength.maxMsg = `The maximum characters allowed for this field are ${maxlen}`;
+//     ValidationMsgsLength.minMsg = `The minimum characters allowed for this field are ${minlen}`;
+//     return ValidationMsgsLength;
+// })()    
+
+const ValidationMsgsLength = (fieldName,maxlen,minlen) =>{
+    function ValidationMsgsLength(fieldName,maxlen,minlen){}
+    console.log('inside ValidationMsgLength');
+    
+    ValidationMsgsLength.msg = `The maximum and the minimum characters allowed for ${fieldName} field are ${maxlen} and ${minlen} respectively`;
+    ValidationMsgsLength.maxMsg = `The maximum characters allowed for ${fieldName} field are ${maxlen}`;
+    ValidationMsgsLength.minMsg = `The minimum characters allowed for ${fieldName} field are ${minlen}`;
+    return ValidationMsgsLength;
+}
+
 
 const ResponseMessages = (function () {
   function ResponseMessages() {}
@@ -156,10 +191,14 @@ const TableFields = (function () {
   // TableFields.emailOTP = "emailOTP";
   // TableFields.authType = "authType";
   TableFields.ID = "_id";
+  TableFields.token = "token";
+  TableFields.tokens = "tokens";
   TableFields.email = "email"; //org,superadmin,emp table (I am taking personalEmail as email only in emp table)
   TableFields.password = "password";
   TableFields.orgName = "orgName";
   TableFields.orgAdmin = "orgAdmin";
+  TableFields.linkedinUrl = 'linkedinUrl';
+  TableFields.websiteUrl = 'websiteUrl';
   TableFields.orgLinkedinUrl = "orgLinkedinUrl";
   TableFields.orgWebsiteUrl = "orgWebsiteUrl";
   TableFields.orgHeadOffice = "orgHeadOffice";
@@ -169,9 +208,12 @@ const TableFields = (function () {
   TableFields.postalCode = "postalCode";
   TableFields.orgCEO = "orgCEO";
   TableFields.name_ = "name"; // emp, org and dep table
+  TableFields.empStrength = "empStrength";
   TableFields.employeeStrength = "employeeStrength";
+  TableFields.subscriptionStart = 'subscriptionStart';
   TableFields.startDateOfSubscription = "startDateOfSubscription";
   TableFields.subscriptionPeriod = "subscriptionPeriod";
+  TableFields.charge = "charge";
   TableFields.subscriptionCharge = "subscriptionCharge";
   TableFields.superAdminResponsible = "superAdminResponsible";
   TableFields.uniqueId = "uniqueId";
@@ -193,6 +235,9 @@ const TableFields = (function () {
   TableFields.organisationId = "organisationId"; //both in emp and dep
   TableFields.departmentName = "departmentName";
   TableFields.manager = "manager";
+  TableFields.ceoName = "ceoName";
+  TableFields.ceoEmail = "ceoEmail";
+
   return TableFields;
 })();
 
@@ -200,6 +245,7 @@ const ResponseStatus = (function () {
   function ResponseStatus() {}
   ResponseStatus.Failed = 0;
   ResponseStatus.Success = 200;
+  ResponseStatus.BadRequest = 400;
   ResponseStatus.Unauthorized = 401;
   ResponseStatus.NotFound = 404;
   ResponseStatus.UpgradeRequired = 426;
@@ -228,4 +274,5 @@ module.exports = {
   Platforms,
   InterfaceTypes,
   AuthTypes,
+  ValidationMsgsLength
 };

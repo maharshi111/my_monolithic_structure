@@ -1,5 +1,6 @@
 const API = require("../utils/apiBuilder");
 const AuthController = require("../controllers/superAdmin/AuthController");
+const DefaultController = require("../controllers/superAdmin/DefaultController");
 const { TableFields } = require("../utils/constants");
 const router = API.configRoute("/superAdmin")
 
@@ -15,6 +16,15 @@ const router = API.configRoute("/superAdmin")
   .asPOST(AuthController.postForgotPassword)
   .build()
 
+  .addPath("/addOrganisation")
+  .asPOST(DefaultController.postAddOrganisation)
+  .useSuperAdminAuth()
+  .build()
+
+  .addPath('/editOrganisation')
+  .asPOST(DefaultController.postEditOrganisation)
+  .build()
+  
   .getRouter();
 
 module.exports = router;

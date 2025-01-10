@@ -45,7 +45,7 @@ const employeeSchema = new Schema({
     required: [true, ValidationMsgs.PasswordEmpty],
   },
   [TableFields.phone]: {
-    type: Number,
+    type: String,
     validate(value) {
       if (!validator.isNumeric(value)) {
         throw new ValidationError(ValidationMsgs.NumericInvalid);
@@ -117,7 +117,7 @@ const employeeSchema = new Schema({
         // required:true,
         ref: TableNames.Department,
         },
-        [TableFields.name]: {
+        [TableFields.name_]: {
         type: String,
         required: [true, ValidationMsgs.DepNameEmpty],
         },
@@ -132,4 +132,4 @@ const employeeSchema = new Schema({
     required: [true, ValidationMsgs.OrganisationIdEmpty],
   },
 });
-module.exports = mongoose.model("Employee", employeeSchema);
+module.exports = mongoose.model(TableNames.Employee, employeeSchema);

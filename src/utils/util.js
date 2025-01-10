@@ -6,6 +6,82 @@ const Util = class {
     const re = /^[A-Za-z0-9\._%+\-]+@[A-Za-z0-9\.\-]+\.[A-Za-z]{2,}$/;
     return re.test(String(email));
   }
+  static subscriptionStartInvalid(value) {
+    let trialDate = new Date().toISOString();
+    let arr = trialDate.split("T");
+    let currDate = arr[0];
+    let year = currDate.split("-");
+    let num = +year[0];
+    //console.log("this is value", value);
+    const grantedDate = new Date(value);
+    //console.log("grantedDate", grantedDate);
+
+    const minDate = new Date(`${num}-01-01`);
+    //console.log("minDate", minDate);
+
+    const maxDate = new Date(`${num}-12-31`);
+
+    let s = "";
+
+    if (grantedDate < minDate) {
+      s = `The date must not be before than January 01,${num}`;
+      return { success: false, msg: s };
+    }
+    if (grantedDate > maxDate) {
+      s = `The date must not be after December 31,${num}`;
+      return { success: false, msg: s };
+    }
+    return { success: true };
+  }
+
+  static isUrlValid(userInput) {
+    //  var res = userInput.match(/^(http(s)?:\/\/)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-zA-Z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)$/);
+    var res = userInput.match(/^(http(s)?:\/\/)?(www\.)?[-a-zA-Z0-9:%._\+~#=]{2,256}\.[a-zA-Z]{2,6}\b([-a-zA-Z0-9:%_\+.~#?&//=]*)$/);
+
+    if(res == null)
+        return false;
+    else
+        return true;
+    }
+
+    static isDigit(value){
+        var reg = /^\d+$/;
+        return reg.test(value);
+    }
+    static isAlpha(value){
+        var reg = /^[a-zA-Z ]*$/;
+        return reg.test(value);
+    }
+    static isDate(value){
+        var reg = /^\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$/;
+        return reg.test(value);
+    }
+    static ValidationMsgsLength(reqBody,maxlen,minlen,fieldName){
+        let msg="";
+        console.log('inside static method');
+        
+        console.log(reqBody);
+        console.log(reqBody.length);
+        
+        
+        if(reqBody.length<minlen){
+             msg= `The minimum length allowed for ${fieldName} field is ${minlen}`;
+            return {flag:false,message:msg};
+        }
+        else if(reqBody.length>maxlen){
+            msg = `The maximum length allowed for ${fieldName} field is ${maxlen}`;
+            return {flag:false,message:msg};
+        }
+        else{
+            return {flag:true};
+        }
+    }
+    static isEmpty(field){
+        if(!field){
+            return false;
+        }
+    }
+  /////###############################################################################////////////////
   static isImageFile(fileOriginalName) {
     return fileOriginalName
       .toLocaleLowerCase()

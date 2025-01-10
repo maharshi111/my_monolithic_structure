@@ -15,11 +15,12 @@ const departmentSchema = new Schema({
   },
   [TableFields.manager]: {
     [TableFields.reference]: {
+        //Employee
       type: Schema.Types.ObjectId,
       required: [true, ValidationMsgs.ManagerReferenceEmpty],
       ref: TableNames.Employee,
     },
-    [TableFields.name]: {
+    [TableFields.name_]: {
       type: String,
       required: [true, ValidationMsgs.ManagerNameEmpty],
     },
@@ -42,4 +43,4 @@ const departmentSchema = new Schema({
     required: [true, ValidationMsgs.OrganisationIdEmpty],
   },
 });
-module.exports = mongoose.model("Department", departmentSchema);
+module.exports = mongoose.model(TableNames.Department, departmentSchema);

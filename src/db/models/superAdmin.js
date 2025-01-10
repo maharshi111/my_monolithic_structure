@@ -23,26 +23,51 @@ const superAdminSchema = new Schema({
     trim: true,
     unique: true,
     lowercase: true,
-    // validate(value) {
-    //   if (!util.isEmail(value)) {
-    //     throw new ValidationError(ValidationMsgs.EmailInvalid);
-    //   }
-    // },
+    validate: {
+      validator: function (v) {
+        if (!validator.isEmail(v)) {
+          return false;
+        } else {
+          return true;
+        }
+      },
+      message: (props) => ValidationMsgs.EmailInvalid,
+    },
   },
   [TableFields.password]: {
     type: String,
     trim: true,
     required: [true, ValidationMsgs.PasswordEmpty],
   },
-});
+  [TableFields.tokens]: [
+    {
+      _id: false,
+      [TableFields.token]: {
+        type: String,
+      },
+    },
+  ]},
+  {
+            timestamps: true,
+            toJSON: {
+                transform: function (doc, ret) {
+                    delete ret[TableFields.tokens];
+                    delete ret[TableFields.password];
+                    delete ret.createdAt;
+                    delete ret.updatedAt;
+                    delete ret.__v;
+                },
+            },
+  }
+);
 
 superAdminSchema.methods.isValidPassword = function (password) {
   const regEx =
     /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]*$/;
+    //console.log(regEx.test(password));
+    
   return regEx.test(password);
 };
-
-
 
 superAdminSchema.pre("save", async function (next) {
   if (this.isModified(TableFields.password)) {
@@ -55,6 +80,14 @@ superAdminSchema.pre("save", async function (next) {
 });
 
 superAdminSchema.methods.isValidAuth = async function (password) {
+    // console.log('inside isValidAuth');
+    // console.log('pass',password);
+    // console.log(this);
+    
+    // console.log('this.pass',this.password);
+    // let bool = await bcrypt.compare(password, this.password);
+    // console.log('value of bool is ',bool);
+    
   return await bcrypt.compare(password, this.password);
 };
 
@@ -73,4 +106,4 @@ superAdminSchema.methods.createAuthToken = function (superAdmin) {
   return token;
 };
 
-module.exports = mongoose.model("SuperAdmin", superAdminSchema);
+module.exports = mongoose.model(TableNames.SuperAdmin, superAdminSchema);

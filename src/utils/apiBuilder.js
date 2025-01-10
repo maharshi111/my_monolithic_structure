@@ -5,6 +5,7 @@ const adminAuth = require("../middleware/adminAuth");
 const Util = require("../utils/util");
 const { ApiResponseCode, ResponseStatus } = require("../utils/constants");
 const ValidationError = require("../utils/ValidationError");
+const superAdminAuth = require("../middleware/superAdminAuth");
 
 class API {
   static configRoute(root) {
@@ -58,7 +59,9 @@ const Builder = class {
     useAuthMiddleware,
     duplicateErrorHandler,
     middlewaresList = [],
-    useAdminAuth = false
+    useAdminAuth = false,
+    useCollegeAuth = false,
+    useSuperAdminAuth = false
   ) {
     // this.useSocketAPIAuth = () => {
     //     return new Builder(
@@ -85,7 +88,9 @@ const Builder = class {
         false,
         duplicateErrorHandler,
         middlewaresList,
-        true
+        true,
+        useCollegeAuth,
+        useSuperAdminAuth
       );
     };
 
@@ -99,10 +104,27 @@ const Builder = class {
         true,
         duplicateErrorHandler,
         middlewaresList,
-        false
+        false,
+        true,
+        useSuperAdminAuth
       );
     };
 
+    this.useSuperAdminAuth = () => {
+        return new Builder(
+          methodType,
+          root,
+          subPath,
+          executer,
+          router,
+          false,
+          duplicateErrorHandler,
+          middlewaresList,
+          useAdminAuth,
+          useCollegeAuth,
+          true
+        );
+      };
     // this.useAuthForGetRequest = () => {
     //     return new Builder(
     //         methodType,
@@ -183,7 +205,12 @@ const Builder = class {
           ...middlewaresList,
           controller
         );
-      } else {
+      } 
+      else if(useSuperAdminAuth){
+        router[methodType](root + subPath,superAdminAuth, ...middlewaresList,controller);
+      }
+      
+      else {
         router[methodType](root + subPath, ...middlewaresList, controller);
       }
       return new PathBuilder(root, router);

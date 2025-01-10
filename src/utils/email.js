@@ -3,6 +3,16 @@ const hbs = require("hbs");
 const path = require("path");
 const customViewsDirPath = path.join(__dirname, "../../views");
 
+
+exports.SendForgotPasswordEmail = async (email) => {
+    console.log(email);
+    await sendEmail(email, 'Sharing New Password',  `<b>Password :</b> 12345`);
+};
+exports.addOrganisationEmail = async (email,uId)=>{
+    await sendEmail(email, 'Sharing of OrganisationId',  `<b>OrganisationId : </b> ${uId}<br>`);
+}
+
+////
 exports.inviteHR = async (email, name, password) => {
     let template = await hbs.renderFile(path.join(customViewsDirPath, "email", "hr_invite.hbs"), {
         email: email,
@@ -12,15 +22,7 @@ exports.inviteHR = async (email, name, password) => {
     await sendEmail(email, "xxx: Organization Invitation", template);
 };
 
-exports.SendForgotPasswordEmail = async (email) => {
-    console.log(email)
-    // let template = await hbs.renderFile(path.join(customViewsDirPath, "email", "forgot-password.hbs"), {
-    //     email: email,
-    //     name: name,
-    //     resetLink: resetLink,
-    // });
-    await sendEmail(email, 'Sharing New Password',  `<b>Password :</b> 12345`);
-};
+
 
 exports.SendAccountRegistrationdEmail = async (email, name, phone, organisationName) => {
     let template = await hbs.renderFile(path.join(customViewsDirPath, "email", "account-register.hbs"), {

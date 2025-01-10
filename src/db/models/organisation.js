@@ -16,43 +16,70 @@ const organisationSchema = new Schema({
   },
   [TableFields.orgAdmin]: {
     //  OrgAdminId:{type:Schema.Types.ObjectId, required:true, ref:'Employee'},
-    [TableFields.reference]: { type: Schema.Types.ObjectId, ref: TableNames.Employee },
+    [TableFields.reference]: {
+      type: Schema.Types.ObjectId,
+      ref: TableNames.Employee,
+    },
     [TableFields.email]: {
       type: String,
       trim: true,
       unique: true,
       lowercase: true,
-      validate(value) {
-        if (!validator.isEmail(value)) {
-          throw new ValidationError(ValidationMsgs.EmailInvalid);
-        }
+      validate: {
+        validator: function (v) {
+          if (!validator.isEmail(v)) {
+            return false;
+          } else {
+            return true;
+          }
+        },
+        message: (props) => ValidationMsgs.EmailInvalid,
       },
-      required: [true, ValidationMsgs.EmailEmpty],
     },
   },
   [TableFields.orgLinkedinUrl]: {
     type: String,
     trim: true,
-    validate(value) {
-      if (!validator.isURL(value)) {
-        throw new ValidationError(ValidationMsgs.UrlInvalid);
-      }
-    },
+    // validate: {
+    //   validator: function (v) {
+    //     if (!validator.isURL(v)) {
+    //       return false;
+    //     } else {
+    //       return true;
+    //     }
+    //   },
+    //   message: (props) => ValidationMsgs.UrlInvalid,
+    // },
     required: [true, ValidationMsgs.LinkedinUrlEmpty],
   },
   [TableFields.orgWebsiteUrl]: {
     type: String,
     trim: true,
-    validate(value) {
-      if (!validator.isURL(value)) {
-        throw new ValidationError(ValidationMsgs.UrlInvalid);
-      }
-    },
+    // validate: {
+    //   validator: function (v) {
+    //     if (!validator.isURL(v)) {
+    //       return false;
+    //     } else {
+    //       return true;
+    //     }
+    //   },
+    //   message: (props) => ValidationMsgs.UrlInvalid,
+    // },
     required: [true, ValidationMsgs.WebsiteUrlEmpty],
   },
   [TableFields.orgHeadOffice]: {
     [TableFields.city]: {
       type: String,
+    //   validate: {
+    //     validator: function (v) {
+    //       if (!validator.isAlpha(v)) {
+    //         return false;
+    //       } else {
+    //         return true;
+    //       }
+    //     },
+    //     message: (props) => ValidationMsgs.IsAlphaInvalidCity,
+    //   },
       required: [true, ValidationMsgs.CityEmpty],
     },
     [TableFields.street]: {
@@ -61,23 +88,35 @@ const organisationSchema = new Schema({
     },
     [TableFields.country]: {
       type: String,
+    //   validate: {
+    //     validator: function (v) {
+    //       if (!validator.isAlpha(v)) {
+    //         return false;
+    //       } else {
+    //         return true;
+    //       }
+    //     },
+    //     message: (props) => ValidationMsgs.IsAlphaInvalidCountry,
+    //   },
       required: [true, ValidationMsgs.CountryEmpty],
     },
     [TableFields.postalCode]: {
-      type: Number,
-      validate(value) {
-        if (!validator.isNumeric(value)) {
-          throw new ValidationError(ValidationMsgs.NumericInvalid);
-        }
-        if(value.length()!=6){
-            throw new ValidationError(ValidationMsgs.PostalCodeInvalid);
-        }
-    },
+      type: String,
+    //   validate: {
+    //     validator: function (v) {
+    //       if (!validator.isNumeric(v)) {
+    //         return false;
+    //       } else {
+    //         return true;
+    //       }
+    //     },
+    //     message: (props) => ValidationMsgs.NumericInvalid,
+    //   },
       required: [true, ValidationMsgs.PostalCodeEmpty],
     },
   },
   [TableFields.orgCEO]: {
-    [TableFields.name]: {
+    [TableFields.name_]: {
       type: String,
       required: [true, ValidationMsgs.OrgCeoEmpty],
     },
@@ -85,63 +124,98 @@ const organisationSchema = new Schema({
       type: String,
       trim: true,
       lowercase: true,
-      validate(value) {
-        if (!validator.isEmail(value)) {
-          throw new ValidationError(ValidationMsgs.EmailInvalid);
-        }
+      validate: {
+        validator: function (v) {
+          if (!validator.isEmail(v)) {
+            return false;
+          } else {
+            return true;
+          }
+        },
+        message: (props) => ValidationMsgs.EmailInvalid,
       },
       required: [true, ValidationMsgs.EmailEmpty],
     },
   },
   [TableFields.employeeStrength]: {
     type: Number,
-    validate(value) {
-        if (!validator.isNumeric(value)) {
-          throw new ValidationError(ValidationMsgs.NumericInvalid);
-        }
-    },
+    // validate: {
+    //   validator: function (v) {
+    //     if (!validator.isNumeric(v)) {
+    //       return false;
+    //     } else {
+    //       return true;
+    //     }
+    //   },
+    //   message: (props) => ValidationMsgs.NumericInvalid,
+    // },
     required: [true, ValidationMsgs.EmployeeStrengthEmpty],
   },
   [TableFields.startDateOfSubscription]: {
     type: Date,
-    validate(value) {
-      if (!validator.isDate(value)) {
-        throw new ValidationError(ValidationMsgs.DateInvalid);
-      }
-    },
+
+    // validate: {
+    //   validator: function (v) {
+    //     if (!validator.isDate(v)) {
+    //       return false;
+    //     } else {
+    //       return true;
+    //     }
+    //   },
+    //   message: (props) => ValidationMsgs.DateInvalid,
+    // },
     required: [true, ValidationMsgs.DateEmpty],
   },
   [TableFields.subscriptionPeriod]: {
     type: Number,
-    validate(value) {
-        if (!validator.isNumeric(value)) {
-          throw new ValidationError(ValidationMsgs.NumericInvalid);
-        }
-        if(value <= 0 || value > 60){
-            throw new ValidationError(ValidationMsgs.SubscriptionPeriodInvalid); 
-        }
-       
-      },
+  
+    // validate: {
+    //   validator: function (v) {
+    //     if (!validator.isNumeric(v)) {
+    //       return false;
+    //     } else {
+    //       return true;
+    //     }
+    //   },
+    //   message: (props) => ValidationMsgs.NumericInvalid,
+    // },
     required: [true, ValidationMsgs.SubscriptionPeriodEmpty],
   },
   [TableFields.subscriptionCharge]: {
     type: Number,
-    validate(value) {
-        if (!validator.isNumeric(value)) {
-          throw new ValidationError(ValidationMsgs.NumericInvalid);
-        }
-      },
-    required: [true, ValidationMsgs.SubscriptionPeriodEmpty],
+    // validate(value) {
+    //   if (!validator.isNumeric(value)) {
+    //     throw new ValidationError(ValidationMsgs.NumericInvalid);
+    //   }
+    // },
+    // validate: {
+    //   validator: function (v) {
+    //     console.log('inside v fun',typeof v);
+    //     console.log('value inside v fun',v);
+        
+    //     if (!validator.isNumeric(v)) {
+    //         console.log('inside if v');
+            
+    //       return false;
+    //     } else {
+    //         console.log('else of v');
+            
+    //       return true;
+    //     }
+    //   },
+    //   message: (props) => ValidationMsgs.NumericInvalid,
+    // },
+    required: [true, ValidationMsgs.SubscriptionChargeEmpty],
   },
   [TableFields.superAdminResponsible]: {
     type: Schema.Types.ObjectId,
     ref: TableNames.SuperAdmin,
-    required: [true, ValidationMsgs.SuperAdminResponsibleEmpty]
+    //required: [true, ValidationMsgs.SuperAdminResponsibleEmpty],
   },
   [TableFields.uniqueId]: {
     type: String,
-    required: [true, ValidationMsgs.UniqueIdEmpty]
+    required: [true, ValidationMsgs.UniqueIdEmpty],
   },
 });
 
-module.exports = mongoose.model("Organisation", organisationSchema);
+module.exports = mongoose.model( TableNames.Organisation, organisationSchema);

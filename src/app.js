@@ -7,9 +7,10 @@ const app = express();
 const Util = require("./utils/util");
 
 app.use(cors());
-app.use(
-  express.urlencoded({ extended: false, limit: "5gb", parameterLimit: 50000 })
-); // To parse application/json
+// app.use(
+//   express.urlencoded({ extended: false, limit: "5gb", parameterLimit: 50000 })
+// ); // To parse application/json
+app.use(express.urlencoded({ extended: true }));
 app.use(
   express.json({
     limit: "5gb",
