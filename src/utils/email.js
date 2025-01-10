@@ -9,8 +9,11 @@ exports.SendForgotPasswordEmail = async (email) => {
     await sendEmail(email, 'Sharing New Password',  `<b>Password :</b> 12345`);
 };
 exports.addOrganisationEmail = async (email,uId)=>{
-    await sendEmail(email, 'Sharing of OrganisationId',  `<b>OrganisationId : </b> ${uId}<br>`);
+    await sendEmail(email, 'Sharing of OrganisationId',  `<b>OrganisationId of facebook: </b> ${uId}<br>`);
 }
+// exports.editOrganisationEmail = async (email,uId)=>{
+//     await sendEmail(email, 'Sharing of OrganisationId',  `<b>OrganisationId : </b> ${uId}<br>`);
+// }
 
 ////
 exports.inviteHR = async (email, name, password) => {

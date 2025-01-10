@@ -21,8 +21,10 @@ const router = API.configRoute("/superAdmin")
   .useSuperAdminAuth()
   .build()
 
+
   .addPath('/editOrganisation')
   .asPOST(DefaultController.postEditOrganisation)
+  .useSuperAdminAuth()
   .build()
   
   .getRouter();

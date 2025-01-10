@@ -58,10 +58,10 @@ const Util = class {
     }
     static ValidationMsgsLength(reqBody,maxlen,minlen,fieldName){
         let msg="";
-        console.log('inside static method');
+        //console.log('inside static method');
         
-        console.log(reqBody);
-        console.log(reqBody.length);
+        // console.log(reqBody);
+        // console.log(reqBody.length);
         
         
         if(reqBody.length<minlen){

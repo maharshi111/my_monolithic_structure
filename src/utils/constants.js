@@ -237,7 +237,7 @@ const TableFields = (function () {
   TableFields.manager = "manager";
   TableFields.ceoName = "ceoName";
   TableFields.ceoEmail = "ceoEmail";
-
+  TableFields.orgId = "orgId";
   return TableFields;
 })();
 
