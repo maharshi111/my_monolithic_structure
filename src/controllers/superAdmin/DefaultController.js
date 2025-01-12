@@ -104,7 +104,7 @@ exports.postAddOrganisation = async (req, res, next) => {
       throw new ValidationError(ValidationMsgs.DateEmpty);
     }
     if(!Util.isDate(reqBody[TableFields.subscriptionStart])){
-        throw new ValidationError(ValidationMsgs.invalidDate);
+        throw new ValidationError(ValidationMsgs.InvalidDate);
     }
     const result = Util.subscriptionStartInvalid(reqBody[TableFields.subscriptionStart]);
     console.log("this is start date",reqBody[TableFields.subscriptionStart]);
@@ -132,7 +132,7 @@ exports.postAddOrganisation = async (req, res, next) => {
       throw new ValidationError(ValidationMsgs.SubscriptionChargeEmpty);
     }
     if(!Util.isDigit(reqBody[TableFields.charge])){
-        throw new ValidationError(ValidationMsgs.invalidCharge);
+        throw new ValidationError(ValidationMsgs.InvalidCharge);
     }
     if (+(reqBody[TableFields.charge]) > 999999) {
       throw new ValidationError(ValidationMsgs.SubscriptionChargeInvalid);
@@ -273,7 +273,7 @@ exports.postEditOrganisation = async (req, res) => {
     throw new ValidationError(ValidationMsgs.DateEmpty);
   }
   if(!Util.isDate(reqBody[TableFields.subscriptionStart])){
-      throw new ValidationError(ValidationMsgs.invalidDate);
+      throw new ValidationError(ValidationMsgs.InvalidDate);
   }
   const result = Util.subscriptionStartInvalid(reqBody[TableFields.subscriptionStart]);
   console.log("this is start date",reqBody[TableFields.subscriptionStart]);
@@ -301,7 +301,7 @@ exports.postEditOrganisation = async (req, res) => {
     throw new ValidationError(ValidationMsgs.SubscriptionChargeEmpty);
   }
   if(!Util.isDigit(reqBody[TableFields.charge])){
-      throw new ValidationError(ValidationMsgs.invalidCharge);
+      throw new ValidationError(ValidationMsgs.InvalidCharge);
   }
   if (+(reqBody[TableFields.charge]) > 999999) {
     throw new ValidationError(ValidationMsgs.SubscriptionChargeInvalid);
@@ -331,3 +331,28 @@ exports.postEditOrganisation = async (req, res) => {
   
 
 };
+
+
+exports.postAddAdmin = (req,res,next)=>{
+
+    const reqBody = req.body;
+    if(!reqBody[TableFields.ceoEmail]){
+        throw new ValidationError(ValidationMsgs.EmailEmpty);
+    }
+    if(!Util.isEmail(reqBody[TableFields.ceoEmail])){
+        throw new ValidationError(ValidationMsgs.EmailInvalid);
+    }
+    if(!Util.ValidationMsgsLength(reqBody[TableFields.ceoEmail],30,0,[TableFields.ceoEmail]).flag){
+        throw new ValidationError(Util.ValidationMsgsLength(reqBody[TableFields.ceoEmail],30,0,[TableFields.ceoEmail]).message);
+    }
+    if(!reqBody[TableFields.adminEmail]){
+        throw new ValidationError(ValidationMsgs.EmailEmpty);
+    }
+    if(!Util.isEmail(reqBody[TableFields.adminEmail])){
+        throw new ValidationError(ValidationMsgs.EmailInvalid);
+    }
+    if(!Util.ValidationMsgsLength(reqBody[TableFields.adminEmail],30,0,[TableFields.adminEmail]).flag){
+        throw new ValidationError(Util.ValidationMsgsLength(reqBody[TableFields.ceoEmail],30,0,[TableFields.ceoEmail]).message);
+    }
+    SuperAdminService.addAdmin(reqBody[TableFields.ceoEmail],reqBody[TableFields.adminEmail]);
+}

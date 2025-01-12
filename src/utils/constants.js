@@ -107,9 +107,12 @@ const ValidationMsgs = (function () {
   ValidationMsgs.SubscriptionChargeInvalid =
     "subscription charge shouldnot exceed 999,999";
   ValidationMsgs.UnableToLogin = "Incorrect email and/or password.";
-  ValidationMsgs.notNumber = "The Entered value is not a number";
-  ValidationMsgs.invalidDate = "Please enter date in valid format yyyy-mm-dd";
-  ValidationMsgs.invalidCharge = "Subscription charge must be a number";
+  //ValidationMsgs.notNumber = "The Entered value is not a number";
+  ValidationMsgs.InvalidDate = "Please enter date in valid format yyyy-mm-dd";
+  ValidationMsgs.InvalidCharge = "Subscription charge must be a number";
+  ValidationMsgs.CeoEmalExist = 'No such ceo email exists';
+  ValidationMsgs.EmployeeEmailExist = 'No Employee of this Email found';
+  ValidationMsgs.EmpOrgMismatch = `The employee doesnot belogs to this ceo's organisation`;
   return ValidationMsgs;
 })();
 
@@ -238,6 +241,7 @@ const TableFields = (function () {
   TableFields.ceoName = "ceoName";
   TableFields.ceoEmail = "ceoEmail";
   TableFields.orgId = "orgId";
+  TableFields.adminEmail = "adminEmail";
   return TableFields;
 })();
 

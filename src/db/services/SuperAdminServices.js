@@ -8,6 +8,7 @@ const Util = require("../../utils/util");
 const ValidationError = require("../../utils/ValidationError");
 const SuperAdmin = require("../models/superAdmin");
 const Organisation = require("../models/organisation");
+const Employee = require('../models/employee');
 const emailUtil = require("../../utils/email");
 class SuperAdminService {
   static saveSuperAdmim = async (recordzobj) => {
@@ -117,44 +118,29 @@ class SuperAdminService {
 
   }
 
+  static addAdmin = async(ceoEmail,adminEmail)=>{
+   let org = await Organisation.findOne({[`${TableFields.orgCEO}.${TableFields.email}`]:ceoEmail});
+   if(!org){
+    throw new ValidationError(ValidationMsgs.CeoEmalExist);
+   }
+   let employee = await Employee.findOne({[`${TableFields.email}`]:adminEmail});
+   if(!employee){
+    throw new ValidationError(ValidationMsgs.EmployeeEmailExist);
+   }
+   const orgId =  new mongoose.Types.ObjectId(employee[TableFields.organisationId]);
+   org = await Organisation.findById(orgId);
+   if(org[TableFields.orgCEO][TableFields.email]!==ceoEmail){
+    throw new ValidationError(ValidationMsgs.EmpOrgMismatch);
+   }
+   const empId = new mongoose.Types.ObjectId(emp[TableFields.ID]);
+   org[TableFields.orgAdmin][TableFields.reference] = empId;
+   org[TableFields.orgAdmin][TableFields.email] = adminEmail;
+   await org.save();    
+
+  }
+
   
-// old org: {
-//     orgHeadOffice: {
-//       city: 'Ahmedabad',
-//       street: 'valam bunglows , near yesh tenament , Punit nagar road, Ghodasar, Ahmedabad ',
-//       country: 'india',
-//       postalCode: '788978'
-//     },
-//     orgCEO: { name: 'mark zuckerberg ', email: 'maharshirao1112002@gmail.com' },
-//     _id: new ObjectId("67810a9ca72d7b038f34d982"),
-//     orgName: 'check668',
-//     orgLinkedinUrl: 'https://www.google.com/about/careers/applications/?utm_campaign=profilepage&utm_medium=profilepage&utm_source=linkedin&src=Online/LinkedIn/linkedin_page',
-//     orgWebsiteUrl: 'https://www.google.com/about/careers/applications/?utm_campaign=profilepage&utm_medium=profilepage&utm_source=linkedin&src=Online/LinkedIn/linkedin_page',
-//     employeeStrength: 79798,
-//     startDateOfSubscription: 2025-01-09T00:00:00.000Z,
-//     subscriptionPeriod: 10,
-//     subscriptionCharge: 8486,
-//     superAdminResponsible: new ObjectId("677e57910364489632d04a5e"),
-//     uniqueId: '4c4c8167-2330-465d-85cd-bebb78ec99a6',
-//     __v: 0
-//   }
-  
-//   this isorgObj : {
-//     orgName: 'facebook',
-//     orgLinkedinUrl: 'https://www.linkedin.com/company/meta/?originalSubdomain=in',
-//     orgWebsiteUrl: 'https://www.metacareers.com/',
-//     orgHeadOffice: {
-//       city: 'Delhi',
-//       street: 'valam bunglows , near yesh tenament , Punit nagar road, Ghodasar, Ahmedabad ',
-//       country: 'India',
-//       postalCode: '123456'
-//     },
-//     orgCEO: { name: 'Mark Zuckerberg', email: 'mark@gmail.com' },
-//     employeeStrength: 100,
-//     startDateOfSubscription: '2025-01-01T00:00:00.000Z',
-//     subscriptionPeriod: 36,
-//     subscriptionCharge: 1000
-//   }
+
 
 
   
