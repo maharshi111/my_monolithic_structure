@@ -333,7 +333,7 @@ exports.postEditOrganisation = async (req, res) => {
 };
 
 
-exports.postAddAdmin = (req,res,next)=>{
+exports.postAddEditAdmin = async(req,res,next)=>{
 
     const reqBody = req.body;
     if(!reqBody[TableFields.ceoEmail]){
@@ -354,5 +354,25 @@ exports.postAddAdmin = (req,res,next)=>{
     if(!Util.ValidationMsgsLength(reqBody[TableFields.adminEmail],30,0,[TableFields.adminEmail]).flag){
         throw new ValidationError(Util.ValidationMsgsLength(reqBody[TableFields.ceoEmail],30,0,[TableFields.ceoEmail]).message);
     }
-    SuperAdminService.addAdmin(reqBody[TableFields.ceoEmail],reqBody[TableFields.adminEmail]);
+    let org = await SuperAdminService.findOneOrgByEmail(reqBody[TableFields.ceoEmail]).withOrgCeo().withOrgAdmin().execute();
+    if(!org){
+        throw new ValidationError(ValidationMsgs.CeoEmalExist);
+    }
+    let employee = await SuperAdminService.findOneEmpByEmail(reqBody[TableFields.adminEmail]).withEmployeeBasicInfo().execute();
+    if(!employee){
+        throw new ValidationError(ValidationMsgs.EmployeeEmailExist);
+    }
+    const orgId =  new mongoose.Types.ObjectId(employee[TableFields.organisationId]);
+    org = await SuperAdminService.findByIdOrgId(orgId).withOrgCeo().execute();
+    if(org[TableFields.email]!==ceoEmail){
+        throw new ValidationError(ValidationMsgs.EmpOrgMismatch);
+    }
+    const empId = new mongoose.Types.ObjectId(employee[TableFields.ID]);
+    
+    let orgObject = {
+        employeeId : empId,
+        adminEmail:reqBody[TableFields.adminEmail]
+    };
+    SuperAdminService.addEditAdmin(orgObject,orgId);
 }
+

@@ -118,25 +118,29 @@ class SuperAdminService {
 
   }
 
-  static addAdmin = async(ceoEmail,adminEmail)=>{
-   let org = await Organisation.findOne({[`${TableFields.orgCEO}.${TableFields.email}`]:ceoEmail});
-   if(!org){
-    throw new ValidationError(ValidationMsgs.CeoEmalExist);
-   }
-   let employee = await Employee.findOne({[`${TableFields.email}`]:adminEmail});
-   if(!employee){
-    throw new ValidationError(ValidationMsgs.EmployeeEmailExist);
-   }
-   const orgId =  new mongoose.Types.ObjectId(employee[TableFields.organisationId]);
-   org = await Organisation.findById(orgId);
-   if(org[TableFields.orgCEO][TableFields.email]!==ceoEmail){
-    throw new ValidationError(ValidationMsgs.EmpOrgMismatch);
-   }
-   const empId = new mongoose.Types.ObjectId(emp[TableFields.ID]);
-   org[TableFields.orgAdmin][TableFields.reference] = empId;
-   org[TableFields.orgAdmin][TableFields.email] = adminEmail;
-   await org.save();    
+  static addEditAdmin = async(orgObject,orgId)=>{ 
+      let org = Organisation.findById(orgId);
+      org[TableFields.orgAdmin][TableFields.reference] = orgObject.employeeId;
+      org[TableFields.orgAdmin][TableFields.email] =orgObject.adminEmail;
+      await org.save();
+  }
 
+  static findOneOrgByEmail = (ceoEmail)=>{
+    return new ProjectionBuilder(async function () {
+       return await Organisation.findOne({[`${TableFields.orgCEO}.${TableFields.email}`]:ceoEmail},this);
+    })
+  }
+
+  static findOneEmpByEmail = (adminEmail)=>{
+    return new ProjectionBuilder(async function(){
+        return await Employee.findOne({[`${TableFields.email}`]:adminEmail},this);
+    })
+  }
+
+  static findByIdOrgId = (orgId ) =>{
+    return new ProjectionBuilder(async function(){
+        return await Organisation.findById(orgId,this);
+    })
   }
 
   
@@ -177,6 +181,18 @@ const ProjectionBuilder = class {
         this.withEmail = () => {
             projection[TableFields.email] = 1;
             return this;
+        };
+        this.withOrgCeo = () =>{
+            projection[TableFields.orgCEO] = 1;
+        };
+        this.withOrgAdmin = () =>{
+            projection[TableFields.orgAdmin]=1;
+        };
+        this.withEmployeeBasicInfo = () =>{
+            projection[TableFields.email]=1;
+            projection[TableFields.workEmail]=1;
+            projection[TableFields.ID]=1
+            projection[TableFields.organisationId]=1
         };
         this.withUserType = () => {
             projection[TableFields.userType] = 1;

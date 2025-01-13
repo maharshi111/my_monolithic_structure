@@ -28,10 +28,12 @@ const router = API.configRoute("/superAdmin")
   .build()
 
 
-  .addPath('/addAdmin')
-  .asPOST(DefaultController.postAddAdmin)
+  .addPath('/addEditAdmin')
+  .asPOST(DefaultController.postAddEditAdmin)
   .useSuperAdminAuth()
   .build()
+
+  
   
   .getRouter();
 
