@@ -46,14 +46,14 @@ const employeeSchema = new Schema({
   },
   [TableFields.phone]: {
     type: String,
-    validate(value) {
-      if (!validator.isNumeric(value)) {
-        throw new ValidationError(ValidationMsgs.NumericInvalid);
-      }
-      if (value.length() != 10) {
-        throw new ValidationError(ValidationMsgs.PhoneInvalid);
-      }
-    },
+    // validate(value) {
+    //   if (!validator.isNumeric(value)) {
+    //     throw new ValidationError(ValidationMsgs.NumericInvalid);
+    //   }
+    //   if (value.length() != 10) {
+    //     throw new ValidationError(ValidationMsgs.PhoneInvalid);
+    //   }
+    // },
     required: [true, ValidationMsgs.PhoneEmpty],
   },
   [TableFields.address]: {
@@ -62,20 +62,20 @@ const employeeSchema = new Schema({
   },
   [TableFields.dateOfBirth]: {
     type: Date,
-    validate(value) {
-      if (!validator.isDate(value)) {
-        throw new ValidationError(ValidationMsgs.DateInvalid);
-      }
-    },
+    // validate(value) {
+    //   if (!validator.isDate(value)) {
+    //     throw new ValidationError(ValidationMsgs.DateInvalid);
+    //   }
+    // },
     required: [true, ValidationMsgs.DateEmpty],
   },
   [TableFields.basicSalary]: {
     type: Number,
-    validate(value) {
-      if (!validator.isNumeric(value)) {
-        throw new ValidationError(ValidationMsgs.NumericInvalid);
-      }
-    },
+    // validate(value) {
+    //   if (!validator.isNumeric(value)) {
+    //     throw new ValidationError(ValidationMsgs.NumericInvalid);
+    //   }
+    // },
     required: [true, ValidationMsgs.SalaryEmpty],
   },
   [TableFields.bonuses]: [
@@ -85,30 +85,30 @@ const employeeSchema = new Schema({
       [TableFields.bonusType]: { type: String },
       [TableFields.bonusAmount]: {
         type: Number,
-        validate(value) {
-          if (!validator.isNumeric(value)) {
-            throw new ValidationError(ValidationMsgs.NumericInvalid);
-          }
-        },
+        // validate(value) {
+        //   if (!validator.isNumeric(value)) {
+        //     throw new ValidationError(ValidationMsgs.NumericInvalid);
+        //   }
+        // },
       },
       [TableFields.dateGranted]: {
         type: Date,
-        validate(value) {
-          if (!validator.isDate(value)) {
-            throw new ValidationError(ValidationMsgs.DateInvalid);
-          }
-        },
+        // validate(value) {
+        //   if (!validator.isDate(value)) {
+        //     throw new ValidationError(ValidationMsgs.DateInvalid);
+        //   }
+        // },
       },
     },
   ],
 
   [TableFields.joiningDate]: {
     type: Date,
-    validate(value) {
-      if (!validator.isDate(value)) {
-        throw new ValidationError(ValidationMsgs.DateInvalid);
-      }
-    },
+    // validate(value) {
+    //   if (!validator.isDate(value)) {
+    //     throw new ValidationError(ValidationMsgs.DateInvalid);
+    //   }
+    // },
     required: [true, ValidationMsgs.DateEmpty],
   },
   [TableFields.department]: {

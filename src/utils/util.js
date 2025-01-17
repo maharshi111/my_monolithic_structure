@@ -64,11 +64,11 @@ const Util = class {
         // console.log(reqBody.length);
         
         
-        if(reqBody.length<minlen){
+        if(reqBody.trim().length<minlen){
              msg= `The minimum length allowed for ${fieldName} field is ${minlen}`;
             return {flag:false,message:msg};
         }
-        else if(reqBody.length>maxlen){
+        else if(reqBody.trim().length>maxlen){
             msg = `The maximum length allowed for ${fieldName} field is ${maxlen}`;
             return {flag:false,message:msg};
         }
@@ -81,6 +81,65 @@ const Util = class {
             return false;
         }
     }
+    static isAlphaNumeric(value){
+        var reg = /^[a-zA-Z0-9]+$/;
+        return reg.test(value);
+    }
+    static DateOfBirthInvalid(value){
+        let trialDate = new Date().toISOString();
+        let arr = trialDate.split('T');
+        let currDate = arr[0];
+        let year =  currDate.split('-');
+        let num = +(year[0]);
+        let minDob = `${num -70}-01-01`;
+        let maxDob = `${num-20}-12-31`;
+        
+        const grantedDate = new Date(value);
+        const minDate = new Date(`${minDob}`); 
+        const maxDate = new Date(`${maxDob}`); 
+
+        let s="";
+    
+        if (grantedDate < minDate) {
+            // throw new Error(`The date must not be before than ${minDob}`);
+            s = `The date must not be before than ${minDob}`;
+            return{success:false,msg:s};
+        }
+        if (grantedDate > maxDate) {
+            //throw new Error(`The date must not be after  ${maxDob}`);
+            s=`The date must not be after  ${maxDob}`;
+            return{success:false,msg:s};
+        }
+        return{success:true};
+    }
+    static joiningDateInvalid(value){
+        let trialDate = new Date().toISOString();
+        let arr = trialDate.split('T');
+        let currDate = arr[0];
+        let year =  currDate.split('-');
+        let num = +(year[0]);
+        let min =  num-50;
+        let leastDate = `${min}-01-01`;
+        let maxiumDate = `${num}-12-31`;
+        
+        const grantedDate = new Date(value);
+        const minDate = new Date(`${leastDate}`); 
+        const maxDate = new Date(`${maxiumDate}`); 
+
+        let s="";
+        
+    
+        if (grantedDate < minDate) {
+          s = `The date must not be before than ${leastDate}`;
+          return{success:false,msg:s};
+        }
+        if (grantedDate > maxDate) {
+           s = `The date must not be after  ${maxiumDate}`;
+           return{success:false,msg:s};
+        }
+        return{success:true};
+    }
+
   /////###############################################################################////////////////
   static isImageFile(fileOriginalName) {
     return fileOriginalName

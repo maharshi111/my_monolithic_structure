@@ -113,6 +113,16 @@ const ValidationMsgs = (function () {
   ValidationMsgs.CeoEmalExist = 'No such ceo email exists';
   ValidationMsgs.EmployeeEmailExist = 'No Employee of this Email found';
   ValidationMsgs.EmpOrgMismatch = `The employee doesnot belogs to this ceo's organisation`;
+  ValidationMsgs.companyNameExist = 'Company name is required';
+  ValidationMsgs.InvalidCompanyName = 'Invalid company name';
+  ValidationMsgs.InvalidOrgId = 'Invalid organisation Id';
+  ValidationMsgs.OrgIdEmpty = 'Organisation Id is required';
+  ValidationMsgs.IncorrectCompanyName = 'Incorrect company name';
+  ValidationMsgs.IsAlphaNumericPassword = 'Password mut be alpha numeric';
+  ValidationMsgs.HeaderTokenAbsent = 'Header Token is not found';
+  ValidationMsgs.DecodedTokenFail = 'Authentication failed due to wrong token';
+  ValidationMsgs.InvalidToken = 'Authentication failed due to invalid token';
+  ValidationMsgs.DepartmentNotExists = "No such Department exists";
   return ValidationMsgs;
 })();
 
@@ -242,6 +252,9 @@ const TableFields = (function () {
   TableFields.ceoEmail = "ceoEmail";
   TableFields.orgId = "orgId";
   TableFields.adminEmail = "adminEmail";
+  TableFields.companyName = 'companyName';
+  TableFields.organisationName = 'organisationName';
+  TableFields.depName = 'depName';
   return TableFields;
 })();
 

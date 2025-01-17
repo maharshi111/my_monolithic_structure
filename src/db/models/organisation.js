@@ -7,7 +7,7 @@ const {
   TableFields,
   UserTypes,
 } = require("../../utils/constants");
-
+const jwt = require("jsonwebtoken");
 const organisationSchema = new Schema({
   [TableFields.orgName]: {
     type: String,
@@ -216,6 +216,28 @@ const organisationSchema = new Schema({
     type: String,
     required: [true, ValidationMsgs.UniqueIdEmpty],
   },
+  [TableFields.tokens]: [
+    {
+      _id: false,
+      [TableFields.token]: {
+        type: String,
+      },
+    },
+  ]
 });
 
+organisationSchema.methods.createAuthToken = function (org) {
+    const token = jwt.sign(
+      {
+        [TableFields.ceoEmail]: org[TableFields.orgCEO][TableFields.email],
+        [TableFields.organisationName]:org[TableFields.orgName],
+        [TableFields.orgId]:org[TableFields.ID].toString()
+      },    
+      process.env.JWT_ORGANISATION_PK,
+      { expiresIn: "5h" }
+    );
+  
+    return token;
+  };
 module.exports = mongoose.model( TableNames.Organisation, organisationSchema);
+

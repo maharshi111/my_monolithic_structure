@@ -184,36 +184,39 @@ const ProjectionBuilder = class {
         };
         this.withOrgCeo = () =>{
             projection[TableFields.orgCEO] = 1;
+            return this;
         };
         this.withOrgAdmin = () =>{
             projection[TableFields.orgAdmin]=1;
+            return this;
         };
         this.withEmployeeBasicInfo = () =>{
             projection[TableFields.email]=1;
             projection[TableFields.workEmail]=1;
-            projection[TableFields.ID]=1
-            projection[TableFields.organisationId]=1
-        };
-        this.withUserType = () => {
-            projection[TableFields.userType] = 1;
+            projection[TableFields.ID]=1;
+            projection[TableFields.organisationId]=1;
             return this;
         };
-        this.withId = () => {
-            projection[TableFields.ID] = 1;
-            return this;
-        };
-        this.withApproved = () => {
-            projection[TableFields.approved] = 1;
-            return this;
-        };
-        this.withName = () => {
-            projection[TableFields.name_] = 1;
-            return this;
-        };
-        this.withPasswordResetToken = () => {
-            projection[TableFields.passwordResetToken] = 1;
-            return this;
-        };
+        // this.withUserType = () => {
+        //     projection[TableFields.userType] = 1;
+        //     return this;
+        // };
+        // this.withId = () => {
+        //     projection[TableFields.ID] = 1;
+        //     return this;
+        // };
+        // this.withApproved = () => {
+        //     projection[TableFields.approved] = 1;
+        //     return this;
+        // };
+        // this.withName = () => {
+        //     projection[TableFields.name_] = 1;
+        //     return this;
+        // };
+        // this.withPasswordResetToken = () => {
+        //     projection[TableFields.passwordResetToken] = 1;
+        //     return this;
+        // };
 
         this.execute = async () => {
             return await methodToExecute.call(projection);

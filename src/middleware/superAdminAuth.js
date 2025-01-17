@@ -21,12 +21,12 @@ const superAdminAuth = async (req, res, next) => {
         //console.log(headerToken);
         
         if(!headerToken){
-            throw new ValidationError();
+            throw new ValidationError(ValidationMsgs.HeaderTokenAbsent);
         }
         const decoded = jwt.verify(headerToken, process.env.JWT_ADMIN_PK);
         //console.log(decoded);
         if(!decoded){
-            throw new ValidationError();
+            throw new ValidationError(ValidationMsgs.DecodedTokenFail);
         }
         const superAdmin = await SuperAdminService.getUserByIdAndToken(decoded.superAdminId, headerToken)
         .withBasicInfo()

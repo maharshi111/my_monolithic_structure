@@ -8,14 +8,23 @@ exports.SendForgotPasswordEmail = async (email) => {
     console.log(email);
     await sendEmail(email, 'Sharing New Password',  `<b>Password :</b> 12345`);
 };
+exports.SendForgotPasswordEmailOrg = async (email) => {
+    console.log(email);
+    await sendEmail(email, 'Sharing New OrganisationId',`<b>orgId :</b> ed429bfb-5807-4c5c-b1e7-ff0d50d21c40`);
+};
 exports.addOrganisationEmail = async (email,uId)=>{
-    await sendEmail(email, 'Sharing of OrganisationId',  `<b>OrganisationId of facebook: </b> ${uId}<br>`);
+    await sendEmail(email, 'Sharing of OrganisationId',  `<b>OrganisationId of your organisation is: </b> ${uId}<br>`);
 }
+exports.addEmployeeEmail = async(personalEmail,password,workEmail) =>{
+    await sendEmail(personalEmail,'Sharing of credentials', `<b>Password : </b> ${password}<br> <b>Work Email: </b> ${workEmail}`)
+},
+
+
 // exports.editOrganisationEmail = async (email,uId)=>{
 //     await sendEmail(email, 'Sharing of OrganisationId',  `<b>OrganisationId : </b> ${uId}<br>`);
 // }
 
-////
+////####################################################################
 exports.inviteHR = async (email, name, password) => {
     let template = await hbs.renderFile(path.join(customViewsDirPath, "email", "hr_invite.hbs"), {
         email: email,

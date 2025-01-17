@@ -20,7 +20,7 @@ app.use(
 // app.use(require("./routes/defaultRoute"));
 // app.use(require("./routes/collegeRoutes"));
 app.use(require("./routes/superAdminRoutes"));
-
+app.use(require("./routes/orgAdminRoutes"));
 app.get("/", (req, res) => {
   // Require for Load Balancer - AWS
   res.sendStatus(200);

@@ -46,7 +46,8 @@ const superAdminSchema = new Schema({
         type: String,
       },
     },
-  ]},
+  ]
+},
   {
             timestamps: true,
             toJSON: {

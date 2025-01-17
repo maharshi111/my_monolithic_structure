@@ -6,7 +6,7 @@ const Util = require("../utils/util");
 const { ApiResponseCode, ResponseStatus } = require("../utils/constants");
 const ValidationError = require("../utils/ValidationError");
 const superAdminAuth = require("../middleware/superAdminAuth");
-
+const organisationAuth = require('../middleware/orgAdminAuth');
 class API {
   static configRoute(root) {
     let router = new express.Router();
@@ -61,7 +61,8 @@ const Builder = class {
     middlewaresList = [],
     useAdminAuth = false,
     useCollegeAuth = false,
-    useSuperAdminAuth = false
+    useSuperAdminAuth = false,
+    useOrganisationAuth = false
   ) {
     // this.useSocketAPIAuth = () => {
     //     return new Builder(
@@ -125,6 +126,24 @@ const Builder = class {
           true
         );
       };
+
+
+      this.useOrganisationAuth = () => {
+        return new Builder(
+          methodType,
+          root,
+          subPath,
+          executer,
+          router,
+          false,
+          duplicateErrorHandler,
+          middlewaresList,
+          useAdminAuth,
+          useCollegeAuth,
+          useSuperAdminAuth,
+          true
+        );
+      };
     // this.useAuthForGetRequest = () => {
     //     return new Builder(
     //         methodType,
@@ -174,6 +193,8 @@ const Builder = class {
     this.build = () => {
       let controller = async (req, res) => {
         try {
+            console.log('inside controller');
+            
           let response = await executer(req, res);
           res.status(ResponseStatus.Success).send(response);
         } catch (e) {
@@ -209,7 +230,9 @@ const Builder = class {
       else if(useSuperAdminAuth){
         router[methodType](root + subPath,superAdminAuth, ...middlewaresList,controller);
       }
-      
+      else if(useOrganisationAuth){
+        router[methodType](root + subPath,organisationAuth, ...middlewaresList,controller);  
+      }
       else {
         router[methodType](root + subPath, ...middlewaresList, controller);
       }

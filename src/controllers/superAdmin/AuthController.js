@@ -7,14 +7,15 @@ const ValidationError = require("../../utils/ValidationError");
 const SuperAdminService = require("../../db/services/SuperAdminServices");
 const emailUtil = require("../../utils/email");
 const superAdminSchema = require("../../db/models/superAdmin");
+const Util = require("../../utils/util");
 exports.postSignUp = async (req, res, next) => {
   const userName = req.body.userName;
   const email = req.body.email;
   const password = req.body.password;
   //Add validations
-    if (!userName) {
-      throw new ValidationError(ValidationMsgs.UserNameEmpty);
-    }
+   if (!userName) {
+        throw new ValidationError(ValidationMsgs.UserNameEmpty);
+   }
   if (!email) {
     throw new ValidationError(ValidationMsgs.EmailEmpty);
   }
@@ -69,5 +70,12 @@ exports.postLogin = async (req, res, next) => {
 exports.postForgotPassword = async (req, res) => {
   const receiverEmail = req.body[TableFields.email];
   if (!receiverEmail) throw new ValidationError(ValidationMsgs.EmailEmpty);
+  if(Util.isEmail(receiverEmail)){
+    throw new ValidationError(ValidationMsgs.EmailInvalid);
+  }
+  if(receiverEmail.length > 30){
+    throw new ValidationError(ValidationMsgs.EmailLength);
+  }
   emailUtil.SendForgotPasswordEmail(receiverEmail);
 };
+
