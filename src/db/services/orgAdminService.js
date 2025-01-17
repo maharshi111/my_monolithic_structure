@@ -76,6 +76,15 @@ class OrganisationAdminService {
         };
 
     static addEmployee = async(empObject) =>{
+        if(!empObject[TableFields.email]){
+            throw new ValidationError(ValidationMsgs.EmailEmpty);
+        }
+        if(!empObject[TableFields.password]){
+            throw new ValidationError(ValidationMsgs.PasswordEmpty);
+        }
+        if(!empObject[TableFields.workEmail]){
+            throw new ValidationError(ValidationMsgs.EmailEmpty); 
+        }
         let employee = new Employee(empObject);
         console.log('emp:',employee);
         
