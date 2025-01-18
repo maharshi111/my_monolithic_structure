@@ -125,6 +125,7 @@ const ValidationMsgs = (function () {
   ValidationMsgs.DepartmentNotExists = "No such Department exists";
   ValidationMsgs.WorkEmailNotExists = 'No such work email found';
   ValidationMsgs.NameAndEmailMistmatch = 'Managers name and Email doesnot match, please verify it and rewrite email';
+  ValidationMsgs.DepIdEmpty = 'Department Id is required';
   return ValidationMsgs;
 })();
 
@@ -258,6 +259,7 @@ const TableFields = (function () {
   TableFields.organisationName = 'organisationName';
   TableFields.depName = 'depName';
   TableFields.managerName = 'managerName';
+  TableFields.depId = 'depId';
   return TableFields;
 })();
 

@@ -102,12 +102,12 @@ const Util = class {
     
         if (grantedDate < minDate) {
             // throw new Error(`The date must not be before than ${minDob}`);
-            s = `The date must not be before than ${minDob}`;
+            s = `The date of birth must not be before than ${minDob}`;
             return{success:false,msg:s};
         }
         if (grantedDate > maxDate) {
             //throw new Error(`The date must not be after  ${maxDob}`);
-            s=`The date must not be after  ${maxDob}`;
+            s=`The date of birth must not be after  ${maxDob}`;
             return{success:false,msg:s};
         }
         return{success:true};
@@ -130,11 +130,11 @@ const Util = class {
         
     
         if (grantedDate < minDate) {
-          s = `The date must not be before than ${leastDate}`;
+          s = `The joining date must not be before than ${leastDate}`;
           return{success:false,msg:s};
         }
         if (grantedDate > maxDate) {
-           s = `The date must not be after  ${maxiumDate}`;
+           s = `The joining date must not be after  ${maxiumDate}`;
            return{success:false,msg:s};
         }
         return{success:true};

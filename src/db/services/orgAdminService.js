@@ -106,6 +106,15 @@ class OrganisationAdminService {
         const department = new Department(depObj);
         await department.save();
     }
+
+    static editDepartment = async(depId,depObj) =>{
+       let oldDep =  await Department.findById(depId);
+       oldDep[TableFields.departmentName] = depObj[TableFields.departmentName];
+       oldDep[TableFields.manager][TableFields.name_] = depObj[TableFields.manager][TableFields.name_];
+       oldDep[TableFields.manager][TableFields.email] = depObj[TableFields.manager][TableFields.email];
+       oldDep[TableFields.manager][TableFields.reference] = depObj[TableFields.manager][TableFields.reference];
+       await oldDep.save();
+    }
 }
 
 const ProjectionBuilder = class {
