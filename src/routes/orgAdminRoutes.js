@@ -18,6 +18,13 @@ const router = API.configRoute("/orgAdmin")
   .useOrganisationAuth()
   .build()
 
+  .addPath('/addDepartment')
+  .asPOST(DefaultController.postAddDepartment)
+  .useOrganisationAuth()
+  .build()
+
+
+  
   .getRouter();
 
   module.exports = router;

@@ -123,6 +123,8 @@ const ValidationMsgs = (function () {
   ValidationMsgs.DecodedTokenFail = 'Authentication failed due to wrong token';
   ValidationMsgs.InvalidToken = 'Authentication failed due to invalid token';
   ValidationMsgs.DepartmentNotExists = "No such Department exists";
+  ValidationMsgs.WorkEmailNotExists = 'No such work email found';
+  ValidationMsgs.NameAndEmailMistmatch = 'Managers name and Email doesnot match, please verify it and rewrite email';
   return ValidationMsgs;
 })();
 
@@ -255,6 +257,7 @@ const TableFields = (function () {
   TableFields.companyName = 'companyName';
   TableFields.organisationName = 'organisationName';
   TableFields.depName = 'depName';
+  TableFields.managerName = 'managerName';
   return TableFields;
 })();
 

@@ -46,6 +46,11 @@ class OrganisationAdminService {
          })  
     }
     
+    static findEmpByWorkEmail = (email) =>{
+        return new ProjectionBuilder(async function () {
+            return await Employee.findOne({[`${TableFields.workEmail}`]:email},this);
+         })  
+    }
     static saveAuthToken = async (uId, token) => {
         
         
@@ -93,6 +98,14 @@ class OrganisationAdminService {
         
         await emailUtil.addEmployeeEmail(empObject[TableFields.email],empObject[TableFields.password],empObject[TableFields.workEmail]);
     }
+
+    static addDepartment = async(depObj) =>{
+        if(!depObj[TableFields.manager][TableFields.email]){
+            throw new ValidationError(ValidationMsgs.EmailEmpty);           
+        }
+        const department = new Department(depObj);
+        await department.save();
+    }
 }
 
 const ProjectionBuilder = class {
@@ -119,6 +132,12 @@ const ProjectionBuilder = class {
             projection[TableFields.organisationId]=1;
             projection[TableFields.ID]=1;
             projection[TableFields.email]=1;
+            return this;
+        }
+        this.withNameInfoEmp = () =>{
+            projection[TableFields.firstName] = 1;
+            projection[TableFields.lastName] =1;
+            projection[TableFields.ID]=1;
             return this;
         }
         this.withBasicInfoDep = () =>{
