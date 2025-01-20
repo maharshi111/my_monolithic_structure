@@ -193,7 +193,7 @@ const Builder = class {
     this.build = () => {
       let controller = async (req, res) => {
         try {
-            console.log('inside controller');
+            //console.log('inside controller');
             
           let response = await executer(req, res);
           res.status(ResponseStatus.Success).send(response);

@@ -51,6 +51,11 @@ class OrganisationAdminService {
             return await Employee.findOne({[`${TableFields.workEmail}`]:email},this);
          })  
     }
+    static findEmpById=(empId)=>{
+        return new ProjectionBuilder(async function () {
+            return await Employee.findById(empId,this);
+         })  
+    }
     static saveAuthToken = async (uId, token) => {
         
         
@@ -115,6 +120,46 @@ class OrganisationAdminService {
        oldDep[TableFields.manager][TableFields.reference] = depObj[TableFields.manager][TableFields.reference];
        await oldDep.save();
     }
+
+    static deleteDepartmentById = async(depId) =>{
+        console.log('11',depId);
+        
+        await Department.findById(depId);
+        await Department.findByIdAndDelete(depId);    
+    }
+
+    static addBonus = async(empId,bonusType,bonusAmount,dateGranted)=>{
+      let employee = await Employee.findById(empId);
+       employee[TableFields.bonuses].push({
+        [TableFields.bonusType]:bonusType,
+        [TableFields.bonusAmount]:bonusAmount,
+        [TableFields.dateGranted]:dateGranted
+       });
+      await employee.save();
+    }
+
+    static updateBonus = async(bonusId,bonusType,bonusAmount,dateGranted,empId) =>{
+        let employee = await Employee.findById(empId);
+        const arr = employee[TableFields.bonuses];
+        let my = arr.filter((b)=>{
+            return b[TableFields.ID].toString() === bonusId;
+            });
+        my[0][TableFields.bonusType] = bonusType;
+        my[0][TableFields.bonusAmount] = bonusAmount;
+        my[0][TableFields.dateGranted]  = dateGranted;
+       await employee.save();
+
+    }
+
+    static deleteBonus = async(empId,bonusId) =>{
+        let employee = await Employee.findById(empId);
+        const arr = employee[TableFields.bonuses];
+        let my =  arr.filter((b)=>{
+            return b[TableFields.ID].toString() !== bonusId; 
+            });
+        employee[TableFields.bonuses] = my;
+        await employee.save();
+    }
 }
 
 const ProjectionBuilder = class {
@@ -141,6 +186,7 @@ const ProjectionBuilder = class {
             projection[TableFields.organisationId]=1;
             projection[TableFields.ID]=1;
             projection[TableFields.email]=1;
+            projection[TableFields.bonuses]=1;
             return this;
         }
         this.withNameInfoEmp = () =>{
@@ -149,6 +195,7 @@ const ProjectionBuilder = class {
             projection[TableFields.ID]=1;
             return this;
         }
+
         this.withBasicInfoDep = () =>{
             projection[TableFields.departmentName]=1;
             projection[TableFields.organisationId] = 1;

@@ -140,6 +140,36 @@ const Util = class {
         return{success:true};
     }
 
+    static dateGrantedInvalid(value){
+        let trialDate = new Date().toISOString();
+        let arr = trialDate.split('T');
+        //console.log(arr[0]);
+        let s =  (arr[0]);
+        let year = s.split('-')[0];
+        let month = s.split('-')[1];
+        let fs = year + '-'+ month +'-'+ 28;
+        let num = +(year);
+        let min =  num-50;
+        let leastDate = `${min}-01-01`;
+
+        
+        const grantedDate = new Date(value);
+        const minDate = new Date(`${leastDate}`); 
+        const maxDate = new Date(`${fs}`); 
+
+        
+        let txt = "";
+        if (grantedDate < minDate) {
+          txt = `The date must not be earlier than ${leastDate}`;
+          return{success:false,msg:txt};
+        }
+        if (grantedDate > maxDate) {
+            txt =`The date must not be after  ${fs}`;
+            return{success:false,msg:txt};
+        }
+        return {success:true}; 
+    }
+
   /////###############################################################################////////////////
   static isImageFile(fileOriginalName) {
     return fileOriginalName

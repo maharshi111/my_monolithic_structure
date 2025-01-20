@@ -125,7 +125,9 @@ const ValidationMsgs = (function () {
   ValidationMsgs.DepartmentNotExists = "No such Department exists";
   ValidationMsgs.WorkEmailNotExists = 'No such work email found';
   ValidationMsgs.NameAndEmailMistmatch = 'Managers name and Email doesnot match, please verify it and rewrite email';
-  ValidationMsgs.DepIdEmpty = 'Department Id is required';
+  ValidationMsgs.IdEmpty = 'please enter a valid mongoose object Id';
+  ValidationMsgs.BonusTypeEmpty = 'please enter bonus type';
+  ValidationMsgs.BonusAmountEmpty = 'please enter bonus amount';
   return ValidationMsgs;
 })();
 
@@ -260,6 +262,9 @@ const TableFields = (function () {
   TableFields.depName = 'depName';
   TableFields.managerName = 'managerName';
   TableFields.depId = 'depId';
+  TableFields.departmentId = 'departmentId';
+  TableFields.empId = 'empId';
+  TableFields.idString = 'idString'
   return TableFields;
 })();
 

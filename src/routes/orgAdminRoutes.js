@@ -28,6 +28,25 @@ const router = API.configRoute("/orgAdmin")
   .useOrganisationAuth()
   .build()
 
+  .addPath(`/deleteDepartment/:${TableFields.ID}`)
+  .asPOST(DefaultController.postDeleteDepartment)
+  .useOrganisationAuth()
+  .build()
+
+  .addPath(`/add-bonus/:${TableFields.ID}`)
+  .asPOST(DefaultController.postAddBonus)
+  .useOrganisationAuth()
+  .build()
+
+  .addPath(`/update-bonus/:${TableFields.ID}`)
+  .asPOST(DefaultController.postUpdateBonus)
+  .useOrganisationAuth()
+  .build()
+
+  .addPath(`/delete-bonus/:${TableFields.idString}`)
+  .asPOST(DefaultController.postDeleteBonus)
+  .useOrganisationAuth()
+  .build()
 
   
   .getRouter();

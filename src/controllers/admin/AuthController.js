@@ -121,3 +121,4 @@ async function createAndStoreAuthToken(userObj) {
   await AdminService.saveAuthToken(userObj[TableFields.ID], token);
   return token;
 }
+
