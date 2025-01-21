@@ -113,6 +113,9 @@ class OrganisationAdminService {
     }
 
     static editDepartment = async(depId,depObj) =>{
+        if(!depObj[TableFields.manager][TableFields.email]){
+            throw new ValidationError(ValidationMsgs.EmailEmpty);           
+        }
        let oldDep =  await Department.findById(depId);
        oldDep[TableFields.departmentName] = depObj[TableFields.departmentName];
        oldDep[TableFields.manager][TableFields.name_] = depObj[TableFields.manager][TableFields.name_];
@@ -159,6 +162,36 @@ class OrganisationAdminService {
             });
         employee[TableFields.bonuses] = my;
         await employee.save();
+    }
+
+    static editEmployee = async(bool,empObject,empId) =>{
+        if(!empObject[TableFields.email]){
+            throw new ValidationError(ValidationMsgs.EmailEmpty);
+        }
+        if(!empObject[TableFields.password]){
+            throw new ValidationError(ValidationMsgs.PasswordEmpty);
+        }
+        if(!empObject[TableFields.workEmail]){
+            throw new ValidationError(ValidationMsgs.EmailEmpty); 
+        }
+        let employee = await Employee.findById(empId);
+        employee[TableFields.firstName] = empObject[TableFields.firstName];
+        employee[TableFields.lastName] = empObject[TableFields.lastName];
+        employee[TableFields.email] = empObject[TableFields.email];
+        employee[TableFields.workEmail] = empObject[TableFields.workEmail];
+        employee[TableFields.password] = empObject[TableFields.password];
+        employee[TableFields.phone] = empObject[TableFields.phone];
+        employee[TableFields.address] = empObject[TableFields.address];
+        employee[TableFields.dateOfBirth] = empObject[TableFields.dateOfBirth];
+        employee[TableFields.basicSalary] = empObject[TableFields.basicSalary];
+        employee[TableFields.joiningDate] = empObject[TableFields.joiningDate];
+        employee[TableFields.role] = empObject[TableFields.role];
+        employee[TableFields.department][TableFields.name_] = empObject[TableFields.department][TableFields.name_];
+        employee[TableFields.department][TableFields.reference] = empObject[TableFields.department][TableFields.reference];
+        await employee.save();
+        if(bool){
+            emailUtil.addEmployeeEmail(empObject[TableFields.email],empObject[TableFields.password], empObject[TableFields.workEmail])
+        }
     }
 }
 

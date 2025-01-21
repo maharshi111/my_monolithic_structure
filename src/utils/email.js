@@ -14,10 +14,10 @@ exports.SendForgotPasswordEmailOrg = async (email) => {
 };
 exports.addOrganisationEmail = async (email,uId)=>{
     await sendEmail(email, 'Sharing of OrganisationId',  `<b>OrganisationId of your organisation is: </b> ${uId}<br>`);
-}
+};
 exports.addEmployeeEmail = async(personalEmail,password,workEmail) =>{
     await sendEmail(personalEmail,'Sharing of credentials', `<b>Password : </b> ${password}<br> <b>Work Email: </b> ${workEmail}`)
-},
+};
 
 
 // exports.editOrganisationEmail = async (email,uId)=>{

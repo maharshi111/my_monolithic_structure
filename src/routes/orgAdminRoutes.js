@@ -18,6 +18,12 @@ const router = API.configRoute("/orgAdmin")
   .useOrganisationAuth()
   .build()
 
+  .addPath('/editEmployee')
+  .asPOST(DefaultController.postEditEmployee)
+  .useOrganisationAuth()
+  .build()
+
+
   .addPath('/addDepartment')
   .asPOST(DefaultController.postAddDepartment)
   .useOrganisationAuth()
