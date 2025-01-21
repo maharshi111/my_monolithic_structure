@@ -127,7 +127,7 @@ class OrganisationAdminService {
     static deleteDepartmentById = async(depId) =>{
         console.log('11',depId);
         
-        await Department.findById(depId);
+       // await Department.findById(depId);
         await Department.findByIdAndDelete(depId);    
     }
 
@@ -192,6 +192,10 @@ class OrganisationAdminService {
         if(bool){
             emailUtil.addEmployeeEmail(empObject[TableFields.email],empObject[TableFields.password], empObject[TableFields.workEmail])
         }
+    }
+
+    static deleteEmployee = async(empId) =>{
+        await Employee.findByIdAndDelete(empId);
     }
 }
 

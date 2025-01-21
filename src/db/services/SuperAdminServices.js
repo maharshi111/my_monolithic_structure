@@ -119,7 +119,7 @@ class SuperAdminService {
   }
 
   static addEditAdmin = async(orgObject,orgId)=>{ 
-      let org = Organisation.findById(orgId);
+      let org = await Organisation.findById(orgId);
       org[TableFields.orgAdmin][TableFields.reference] = orgObject.employeeId;
       org[TableFields.orgAdmin][TableFields.email] =orgObject.adminEmail;
       await org.save();
@@ -143,7 +143,9 @@ class SuperAdminService {
     })
   }
 
-  
+  static deleteOrganisation = async(orgId) =>{
+    await Organisation.findByIdAndDelete(orgId);
+  }
 
 
 

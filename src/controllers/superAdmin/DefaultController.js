@@ -7,7 +7,8 @@ const ValidationError = require("../../utils/ValidationError");
 const SuperAdminService = require("../../db/services/SuperAdminServices");
 const emailUtil = require("../../utils/email");
 const Util = require("../../utils/util");
-
+var mongoose = require('mongoose');
+const { MongoUtil } = require("../../db/mongoose");
 exports.postAddOrganisation = async (req, res, next) => {
   //console.log("this is body", req.body);
     const reqBody = req.body;
@@ -368,8 +369,10 @@ exports.postAddEditAdmin = async(req,res,next)=>{
         throw new ValidationError(ValidationMsgs.EmployeeEmailExist);
     }
     const orgId =  new mongoose.Types.ObjectId(employee[TableFields.organisationId]);
+    
     org = await SuperAdminService.findByIdOrgId(orgId).withOrgCeo().execute();
-    if(org[TableFields.email]!==reqBody[TableFields.ceoEmail].trim()){
+
+    if(org[TableFields.orgCEO][TableFields.email]!==reqBody[TableFields.ceoEmail].trim()){
         throw new ValidationError(ValidationMsgs.EmpOrgMismatch);
     }
     const empId = new mongoose.Types.ObjectId(employee[TableFields.ID]);
@@ -378,6 +381,15 @@ exports.postAddEditAdmin = async(req,res,next)=>{
         employeeId : empId,
         adminEmail:reqBody[TableFields.adminEmail]
     };
-    SuperAdminService.addEditAdmin(orgObject,orgId);
+   await SuperAdminService.addEditAdmin(orgObject,orgId);
+}
+
+
+exports.postDeleteOrganisation = async(req,res,next) =>{
+    const orgId = req.params[TableFields.ID];
+    if(!MongoUtil.isValidObjectID(orgId)){
+        throw new ValidationError(ValidationMsgs.IdEmpty);
+    }
+    await SuperAdminService.deleteOrganisation(orgId);
 }
 

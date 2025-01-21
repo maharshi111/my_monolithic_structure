@@ -27,6 +27,10 @@ const router = API.configRoute("/superAdmin")
   .useSuperAdminAuth()
   .build()
 
+  .addPath(`/deleteOrganisation/:${TableFields.ID}`)
+  .asPOST(DefaultController.postDeleteOrganisation)
+  .useSuperAdminAuth()
+  .build()
 
   .addPath('/addEditAdmin')
   .asPOST(DefaultController.postAddEditAdmin)

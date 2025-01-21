@@ -23,6 +23,10 @@ const router = API.configRoute("/orgAdmin")
   .useOrganisationAuth()
   .build()
 
+  .addPath(`/deleteEmployee/:${TableFields.ID}`)
+  .asPOST(DefaultController.postDeleteEmployee)
+  .useOrganisationAuth()
+  .build()
 
   .addPath('/addDepartment')
   .asPOST(DefaultController.postAddDepartment)
@@ -53,7 +57,7 @@ const router = API.configRoute("/orgAdmin")
   .asPOST(DefaultController.postDeleteBonus)
   .useOrganisationAuth()
   .build()
-
+   
   
   .getRouter();
 

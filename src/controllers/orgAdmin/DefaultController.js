@@ -542,3 +542,12 @@ exports.postEditEmployee = async(req,res,next)=>{
     };
     await OrganisationAdminService.editEmployee(bool,empObject,reqBody[TableFields.empId]);
 }
+
+exports.postDeleteEmployee = async(req,res,next) =>{
+    const empId = req.params[TableFields.ID];
+    if(!MongoUtil.isValidObjectID(empId) ){
+        throw new ValidationError(ValidationMsgs.IdEmpty);
+    }
+    await OrganisationAdminService.deleteEmployee(empId);
+
+}
