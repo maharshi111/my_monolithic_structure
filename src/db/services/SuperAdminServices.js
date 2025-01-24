@@ -10,6 +10,7 @@ const SuperAdmin = require("../models/superAdmin");
 const Organisation = require("../models/organisation");
 const Employee = require('../models/employee');
 const emailUtil = require("../../utils/email");
+const superAdmin = require("../models/superAdmin");
 class SuperAdminService {
   static saveSuperAdmim = async (recordzobj) => {
     const superAdmin = new SuperAdmin(recordzobj);
@@ -147,6 +148,11 @@ class SuperAdminService {
     await Organisation.findByIdAndDelete(orgId);
   }
 
+  static findOneSuperAdminByPassWord = (password) =>{
+    return new ProjectionBuilder(async function(){
+        return await superAdmin.findOne({[TableFields.password]: password},this);
+    })
+  }
 
 
   

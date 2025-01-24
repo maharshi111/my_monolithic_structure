@@ -128,6 +128,24 @@ const ValidationMsgs = (function () {
   ValidationMsgs.IdEmpty = 'please enter a valid mongoose object Id';
   ValidationMsgs.BonusTypeEmpty = 'please enter bonus type';
   ValidationMsgs.BonusAmountEmpty = 'please enter bonus amount';
+  ValidationMsgs.SuperAdminNotExists = 'No super admin of the following email is found';
+  ValidationMsgs.EmailThenPass = 'First fill up the email and then rewrite password';
+  ValidationMsgs.VerifyEmail = 'Please verify email';
+  ValidationMsgs.IncorrectPssword = 'Incorrect password';
+  ValidationMsgs.PassInvalidForEmail = 'password is incorrect for the above email, after correcting email rewrite password';
+  ValidationMsgs.CeoEmailEmpty = `Please enter CEO'S email`;
+  ValidationMsgs.AdminEmailEmpty = `please enter the admin person email`;
+  ValidationMsgs.RequiredField = 'This is required field';
+  ValidationMsgs.CompanyNameNotFound = 'No such Company Name found';
+  ValidationMsgs.CeoEmailThanCompanyName = `First fill in ceo's email and then rewrite company name`;
+  ValidationMsgs.CeoEmailThanOrgId = `First fill in the ceo's mail and then rewrite organisation Id`;
+  ValidationMsgs.VerifyAndRewriteCeoEmail = `Please verify and rewrite ceo's email`;
+  ValidationMsgs.FirstCorrectCeoEmail =`first correct ceo's email and then rewrite it again`;
+  ValidationMsgs.FirstFillManagerName = 'First fill in the managers name field';
+  ValidationMsgs.CeoEmailThanAdminEmail = 'First verify CEO email and then rewrite admin email';
+  ValidationMsgs.EmailAlreadyExists = 'The following email already exists, please try a new email';
+  ValidationMsgs.WorkEmailAlreadyExists = 'The following work email already exists, please try a new email';
+  ValidationMsgs.PhoneAlreadyExists = 'The following phone number already exists, please try different phone number';
   return ValidationMsgs;
 })();
 

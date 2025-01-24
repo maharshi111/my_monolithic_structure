@@ -57,7 +57,32 @@ const router = API.configRoute("/orgAdmin")
   .asPOST(DefaultController.postDeleteBonus)
   .useOrganisationAuth()
   .build()
+
+  .addPath(`/ajax-ceo`)
+  .asPOST(AuthController.postAjaxCeo)
+  .useOrganisationAuth()
+  .build()
    
+  .addPath(`/ajax-org-name`)
+  .asPOST(AuthController.postAjaxOrgName)
+  .useOrganisationAuth()
+  .build()
+
+  .addPath(`/ajax-org-Id`)
+  .asPOST(AuthController.postAjaxOrgId)
+  .useOrganisationAuth()
+  .build()
+
+  .addPath('/ajax-manager-email')
+  .asPOST(AuthController.postAjaxManagerEmail)
+  .useOrganisationAuth()
+  .build()
+
+  .addPath('/ajax-dep-name')
+  .asPOST(AuthController.postAjaxDepName)
+  .useOrganisationAuth()
+  .build()
+
   
   .getRouter();
 

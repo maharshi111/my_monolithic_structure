@@ -82,7 +82,7 @@ const Util = class {
         }
     }
     static isAlphaNumeric(value){
-        var reg = /^[a-zA-Z0-9]+$/;
+        var reg =  /^(?=.*[a-zA-Z])(?=.*[0-9])[a-zA-Z0-9]+$/;
         return reg.test(value);
     }
     static DateOfBirthInvalid(value){

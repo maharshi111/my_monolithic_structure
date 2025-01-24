@@ -37,8 +37,28 @@ const router = API.configRoute("/superAdmin")
   .useSuperAdminAuth()
   .build()
 
-  
-  
+  .addPath('/ajax-validation')
+  .asPOST(AuthController.postAjaxValidation)
+  .useSuperAdminAuth()
+  .build()
+
+  .addPath('/ajax-pass-validation')
+  .asPOST(AuthController.postAjaxPassValidation)
+  .useSuperAdminAuth()
+  .build()
+
+  .addPath('/ajax-org-ceo')
+  .asPOST(AuthController.postAjaxAddCeo)
+  .useSuperAdminAuth()
+  .build()
+
+  .addPath('/ajax-admin-validation')
+  .asPOST(AuthController.postAjaxAddAdmin)
+  .useSuperAdminAuth()
+  .build()
+
+ 
+
   .getRouter();
 
 module.exports = router;

@@ -51,6 +51,18 @@ class OrganisationAdminService {
             return await Employee.findOne({[`${TableFields.workEmail}`]:email},this);
          })  
     }
+
+    static findEmpByEmail =(email)=>{
+        return new ProjectionBuilder(async function () {
+            return await Employee.findOne({[`${TableFields.email}`]:email},this);
+         })  
+    }
+    static findEmpByPhone =(phone)=>{
+        return new ProjectionBuilder(async function () {
+            return await Employee.findOne({[`${TableFields.phone}`]:phone},this);
+         })  
+    }
+
     static findEmpById=(empId)=>{
         return new ProjectionBuilder(async function () {
             return await Employee.findById(empId,this);
@@ -109,6 +121,8 @@ class OrganisationAdminService {
             throw new ValidationError(ValidationMsgs.EmailEmpty);           
         }
         const department = new Department(depObj);
+        const error = department.validateSync();
+        if (error) throw error;
         await department.save();
     }
 
@@ -116,12 +130,32 @@ class OrganisationAdminService {
         if(!depObj[TableFields.manager][TableFields.email]){
             throw new ValidationError(ValidationMsgs.EmailEmpty);           
         }
-       let oldDep =  await Department.findById(depId);
-       oldDep[TableFields.departmentName] = depObj[TableFields.departmentName];
-       oldDep[TableFields.manager][TableFields.name_] = depObj[TableFields.manager][TableFields.name_];
-       oldDep[TableFields.manager][TableFields.email] = depObj[TableFields.manager][TableFields.email];
-       oldDep[TableFields.manager][TableFields.reference] = depObj[TableFields.manager][TableFields.reference];
-       await oldDep.save();
+        // console.log('--->',depId);
+        
+        // let obj = {...depObj};
+        // console.log('===>',depObj);
+        let currentDep = await Department.findById(depId);
+        // console.log(currentDep);
+        let x = await Department.findOne({})
+        
+    //    let oldDep =  await Department.findById(depId);
+    //    oldDep[TableFields.departmentName] = depObj[TableFields.departmentName];
+    //    oldDep[TableFields.manager][TableFields.name_] = depObj[TableFields.manager][TableFields.name_];
+    //    oldDep[TableFields.manager][TableFields.email] = depObj[TableFields.manager][TableFields.email];
+    //    oldDep[TableFields.manager][TableFields.reference] = depObj[TableFields.manager][TableFields.reference];
+    let newDep =  await Department.findOneAndUpdate({[TableFields.ID]:depId},
+        {
+            // [TableFields.departmentName] : depObj[TableFields.departmentName],
+            // [`${TableFields.manager}.${TableFields.name_}`] : depObj[TableFields.manager][TableFields.name_],
+            // [`${TableFields.manager}.${TableFields.email}`]:[TableFields.manager][TableFields.email],
+            // [`${TableFields.manager}.${TableFields.reference}`]:[TableFields.manager][TableFields.reference]
+            $set:{...depObj}
+        }
+    );
+    console.log('---->>>',newDep);
+    
+
+    //    await oldDep.save();
     }
 
     static deleteDepartmentById = async(depId) =>{

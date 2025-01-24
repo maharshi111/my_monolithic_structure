@@ -155,7 +155,7 @@ exports.postAddOrganisation = async (req, res, next) => {
     console.log('this is superAdminId:',req.superAdminId);
     
     const organisation = {
-      [TableFields.orgName]: reqBody[TableFields.orgName],
+      [TableFields.orgName]: reqBody[TableFields.orgName].toUpperCase(),
       [TableFields.orgLinkedinUrl]: reqBody[TableFields.linkedinUrl],
       [TableFields.orgWebsiteUrl]: reqBody[TableFields.websiteUrl],
       [TableFields.orgHeadOffice]: {
@@ -214,7 +214,7 @@ exports.postEditOrganisation = async (req, res) => {
   if(!Util.ValidationMsgsLength(reqBody[TableFields.country],70,0,[TableFields.country]).flag){
       throw new ValidationError(Util.ValidationMsgsLength(reqBody[TableFields.country],70,0,[TableFields.country]).message);
   }
-  if(!Util.isAlpha(reqBody[TableFields.country]).trim()){
+  if(!Util.isAlpha(reqBody[TableFields.country].trim())){
     throw new ValidationError(ValidationMsgs.IsAlphaInvalidCountry);
   }
   if (!reqBody[TableFields.city].trim()) {
@@ -313,7 +313,7 @@ exports.postEditOrganisation = async (req, res) => {
     throw new ValidationError(ValidationMsgs.SubscriptionChargeInvalid);
   }
   const myObj = {
-    [TableFields.orgName]: reqBody[TableFields.orgName],
+    [TableFields.orgName]: reqBody[TableFields.orgName].toUpperCase(),
     [TableFields.orgLinkedinUrl]: reqBody[TableFields.linkedinUrl],
     [TableFields.orgWebsiteUrl]: reqBody[TableFields.websiteUrl],
     [TableFields.orgHeadOffice]: {
@@ -392,4 +392,5 @@ exports.postDeleteOrganisation = async(req,res,next) =>{
     }
     await SuperAdminService.deleteOrganisation(orgId);
 }
+
 

@@ -207,7 +207,7 @@ const Builder = class {
               console.log(e);
             }
             res
-              .status(ResponseStatus.InternalServerError)
+              .status(ResponseStatus.BadRequest)
               .send(Util.getErrorMessage(e));
           }
         }

@@ -27,6 +27,7 @@ const employeeSchema = new Schema({
       }
     },
     required: [true, ValidationMsgs.EmailEmpty],
+    unique:true
   },
   [TableFields.workEmail]: {
     type: String,
@@ -38,6 +39,7 @@ const employeeSchema = new Schema({
       }
     },
     required: [true, ValidationMsgs.EmailEmpty],
+    unique:true
   },
   [TableFields.password]: {
     type: String,
@@ -55,6 +57,7 @@ const employeeSchema = new Schema({
     //   }
     // },
     required: [true, ValidationMsgs.PhoneEmpty],
+    unique:true
   },
   [TableFields.address]: {
     type: String,
