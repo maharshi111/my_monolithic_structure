@@ -69,21 +69,12 @@ class EmployeeService {
       throw new ValidationError(ValidationMsgs.EmailEmpty);
     }
     let employee = new Employee(empObject);
-    //console.log('emp:',employee);
     const error = employee.validateSync();
     if (error) throw error;
     await employee.save();
-    // console.log('***');
   };
 
   static addBonus = async (empId, bonusType, bonusAmount, dateGranted) => {
-    //   let employee = await Employee.findById(empId);
-    //    employee[TableFields.bonuses].push({
-    //     [TableFields.bonusType]:bonusType,
-    //     [TableFields.bonusAmount]:bonusAmount,
-    //     [TableFields.dateGranted]:dateGranted
-    //    });
-    //await employee.save();
     await Employee.findByIdAndUpdate(empId, {
       $push: {
         [TableFields.bonuses]: {
@@ -115,13 +106,6 @@ class EmployeeService {
   };
 
   static deleteBonus = async (empId, bonusId) => {
-    // let employee = await Employee.findById(empId);
-    // const arr = employee[TableFields.bonuses];
-    // let my =  arr.filter((b)=>{
-    //     return b[TableFields.ID].toString() !== bonusId;
-    //     });
-    // employee[TableFields.bonuses] = my;
-    // await employee.save();
     await Employee.updateOne(
       {
         [TableFields.ID]: empId,
@@ -137,30 +121,6 @@ class EmployeeService {
   };
 
   static editEmployee = async (empObject, empId) => {
-    if (!empObject[TableFields.email]) {
-      throw new ValidationError(ValidationMsgs.EmailEmpty);
-    }
-    if (!empObject[TableFields.phone]) {
-      throw new ValidationError(ValidationMsgs.PhoneEmpty);
-    }
-    if (!empObject[TableFields.workEmail]) {
-      throw new ValidationError(ValidationMsgs.EmailEmpty);
-    }
-    // let employee = await Employee.findById(empId);
-    // employee[TableFields.firstName] = empObject[TableFields.firstName];
-    // employee[TableFields.lastName] = empObject[TableFields.lastName];
-    // employee[TableFields.email] = empObject[TableFields.email];
-    // employee[TableFields.workEmail] = empObject[TableFields.workEmail];
-    // employee[TableFields.password] = empObject[TableFields.password];
-    // employee[TableFields.phone] = empObject[TableFields.phone];
-    // employee[TableFields.address] = empObject[TableFields.address];
-    // employee[TableFields.dateOfBirth] = empObject[TableFields.dateOfBirth];
-    // employee[TableFields.basicSalary] = empObject[TableFields.basicSalary];
-    // employee[TableFields.joiningDate] = empObject[TableFields.joiningDate];
-    // employee[TableFields.role] = empObject[TableFields.role];
-    // employee[TableFields.department][TableFields.name_] = empObject[TableFields.department][TableFields.name_];
-    // employee[TableFields.department][TableFields.reference] = empObject[TableFields.department][TableFields.reference];
-    // await employee.save();
     Employee.findByIdAndUpdate(empId, { $set: { ...empObject } });
   };
 
@@ -220,27 +180,6 @@ const ProjectionBuilder = class {
       projection[TableFields.organisationId] = 1;
       return this;
     };
-    // this.withUserType = () => {
-    //     projection[TableFields.userType] = 1;
-    //     return this;
-    // };
-    // this.withId = () => {
-    //     projection[TableFields.ID] = 1;
-    //     return this;
-    // };
-    // this.withApproved = () => {
-    //     projection[TableFields.approved] = 1;
-    //     return this;
-    // };
-    // this.withName = () => {
-    //     projection[TableFields.name_] = 1;
-    //     return this;
-    // };
-    // this.withPasswordResetToken = () => {
-    //     projection[TableFields.passwordResetToken] = 1;
-    //     return this;
-    // };
-
     this.execute = async () => {
       return await methodToExecute.call(projection);
     };

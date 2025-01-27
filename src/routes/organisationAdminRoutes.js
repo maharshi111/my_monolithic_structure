@@ -1,28 +1,28 @@
 const API = require("../utils/apiBuilder");
 const AuthController = require("../controllers/organisationAdmin/AuthController");
 const EmployeeController = require("../controllers/organisationAdmin/EmployeeController");
-const DepartmentController =require('../controllers/organisationAdmin/DepartmentController')
-const EmployeeBonusController = require('../controllers/organisationAdmin/EmployeeBonusController');
-const AjaxController = require('../controllers/organisationAdmin/AjaxController');
+const DepartmentController = require("../controllers/organisationAdmin/DepartmentController");
+const EmployeeBonusController = require("../controllers/organisationAdmin/EmployeeBonusController");
+const AjaxController = require("../controllers/organisationAdmin/AjaxController");
 const { TableFields } = require("../utils/constants");
 const router = API.configRoute("/orgAdmin")
 
-// Auth routes
+  // Auth routes
   .addPath("/login")
   .asPOST(AuthController.postLogin)
   .build()
-   
-  .addPath('/forgotpassword')
+
+  .addPath("/forgotpassword")
   .asPOST(AuthController.postForgotPassword)
   .build()
 
-// Employee routes
-  .addPath('/addEmployee')
+  // Employee routes
+  .addPath("/addEmployee")
   .asPOST(EmployeeController.postAddEmployee)
   .useOrganisationAuth()
   .build()
 
-  .addPath('/editEmployee')
+  .addPath("/editEmployee")
   .asPOST(EmployeeController.postEditEmployee)
   .useOrganisationAuth()
   .build()
@@ -32,14 +32,14 @@ const router = API.configRoute("/orgAdmin")
   .useOrganisationAuth()
   .build()
 
-//Department routes
+  //Department routes
 
-  .addPath('/addDepartment')
+  .addPath("/addDepartment")
   .asPOST(DepartmentController.postAddDepartment)
   .useOrganisationAuth()
   .build()
 
-  .addPath('/editDepartment')
+  .addPath("/editDepartment")
   .asPOST(DepartmentController.postEditDepartment)
   .useOrganisationAuth()
   .build()
@@ -49,7 +49,7 @@ const router = API.configRoute("/orgAdmin")
   .useOrganisationAuth()
   .build()
 
-// Bonus routes
+  // Bonus routes
 
   .addPath(`/add-bonus/:${TableFields.ID}`)
   .asPOST(EmployeeBonusController.postAddBonus)
@@ -66,13 +66,13 @@ const router = API.configRoute("/orgAdmin")
   .useOrganisationAuth()
   .build()
 
-// Ajax rutes
+  // Ajax rutes
 
   .addPath(`/ajax-ceo`)
   .asPOST(AjaxController.postAjaxCeo)
   .useOrganisationAuth()
   .build()
-   
+
   .addPath(`/ajax-org-name`)
   .asPOST(AjaxController.postAjaxOrgName)
   .useOrganisationAuth()
@@ -83,18 +83,16 @@ const router = API.configRoute("/orgAdmin")
   .useOrganisationAuth()
   .build()
 
-  .addPath('/ajax-manager-email')
+  .addPath("/ajax-manager-email")
   .asPOST(AjaxController.postAjaxManagerEmail)
   .useOrganisationAuth()
   .build()
 
-  .addPath('/ajax-dep-name')
+  .addPath("/ajax-dep-name")
   .asPOST(AjaxController.postAjaxDepName)
   .useOrganisationAuth()
   .build()
 
-  
   .getRouter();
 
-  module.exports = router;
-  
+module.exports = router;

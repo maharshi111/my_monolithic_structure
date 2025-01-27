@@ -30,31 +30,6 @@ const InterfaceTypes = (function () {
 
 const ValidationMsgs = (function () {
   function ValidationMsgs() {}
-  //   ValidationMsgs.InvalidAuthToken = "Invalid auth token.";
-  //   ValidationMsgs.ParametersError = "Invalid parameters.";
-  //   ValidationMsgs.RecordNotFound = "Record not found!";
-  //   ValidationMsgs.AccountAlreadyExists =
-  //     "Registration has already been completed.";
-  //   ValidationMsgs.AccountNotRegistered = "Account not registered!";
-  //   ValidationMsgs.PasswordEmpty = "Password required!";
-  //   ValidationMsgs.EmailInvalid = "Email is invalid.";
-  //   ValidationMsgs.PhoneInvalid = "Phone is invalid.";
-  //   ValidationMsgs.PasswordInvalid = "Password is invalid.";
-  //   ValidationMsgs.AuthFail = "Please authenticate!";
-  //   ValidationMsgs.UnableToLogin = "Incorrect email and/or password.";
-  //   ValidationMsgs.UserTypeEmpty = "User type required!";
-  //   ValidationMsgs.NameEmpty = "Name required!";
-  //   ValidationMsgs.EmailEmpty = "Email required!";
-  //   ValidationMsgs.PhoneEmpty = "Phone number cannot be blank!";
-  //   ValidationMsgs.PhoneCountryEmpty = "Phone country code cannot be blank!";
-  //   ValidationMsgs.DuplicateEmail = "This email address is already in use!";
-  //   ValidationMsgs.NewPasswordEmpty = "New password required!";
-  //   ValidationMsgs.PassResetCodeEmpty = "Password reset code required!";
-  //   ValidationMsgs.DuplicatePhone = "This phone number is already in use!";
-  //   ValidationMsgs.InvalidPassResetCode = "Password reset code is invalid!";
-  //   ValidationMsgs.UnableToForgotPassword =
-  //     "User not active, unable to reset password.";
-  //   ValidationMsgs.OldPasswordIncorrect = "Entered old password is incorrect.";
   ValidationMsgs.UserNameEmpty = "User Name is a required field!";
   ValidationMsgs.AuthFail = "Please authenticate!";
   ValidationMsgs.EmailEmpty = "Email required!";
@@ -106,7 +81,6 @@ const ValidationMsgs = (function () {
   ValidationMsgs.SubscriptionChargeInvalid =
     "subscription charge shouldnot exceed 999,999";
   ValidationMsgs.UnableToLogin = "Incorrect email and/or password.";
-  //ValidationMsgs.notNumber = "The Entered value is not a number";
   ValidationMsgs.InvalidDate = "Please enter date in valid format yyyy-mm-dd";
   ValidationMsgs.InvalidCharge = "Subscription charge must be a number";
   ValidationMsgs.CeoEmalExist = "No such ceo email exists";
@@ -156,14 +130,6 @@ const ValidationMsgs = (function () {
   return ValidationMsgs;
 })();
 
-// const ValidationMsgsLength = (function (maxlen,minlen) {
-//     function ValidationMsgsLength(maxlen,minlen){}
-//     ValidationMsgsLength.msg = `The maximum and the minimum characters allowed for this field are ${maxlen} and ${minlen} respectively`;
-//     ValidationMsgsLength.maxMsg = `The maximum characters allowed for this field are ${maxlen}`;
-//     ValidationMsgsLength.minMsg = `The minimum characters allowed for this field are ${minlen}`;
-//     return ValidationMsgsLength;
-// })()
-
 const ValidationMsgsLength = (fieldName, maxlen, minlen) => {
   function ValidationMsgsLength(fieldName, maxlen, minlen) {}
   console.log("inside ValidationMsgLength");
@@ -185,8 +151,6 @@ const ResponseMessages = (function () {
 
 const TableNames = (function () {
   function TableNames() {}
-  //   TableNames.Admin = "admins";
-  //   TableNames.College = "colleges";
   TableNames.SuperAdmin = "superadmins";
   TableNames.Organisation = "organisations";
   TableNames.Employee = "employees";
@@ -203,35 +167,6 @@ const AuthTypes = (function () {
 
 const TableFields = (function () {
   function TableFields() {}
-  // TableFields.ID = "_id";
-  // TableFields.userId = "userId";
-  //TableFields.name_ = "name";
-  // TableFields.userType = "userType";
-  // TableFields.phoneCountry = "phoneCountry";
-  // TableFields.phone = "phone";
-  // TableFields.platform = "platform";
-  // TableFields.passwordResetToken = "passwordResetToken";
-  // TableFields.fcmTokens = "fcmTokens";
-  // TableFields.token = "token";
-  // TableFields._createdAt = "createdAt";
-  // TableFields._updatedAt = "updatedAt";
-  // TableFields.email = "email";
-  // TableFields.password = "password";
-  // TableFields.tokens = "tokens";
-  // TableFields.approved = "approved";
-  // TableFields.interface = "interface";
-  // TableFields.active = "active";
-  // TableFields.image = "image";
-  // TableFields.thumbnail = "thumbnail";
-  // TableFields.emailVerified = "emailVerified";
-  // TableFields.regCompleted = "regCompleted";
-  // TableFields.addedByAdmin = "addedByAdmin";
-  // TableFields._createdAt = "_createdAt";
-  // TableFields._updatedAt = "_updatedAt";
-  // TableFields.deleted = "deleted";
-  // TableFields._deletedAt = "_deletedAt";
-  // TableFields.emailOTP = "emailOTP";
-  // TableFields.authType = "authType";
   TableFields.ID = "_id";
   TableFields.token = "token";
   TableFields.tokens = "tokens";

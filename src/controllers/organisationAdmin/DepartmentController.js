@@ -52,7 +52,6 @@ exports.postAddDepartment = async(req,res,next)=>{
     if(fn!==emp[TableFields.firstName] || ln!==emp[TableFields.lastName]){
         throw new ValidationError(ValidationMsgs.NameAndEmailMistmatch);    
     }
-    // emp = await EmployeeService.findEmpByWorkEmail(reqBody[TableFields.email]).withBasicInfoEmp().execute();
     console.log('this is emp',emp);
     
     let mName = ln+' '+fn;
@@ -131,10 +130,7 @@ exports.postEditDepartment = async(req,res,next) =>{
 
 exports.postDeleteDepartment = async(req,res,next) =>{
     const depId =( req.params[TableFields.ID]);
-    // console.log('this is whole req',req.params);
-    
-    // console.log('this is depId',depId);
-    
+
     if(!MongoUtil.isValidObjectID(depId) ){
         throw new ValidationError(ValidationMsgs.IdEmpty);
     }

@@ -12,9 +12,9 @@ exports.postSignUp = async (req, res, next) => {
   const email = req.body.email;
   const password = req.body.password;
   //Add validations
-   if (!userName) {
-        throw new ValidationError(ValidationMsgs.UserNameEmpty);
-   }
+  if (!userName) {
+    throw new ValidationError(ValidationMsgs.UserNameEmpty);
+  }
   if (!email) {
     throw new ValidationError(ValidationMsgs.EmailEmpty);
   }
@@ -36,54 +36,45 @@ exports.postSignUp = async (req, res, next) => {
     [TableFields.email]: email,
     [TableFields.password]: password,
   };
-  console.log('==>>',superAdmin [TableFields.password]);
-  
+  console.log("==>>", superAdmin[TableFields.password]);
+
   await SuperAdminService.saveSuperAdmim(superAdmin);
 };
 
 exports.postLogin = async (req, res, next) => {
   let email = req.body[TableFields.email];
+
   if (!email) throw new ValidationError(ValidationMsgs.EmailEmpty);
   const password = req.body[TableFields.password];
-  //console.log('inside post',password);
-  
+
   if (!password) throw new ValidationError(ValidationMsgs.PasswordEmpty);
-  let superAdmin = await SuperAdminService.findByEmail(email).withBasicInfo().withPassword().execute();
-  console.log('this is superAdmin',superAdmin);
-  console.log(typeof(superAdmin));
-  
-  if (superAdmin && await superAdmin.isValidAuth(password)) {
-    //console.log('this is return value',superAdmin.isValidAuth(password)); 
-    
+
+  let superAdmin = await SuperAdminService.findByEmail(email)
+    .withBasicInfo()
+    .withPassword()
+    .execute();
+  console.log("this is superAdmin", superAdmin);
+  console.log(typeof superAdmin);
+
+  if (superAdmin && (await superAdmin.isValidAuth(password))) {
     const token = superAdmin.createAuthToken(superAdmin);
-    console.log('this is token:',token);
-    
     await SuperAdminService.saveAuthToken(superAdmin[TableFields.ID], token);
-    
-    // res.cookie("uid", token);
-    //res.redirect("/superAdmin/getAllOrganisation");
     return { superAdmin, token };
-    
-  }
-  else throw new ValidationError(ValidationMsgs.UnableToLogin);
+  } else throw new ValidationError(ValidationMsgs.UnableToLogin);
 };
 
 exports.postForgotPassword = async (req, res) => {
   const receiverEmail = req.body[TableFields.email].trim().toLowerCase();
+
   if (!receiverEmail) throw new ValidationError(ValidationMsgs.EmailEmpty);
-  if(Util.isEmail(receiverEmail)){
+
+  if (Util.isEmail(receiverEmail)) {
     throw new ValidationError(ValidationMsgs.EmailInvalid);
   }
-  if(receiverEmail.length > 30){
+
+  if (receiverEmail.length > 30) {
     throw new ValidationError(ValidationMsgs.EmailLength);
   }
+
   emailUtil.SendForgotPasswordEmail(receiverEmail);
 };
-
-
-
-
-
-
-
-

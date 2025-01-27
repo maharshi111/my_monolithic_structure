@@ -34,7 +34,7 @@ const Util = class {
     return { success: true };
   }
 
-  static subscriptionStartInvalidEdit(value){
+  static subscriptionStartInvalidEdit(value) {
     let trialDate = new Date().toISOString();
     let arr = trialDate.split("T");
     let currDate = arr[0];
@@ -44,7 +44,7 @@ const Util = class {
     const grantedDate = new Date(value);
     //console.log("grantedDate", grantedDate);
 
-    const minDate = new Date(`${num-5}-01-01`);
+    const minDate = new Date(`${num - 5}-01-01`);
     //console.log("minDate", minDate);
 
     const maxDate = new Date(`${num}-12-31`);
@@ -52,7 +52,7 @@ const Util = class {
     let s = "";
 
     if (grantedDate < minDate) {
-      s = `The date must not be before than January 01,${num-5}`;
+      s = `The date must not be before than January 01,${num - 5}`;
       return { success: false, msg: s };
     }
     if (grantedDate > maxDate) {
@@ -60,143 +60,135 @@ const Util = class {
       return { success: false, msg: s };
     }
     return { success: true };
-  } 
+  }
 
   static isUrlValid(userInput) {
     //  var res = userInput.match(/^(http(s)?:\/\/)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-zA-Z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)$/);
-    var res = userInput.match(/^(http(s)?:\/\/)?(www\.)?[-a-zA-Z0-9:%._\+~#=]{2,256}\.[a-zA-Z]{2,6}\b([-a-zA-Z0-9:%_\+.~#?&//=]*)$/);
+    var res = userInput.match(
+      /^(http(s)?:\/\/)?(www\.)?[-a-zA-Z0-9:%._\+~#=]{2,256}\.[a-zA-Z]{2,6}\b([-a-zA-Z0-9:%_\+.~#?&//=]*)$/
+    );
 
-    if(res == null)
-        return false;
-    else
-        return true;
-    }
+    if (res == null) return false;
+    else return true;
+  }
 
-    static isDigit(value){
-        var reg = /^\d+$/;
-        return reg.test(value);
-    }
-    static isAlpha(value){
-        var reg = /^[a-zA-Z ]*$/;
-        return reg.test(value);
-    }
-    static isDate(value){
-        var reg = /^\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$/;
-        return reg.test(value);
-    }
-    static ValidationMsgsLength(reqBody,maxlen,minlen,fieldName){
-        let msg="";
-        //console.log('inside static method');
-        
-        // console.log(reqBody);
-        // console.log(reqBody.length);
-        
-        
-        if(reqBody.trim().length<minlen){
-             msg= `The minimum length allowed for ${fieldName} field is ${minlen}`;
-            return {flag:false,message:msg};
-        }
-        else if(reqBody.trim().length>maxlen){
-            msg = `The maximum length allowed for ${fieldName} field is ${maxlen}`;
-            return {flag:false,message:msg};
-        }
-        else{
-            return {flag:true};
-        }
-    }
-    static isEmpty(field){
-        if(!field){
-            return false;
-        }
-    }
-    static isAlphaNumeric(value){
-        var reg =  /^(?=.*[a-zA-Z])(?=.*[0-9])[a-zA-Z0-9]+$/;
-        return reg.test(value);
-    }
-    static DateOfBirthInvalid(value){
-        let trialDate = new Date().toISOString();
-        let arr = trialDate.split('T');
-        let currDate = arr[0];
-        let year =  currDate.split('-');
-        let num = +(year[0]);
-        let minDob = `${num -70}-01-01`;
-        let maxDob = `${num-20}-12-31`;
-        
-        const grantedDate = new Date(value);
-        const minDate = new Date(`${minDob}`); 
-        const maxDate = new Date(`${maxDob}`); 
+  static isDigit(value) {
+    var reg = /^\d+$/;
+    return reg.test(value);
+  }
+  static isAlpha(value) {
+    var reg = /^[a-zA-Z ]*$/;
+    return reg.test(value);
+  }
+  static isDate(value) {
+    var reg = /^\d{4}-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$/;
+    return reg.test(value);
+  }
+  static ValidationMsgsLength(reqBody, maxlen, minlen, fieldName) {
+    let msg = "";
 
-        let s="";
-    
-        if (grantedDate < minDate) {
-            // throw new Error(`The date must not be before than ${minDob}`);
-            s = `The date of birth must not be before than ${minDob}`;
-            return{success:false,msg:s};
-        }
-        if (grantedDate > maxDate) {
-            //throw new Error(`The date must not be after  ${maxDob}`);
-            s=`The date of birth must not be after  ${maxDob}`;
-            return{success:false,msg:s};
-        }
-        return{success:true};
+    if (reqBody.trim().length < minlen) {
+      msg = `The minimum length allowed for ${fieldName} field is ${minlen}`;
+      return { flag: false, message: msg };
+    } else if (reqBody.trim().length > maxlen) {
+      msg = `The maximum length allowed for ${fieldName} field is ${maxlen}`;
+      return { flag: false, message: msg };
+    } else {
+      return { flag: true };
     }
-    static joiningDateInvalid(value){
-        let trialDate = new Date().toISOString();
-        let arr = trialDate.split('T');
-        let currDate = arr[0];
-        let year =  currDate.split('-');
-        let num = +(year[0]);
-        let min =  num-50;
-        let leastDate = `${min}-01-01`;
-        let maxiumDate = `${num}-12-31`;
-        
-        const grantedDate = new Date(value);
-        const minDate = new Date(`${leastDate}`); 
-        const maxDate = new Date(`${maxiumDate}`); 
+  }
+  static isEmpty(field) {
+    if (!field) {
+      return false;
+    }
+  }
+  static isAlphaNumeric(value) {
+    var reg = /^(?=.*[a-zA-Z])(?=.*[0-9])[a-zA-Z0-9]+$/;
+    return reg.test(value);
+  }
+  static DateOfBirthInvalid(value) {
+    let trialDate = new Date().toISOString();
+    let arr = trialDate.split("T");
+    let currDate = arr[0];
+    let year = currDate.split("-");
+    let num = +year[0];
+    let minDob = `${num - 70}-01-01`;
+    let maxDob = `${num - 20}-12-31`;
 
-        let s="";
-        
-    
-        if (grantedDate < minDate) {
-          s = `The joining date must not be before than ${leastDate}`;
-          return{success:false,msg:s};
-        }
-        if (grantedDate > maxDate) {
-           s = `The joining date must not be after  ${maxiumDate}`;
-           return{success:false,msg:s};
-        }
-        return{success:true};
+    const grantedDate = new Date(value);
+    const minDate = new Date(`${minDob}`);
+    const maxDate = new Date(`${maxDob}`);
+
+    let s = "";
+
+    if (grantedDate < minDate) {
+      s = `The date of birth must not be before than ${minDob}`;
+      return { success: false, msg: s };
+    }
+    if (grantedDate > maxDate) {
+      s = `The date of birth must not be after  ${maxDob}`;
+      return { success: false, msg: s };
+    }
+    return { success: true };
+  }
+  static joiningDateInvalid(value) {
+    let trialDate = new Date().toISOString();
+    let arr = trialDate.split("T");
+    let currDate = arr[0];
+    let year = currDate.split("-");
+    let num = +year[0];
+    let min = num - 50;
+    let leastDate = `${min}-01-01`;
+    let maxiumDate = `${num}-12-31`;
+
+    const grantedDate = new Date(value);
+    const minDate = new Date(`${leastDate}`);
+    const maxDate = new Date(`${maxiumDate}`);
+
+    let s = "";
+
+    if (grantedDate < minDate) {
+      s = `The joining date must not be before than ${leastDate}`;
+      return { success: false, msg: s };
     }
 
-    static dateGrantedInvalid(value){
-        let trialDate = new Date().toISOString();
-        let arr = trialDate.split('T');
-        //console.log(arr[0]);
-        let s =  (arr[0]);
-        let year = s.split('-')[0];
-        let month = s.split('-')[1];
-        let fs = year + '-'+ month +'-'+ 28;
-        let num = +(year);
-        let min =  num-50;
-        let leastDate = `${min}-01-01`;
-
-        
-        const grantedDate = new Date(value);
-        const minDate = new Date(`${leastDate}`); 
-        const maxDate = new Date(`${fs}`); 
-
-        
-        let txt = "";
-        if (grantedDate < minDate) {
-          txt = `The date must not be earlier than ${leastDate}`;
-          return{success:false,msg:txt};
-        }
-        if (grantedDate > maxDate) {
-            txt =`The date must not be after  ${fs}`;
-            return{success:false,msg:txt};
-        }
-        return {success:true}; 
+    if (grantedDate > maxDate) {
+      s = `The joining date must not be after  ${maxiumDate}`;
+      return { success: false, msg: s };
     }
+
+    return { success: true };
+  }
+
+  static dateGrantedInvalid(value) {
+    let trialDate = new Date().toISOString();
+    let arr = trialDate.split("T");
+    let s = arr[0];
+    let year = s.split("-")[0];
+    let month = s.split("-")[1];
+    let fs = year + "-" + month + "-" + 28;
+    let num = +year;
+    let min = num - 50;
+    let leastDate = `${min}-01-01`;
+
+    const grantedDate = new Date(value);
+    const minDate = new Date(`${leastDate}`);
+    const maxDate = new Date(`${fs}`);
+
+    let txt = "";
+
+    if (grantedDate < minDate) {
+      txt = `The date must not be earlier than ${leastDate}`;
+      return { success: false, msg: txt };
+    }
+
+    if (grantedDate > maxDate) {
+      txt = `The date must not be after  ${fs}`;
+      return { success: false, msg: txt };
+    }
+
+    return { success: true };
+  }
 
   /////###############################################################################////////////////
   static isImageFile(fileOriginalName) {

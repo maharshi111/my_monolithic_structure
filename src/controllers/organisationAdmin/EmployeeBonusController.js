@@ -44,7 +44,6 @@ exports.postAddBonus = async(req,res,next) =>{
     if(!MongoUtil.isValidObjectID(empId)){
      throw new ValidationError(ValidationMsgs.IdEmpty) ;
     }
-    //let empObj= await OrganisationAdminService.findEmpById(empId).withBasicInfoDep().execute();
     await EmployeeService.addBonus(empId,reqBody[TableFields.bonusType].trim(),reqBody[TableFields.bonusAmount].trim(),reqBody[TableFields.dateGranted].trim());
  }
  

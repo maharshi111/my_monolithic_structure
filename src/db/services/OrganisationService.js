@@ -83,25 +83,19 @@ class OrganisationService {
   };
 
   static addOrganisation = async (orgObject) => {
-    console.log("orgObject", orgObject);
     const organisation = new Organisation(orgObject);
-    console.log("organisation", organisation);
-    // const error = organisation.validateSync();
-    // console.log("error", error);
-    // if (error) throw error;
+    
     if (!orgObject[TableFields.orgCEO][TableFields.email]) {
       throw new ValidationError(ValidationMsgs.EmailEmpty);
     }
+
     const error = organisation.validateSync();
     if (error) throw error;
-    await organisation.save(); //.save() is model's instance method
+
+    await organisation.save();
   };
 
   static editOrganisation = async (orgObj, orgId) => {
-    if (!orgObj[TableFields.orgCEO][TableFields.email]) {
-      throw new ValidationError(ValidationMsgs.EmailEmpty);
-    }
-    console.log("this isorgObj :", orgObj);
     await Organisation.findByIdAndUpdate(orgId, { $set: { ...orgObj } });
   };
 
@@ -142,7 +136,6 @@ const ProjectionBuilder = class {
       projection[TableFields.orgAdmin] = 1;
       return this;
     };
-
     this.execute = async () => {
       return await methodToExecute.call(projection);
     };

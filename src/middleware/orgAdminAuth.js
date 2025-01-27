@@ -16,13 +16,11 @@ const { header } = require("express-validator");
 const orgAuth = async (req, res, next) => {
   try {
     const headerToken = req.header("Authorization").replace("Bearer ", "");
-    //console.log('headerToken:',headerToken);
 
     if (!headerToken) {
       throw new ValidationError(ValidationMsgs.HeaderTokenAbsent);
     }
     const decoded = jwt.verify(headerToken, process.env.JWT_ORGANISATION_PK);
-    //console.log('decoded:',decoded);
 
     if (!decoded) {
       throw new ValidationError(ValidationMsgs.DecodedTokenFail);
