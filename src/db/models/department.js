@@ -8,39 +8,59 @@ const {
   UserTypes,
 } = require("../../utils/constants");
 
-const departmentSchema = new Schema({
-  [TableFields.departmentName]: {
-    type: String,
-    required: [true, ValidationMsgs.DepNameEmpty],
-  },
-  [TableFields.manager]: {
-    [TableFields.reference]: {
+const departmentSchema = new Schema(
+  {
+    [TableFields.departmentName]: {
+      type: String,
+      required: [true, ValidationMsgs.DepNameEmpty],
+    },
+    [TableFields.manager]: {
+      [TableFields.reference]: {
         //Employee
-      type: Schema.Types.ObjectId,
-      required: [true, ValidationMsgs.ManagerReferenceEmpty],
-      ref: TableNames.Employee,
-    },
-    [TableFields.name_]: {
-      type: String,
-      required: [true, ValidationMsgs.ManagerNameEmpty],
-    },
-    [TableFields.email]: {
-      type: String,
-      trim: true,
-      unique: true,
-      lowercase: true,
-      validate(value) {
-        if (!validator.isEmail(value)) {
-          throw new ValidationError(ValidationMsgs.EmailInvalid);
-        }
+        type: Schema.Types.ObjectId,
+        required: [true, ValidationMsgs.ManagerReferenceEmpty],
+        ref: TableNames.Employee,
       },
-      required: [true, ValidationMsgs.EmailEmpty],
+      [TableFields.name_]: {
+        type: String,
+        required: [true, ValidationMsgs.ManagerNameEmpty],
+      },
+      [TableFields.email]: {
+        type: String,
+        trim: true,
+        unique: true,
+        lowercase: true,
+        validate(value) {
+          if (!validator.isEmail(value)) {
+            throw new ValidationError(ValidationMsgs.EmailInvalid);
+          }
+        },
+        required: [true, ValidationMsgs.EmailEmpty],
+      },
     },
+    [TableFields.organisationId]: {
+      type: Schema.Types.ObjectId,
+      ref: TableNames.Organisation,
+      required: [true, ValidationMsgs.OrganisationIdEmpty],
+    },
+    [TableFields._createdAt]: {
+      type: Date,
+      default: Date.now(),
+    },
+    [TableFields._updatedAt]: {
+      type: Date,
+      default: Date.now(),
+    }
   },
-  [TableFields.organisationId]: {
-    type: Schema.Types.ObjectId,
-    ref: TableNames.Organisation,
-    required: [true, ValidationMsgs.OrganisationIdEmpty],
-  },
-});
+  {
+    timestamps: false,
+    toJSON: {
+      transform: function (doc, ret) {
+        delete ret.createdAt;
+        delete ret.updatedAt;
+        delete ret.__v;
+      },
+    },
+  }
+);
 module.exports = mongoose.model(TableNames.Department, departmentSchema);

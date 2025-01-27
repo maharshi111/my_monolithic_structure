@@ -11,62 +11,71 @@ const {
 } = require("../../utils/constants");
 const bcrypt = require("bcryptjs");
 const ValidationError = require("../../utils/ValidationError");
-const superAdminSchema = new Schema({
-  [TableFields.name_]: {
-    type: String,
-    trim: true,
-    required: [true, ValidationMsgs.UserNameEmpty],
-  },
-  [TableFields.email]: {
-    type: String,
-    required: [true, ValidationMsgs.EmailEmpty],
-    trim: true,
-    unique: true,
-    lowercase: true,
-    validate: {
-      validator: function (v) {
-        if (!validator.isEmail(v)) {
-          return false;
-        } else {
-          return true;
-        }
-      },
-      message: (props) => ValidationMsgs.EmailInvalid,
-    },
-  },
-  [TableFields.password]: {
-    type: String,
-    trim: true,
-    required: [true, ValidationMsgs.PasswordEmpty],
-  },
-  [TableFields.tokens]: [
-    {
-      _id: false,
-      [TableFields.token]: {
-        type: String,
-      },
-    },
-  ]
-},
+const superAdminSchema = new Schema(
   {
-            timestamps: true,
-            toJSON: {
-                transform: function (doc, ret) {
-                    delete ret[TableFields.tokens];
-                    delete ret[TableFields.password];
-                    delete ret.createdAt;
-                    delete ret.updatedAt;
-                    delete ret.__v;
-                },
-            },
+    [TableFields.name_]: {
+      type: String,
+      trim: true,
+      required: [true, ValidationMsgs.UserNameEmpty],
+    },
+    [TableFields.email]: {
+      type: String,
+      required: [true, ValidationMsgs.EmailEmpty],
+      trim: true,
+      unique: true,
+      lowercase: true,
+      validate: {
+        validator: function (v) {
+          if (!validator.isEmail(v)) {
+            return false;
+          } else {
+            return true;
+          }
+        },
+        message: (props) => ValidationMsgs.EmailInvalid,
+      },
+    },
+    [TableFields.password]: {
+      type: String,
+      trim: true,
+      required: [true, ValidationMsgs.PasswordEmpty],
+    },
+    [TableFields.tokens]: [
+      {
+        _id: false,
+        [TableFields.token]: {
+          type: String,
+        },
+      },
+    ],
+    [TableFields._createdAt]: {
+      type: Date,
+      default: Date.now(),
+    },
+    [TableFields._updatedAt]: {
+      type: Date,
+      default: Date.now(),
+    },
+  },
+  {
+    timestamps: true,
+    toJSON: {
+      transform: function (doc, ret) {
+        delete ret[TableFields.tokens];
+        delete ret[TableFields.password];
+        delete ret.createdAt;
+        delete ret.updatedAt;
+        delete ret.__v;
+      },
+    },
   }
 );
 
 superAdminSchema.methods.isValidPassword = function (password) {
   const regEx =
     /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]*$/;
-    //console.log(regEx.test(password));
-    
+  //console.log(regEx.test(password));
+
   return regEx.test(password);
 };
 
@@ -81,14 +90,14 @@ superAdminSchema.pre("save", async function (next) {
 });
 
 superAdminSchema.methods.isValidAuth = async function (password) {
-    // console.log('inside isValidAuth');
-    // console.log('pass',password);
-    // console.log(this);
-    
-    // console.log('this.pass',this.password);
-    // let bool = await bcrypt.compare(password, this.password);
-    // console.log('value of bool is ',bool);
-    
+  // console.log('inside isValidAuth');
+  // console.log('pass',password);
+  // console.log(this);
+
+  // console.log('this.pass',this.password);
+  // let bool = await bcrypt.compare(password, this.password);
+  // console.log('value of bool is ',bool);
+
   return await bcrypt.compare(password, this.password);
 };
 

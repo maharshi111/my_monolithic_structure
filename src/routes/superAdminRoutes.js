@@ -1,8 +1,12 @@
 const API = require("../utils/apiBuilder");
 const AuthController = require("../controllers/superAdmin/AuthController");
-const DefaultController = require("../controllers/superAdmin/DefaultController");
+const OrganisationAdminController = require("../controllers/superAdmin/OrganisationAdminController.js");
+const OrganisationController = require('../controllers/superAdmin/OrganisationController.js');
+const AjaxController = require('../controllers/superAdmin/AjaxController.js')
 const { TableFields } = require("../utils/constants");
 const router = API.configRoute("/superAdmin")
+
+// Auth routes
 
   .addPath("/signup")
   .asPOST(AuthController.postSignUp)
@@ -16,44 +20,51 @@ const router = API.configRoute("/superAdmin")
   .asPOST(AuthController.postForgotPassword)
   .build()
 
+//   Organisation routes
+
   .addPath("/addOrganisation")
-  .asPOST(DefaultController.postAddOrganisation)
+  .asPOST(OrganisationController.postAddOrganisation)
   .useSuperAdminAuth()
   .build()
 
 
   .addPath('/editOrganisation')
-  .asPOST(DefaultController.postEditOrganisation)
+  .asPOST(OrganisationController.postEditOrganisation)
   .useSuperAdminAuth()
   .build()
 
   .addPath(`/deleteOrganisation/:${TableFields.ID}`)
-  .asPOST(DefaultController.postDeleteOrganisation)
+  .asPOST(OrganisationController.postDeleteOrganisation)
   .useSuperAdminAuth()
   .build()
+
+  // Organisation Admin routes
 
   .addPath('/addEditAdmin')
-  .asPOST(DefaultController.postAddEditAdmin)
+  .asPOST(OrganisationAdminController.postAddEditAdmin)
   .useSuperAdminAuth()
   .build()
 
+
+  // Ajax routes
+
   .addPath('/ajax-validation')
-  .asPOST(AuthController.postAjaxValidation)
+  .asPOST(AjaxController.postAjaxValidation)
   .useSuperAdminAuth()
   .build()
 
   .addPath('/ajax-pass-validation')
-  .asPOST(AuthController.postAjaxPassValidation)
+  .asPOST(AjaxController.postAjaxPassValidation)
   .useSuperAdminAuth()
   .build()
 
   .addPath('/ajax-org-ceo')
-  .asPOST(AuthController.postAjaxAddCeo)
+  .asPOST(AjaxController.postAjaxAddCeo)
   .useSuperAdminAuth()
   .build()
 
   .addPath('/ajax-admin-validation')
-  .asPOST(AuthController.postAjaxAddAdmin)
+  .asPOST(AjaxController.postAjaxAddAdmin)
   .useSuperAdminAuth()
   .build()
 

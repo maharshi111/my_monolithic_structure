@@ -1,10 +1,13 @@
 const API = require("../utils/apiBuilder");
-const AuthController = require("../controllers/orgAdmin/AuthController");
-const DefaultController = require("../controllers/orgAdmin/DefaultController");
+const AuthController = require("../controllers/organisationAdmin/AuthController");
+const EmployeeController = require("../controllers/organisationAdmin/EmployeeController");
+const DepartmentController =require('../controllers/organisationAdmin/DepartmentController')
+const EmployeeBonusController = require('../controllers/organisationAdmin/EmployeeBonusController');
+const AjaxController = require('../controllers/organisationAdmin/AjaxController');
 const { TableFields } = require("../utils/constants");
 const router = API.configRoute("/orgAdmin")
 
-
+// Auth routes
   .addPath("/login")
   .asPOST(AuthController.postLogin)
   .build()
@@ -13,73 +16,80 @@ const router = API.configRoute("/orgAdmin")
   .asPOST(AuthController.postForgotPassword)
   .build()
 
+// Employee routes
   .addPath('/addEmployee')
-  .asPOST(DefaultController.postAddEmployee)
+  .asPOST(EmployeeController.postAddEmployee)
   .useOrganisationAuth()
   .build()
 
   .addPath('/editEmployee')
-  .asPOST(DefaultController.postEditEmployee)
+  .asPOST(EmployeeController.postEditEmployee)
   .useOrganisationAuth()
   .build()
 
   .addPath(`/deleteEmployee/:${TableFields.ID}`)
-  .asPOST(DefaultController.postDeleteEmployee)
+  .asPOST(EmployeeController.postDeleteEmployee)
   .useOrganisationAuth()
   .build()
 
+//Department routes
+
   .addPath('/addDepartment')
-  .asPOST(DefaultController.postAddDepartment)
+  .asPOST(DepartmentController.postAddDepartment)
   .useOrganisationAuth()
   .build()
 
   .addPath('/editDepartment')
-  .asPOST(DefaultController.postEditDepartment)
+  .asPOST(DepartmentController.postEditDepartment)
   .useOrganisationAuth()
   .build()
 
   .addPath(`/deleteDepartment/:${TableFields.ID}`)
-  .asPOST(DefaultController.postDeleteDepartment)
+  .asPOST(DepartmentController.postDeleteDepartment)
   .useOrganisationAuth()
   .build()
 
+// Bonus routes
+
   .addPath(`/add-bonus/:${TableFields.ID}`)
-  .asPOST(DefaultController.postAddBonus)
+  .asPOST(EmployeeBonusController.postAddBonus)
   .useOrganisationAuth()
   .build()
 
   .addPath(`/update-bonus/:${TableFields.ID}`)
-  .asPOST(DefaultController.postUpdateBonus)
+  .asPOST(EmployeeBonusController.postUpdateBonus)
   .useOrganisationAuth()
   .build()
 
   .addPath(`/delete-bonus/:${TableFields.idString}`)
-  .asPOST(DefaultController.postDeleteBonus)
+  .asPOST(EmployeeBonusController.postDeleteBonus)
   .useOrganisationAuth()
   .build()
 
+// Ajax rutes
+
   .addPath(`/ajax-ceo`)
-  .asPOST(AuthController.postAjaxCeo)
+  .asPOST(AjaxController.postAjaxCeo)
   .useOrganisationAuth()
   .build()
    
   .addPath(`/ajax-org-name`)
-  .asPOST(AuthController.postAjaxOrgName)
+  .asPOST(AjaxController.postAjaxOrgName)
   .useOrganisationAuth()
   .build()
 
   .addPath(`/ajax-org-Id`)
-  .asPOST(AuthController.postAjaxOrgId)
+  .asPOST(AjaxController.postAjaxOrgId)
   .useOrganisationAuth()
   .build()
 
   .addPath('/ajax-manager-email')
-  .asPOST(AuthController.postAjaxManagerEmail)
+  .asPOST(AjaxController.postAjaxManagerEmail)
   .useOrganisationAuth()
   .build()
 
   .addPath('/ajax-dep-name')
-  .asPOST(AuthController.postAjaxDepName)
+  .asPOST(AjaxController.postAjaxDepName)
   .useOrganisationAuth()
   .build()
 

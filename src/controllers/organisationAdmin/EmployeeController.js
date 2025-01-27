@@ -7,9 +7,10 @@ const ValidationError = require("../../utils/ValidationError");
 const SuperAdminService = require("../../db/services/SuperAdminServices");
 const emailUtil = require("../../utils/email");
 const Util = require("../../utils/util");
-const OrganisationAdminService = require("../../db/services/orgAdminService");
+const EmployeeService = require("../../db/services/EmployeeService");
 var mongoose = require('mongoose');
 const { MongoUtil } = require("../../db/mongoose");
+const DepartmentService = require("../../db/services/DepartmentService");
 exports.postAddEmployee =async(req,res,next) =>{
     const reqBody = req.body;
     
@@ -112,23 +113,23 @@ exports.postAddEmployee =async(req,res,next) =>{
     }
 
     //index validation
-    let existingEmail = await OrganisationAdminService.findEmpByEmail(reqBody[TableFields.email].trim().toLowerCase()).withBasicInfoEmp().execute();
+    let existingEmail = await EmployeeService.findEmpByEmail(reqBody[TableFields.email].trim().toLowerCase()).withBasicInfoEmp().execute();
 
     if(existingEmail){
         throw new ValidationError(ValidationMsgs.EmailAlreadyExists);
     }
 
-    let existingWorkEmail = await OrganisationAdminService.findEmpByWorkEmail(reqBody[TableFields.workEmail].trim().toLowerCase()).withBasicInfoEmp().execute();
+    let existingWorkEmail = await EmployeeService.findEmpByWorkEmail(reqBody[TableFields.workEmail].trim().toLowerCase()).withBasicInfoEmp().execute();
 
     if(existingWorkEmail){
         throw new ValidationError(ValidationMsgs.WorkEmailAlreadyExists);
     }
-    let existingPhone = await OrganisationAdminService.findEmpByPhone(reqBody[TableFields.phone].trim()).withBasicInfoEmp().execute();
+    let existingPhone = await EmployeeService.findEmpByPhone(reqBody[TableFields.phone].trim()).withBasicInfoEmp().execute();
     if(existingPhone){
         throw new ValidationError(ValidationMsgs.PhoneAlreadyExists);
     }
  
-    let empArr = await OrganisationAdminService.findEmpByOrgId(orgId).withBasicInfoEmp().execute();
+    let empArr = await EmployeeService.findEmpByOrgId(orgId).withBasicInfoEmp().execute();
     console.log(empArr);
     let empObject;
     console.log('empArr.length',empArr.length);
@@ -158,7 +159,7 @@ exports.postAddEmployee =async(req,res,next) =>{
 
     }
     if(empArr.length!==0){
-        let departmentNameArr = await OrganisationAdminService.findDepByOrgId(orgId).withBasicInfoDep().execute();
+        let departmentNameArr = await DepartmentService.findDepByOrgId(orgId).withBasicInfoDep().execute();
         console.log(departmentNameArr);
         let flag = false;
         let depId;
@@ -193,221 +194,9 @@ exports.postAddEmployee =async(req,res,next) =>{
     }
     console.log('&&&&&&&&&&');
     
-  await  OrganisationAdminService.addEmployee(empObject);
+  await  EmployeeService.addEmployee(empObject);
+  await emailUtil.addEmployeeEmail(empObject[TableFields.email],empObject[TableFields.password],empObject[TableFields.workEmail]);
 
-
-}
-
-exports.postAddDepartment = async(req,res,next)=>{
-    const reqBody = req.body;
-    if(!reqBody[TableFields.depName].trim()){
-        throw new ValidationError(ValidationMsgs.DepNameEmpty);
-    }
-    if(!Util.ValidationMsgsLength(reqBody[TableFields.depName],30,0,'department name').flag){
-        throw new ValidationError(Util.ValidationMsgsLength(reqBody[TableFields.depName],30,0,'department name').message);
-    }
-    if(!reqBody[TableFields.managerName].trim()){
-        throw new ValidationError(ValidationMsgs.ManagerNameEmpty); 
-    }
-    if(!Util.ValidationMsgsLength(reqBody[TableFields.managerName],71,0,'manager name').flag){
-        throw new ValidationError(Util.ValidationMsgsLength(reqBody[TableFields.managerName],71,0,'department name').message);
-    }
-    if(!reqBody[TableFields.email].trim()){
-        throw new ValidationError(ValidationMsgs.EmailEmpty);
-    }
-    if(!Util.isEmail(reqBody[TableFields.email].trim().toLowerCase())){
-        throw new ValidationError(ValidationMsgs.EmailInvalid);
-    }
-    if(reqBody[TableFields.email].trim().length>30){
-        throw new ValidationError(ValidationMsgs.EmailLength);
-    }
-    let emp = await OrganisationAdminService.findEmpByWorkEmail(reqBody[TableFields.email].trim().toLowerCase()).withNameInfoEmp().execute();
-    if(!emp){
-        throw new ValidationError(ValidationMsgs.WorkEmailNotExists);
-    }
-    console.log('emp:',emp);
-    
-    let fullName = reqBody[TableFields.managerName].trim();
-    let arr = fullName.split(' ');
-    let ln = arr[0].toUpperCase();
-    let fn = arr.pop().toUpperCase();
-    console.log(fn);
-    console.log(ln);
-    if(fn!==emp[TableFields.firstName] || ln!==emp[TableFields.lastName]){
-        throw new ValidationError(ValidationMsgs.NameAndEmailMistmatch);    
-    }
-    // emp = await OrganisationAdminService.findEmpByWorkEmail(reqBody[TableFields.email]).withBasicInfoEmp().execute();
-    console.log('this is emp',emp);
-    
-    let mName = ln+' '+fn;
-    const empId = new mongoose.Types.ObjectId(emp[TableFields.ID]);
-    const orgId = new mongoose.Types.ObjectId(req.orgId);
-    let depObject = {
-        [TableFields.departmentName]:reqBody[TableFields.depName].trim().toUpperCase(),
-        [TableFields.manager]:{
-            [TableFields.reference]:empId,
-            [TableFields.name_]:mName.trim(),
-            [TableFields.email]:reqBody[TableFields.email].trim().toLowerCase()
-        },
-        [TableFields.organisationId]:orgId
-    };
-    await OrganisationAdminService.addDepartment(depObject)
-}
-
-
-exports.postEditDepartment = async(req,res,next) =>{
-    const reqBody = req.body;
-    if(!reqBody[TableFields.depName].trim().toUpperCase()){
-        throw new ValidationError(ValidationMsgs.DepNameEmpty);
-    }
-    if(!Util.ValidationMsgsLength(reqBody[TableFields.depName],30,0,'department name').flag){
-        throw new ValidationError(Util.ValidationMsgsLength(reqBody[TableFields.depName],30,0,'department name').message);
-    }
-    if(!reqBody[TableFields.managerName].trim().toUpperCase()){
-        throw new ValidationError(ValidationMsgs.ManagerNameEmpty); 
-    }
-    if(!Util.ValidationMsgsLength(reqBody[TableFields.managerName],71,0,'manager name').flag){
-        throw new ValidationError(Util.ValidationMsgsLength(reqBody[TableFields.managerName],71,0,'department name').message);
-    }
-    if(!reqBody[TableFields.email].trim().toLowerCase()){
-        throw new ValidationError(ValidationMsgs.EmailEmpty);
-    }
-    if(!Util.isEmail(reqBody[TableFields.email].trim().toLowerCase())){
-        throw new ValidationError(ValidationMsgs.EmailInvalid);
-    }
-    if(reqBody[TableFields.email].trim().length>30){
-        throw new ValidationError(ValidationMsgs.EmailLength);
-    }
-    if(!reqBody[TableFields.depId]){
-        throw new ValidationError(ValidationMsgs.DepartmentNotExists);
-    }
-    let emp = await OrganisationAdminService.findEmpByWorkEmail(reqBody[TableFields.email].trim().toLowerCase()).withNameInfoEmp().execute();
-    if(!emp){
-        throw new ValidationError(ValidationMsgs.WorkEmailNotExists);
-    }
-    console.log('emp:',emp);
-    
-    let fullName = reqBody[TableFields.managerName].trim();
-    let arr = fullName.split(' ');
-    let ln = arr[0].toUpperCase();
-    let fn = arr.pop().toUpperCase();
-    console.log(fn);
-    console.log(ln);
-    if(fn!==emp[TableFields.firstName] || ln!==emp[TableFields.lastName]){
-        throw new ValidationError(ValidationMsgs.NameAndEmailMistmatch);    
-    }
-    let mName = ln+' '+fn;
-    const empId = new mongoose.Types.ObjectId(emp[TableFields.ID]);
-    const orgId = new mongoose.Types.ObjectId(req.orgId);
-    let depObject = {
-        [TableFields.departmentName]:reqBody[TableFields.depName].trim().toUpperCase(),
-        [TableFields.manager]:{
-            [TableFields.reference]:empId,
-            [TableFields.name_]:mName.trim(),
-            [TableFields.email]:reqBody[TableFields.email].trim().toLowerCase()
-        },
-        [TableFields.organisationId]:orgId
-    };
-   
-    await OrganisationAdminService.editDepartment(reqBody[TableFields.depId],depObject);
-     
-}
-
-exports.postDeleteDepartment = async(req,res,next) =>{
-    const depId =( req.params[TableFields.ID]);
-    // console.log('this is whole req',req.params);
-    
-    // console.log('this is depId',depId);
-    
-    if(!MongoUtil.isValidObjectID(depId) ){
-        throw new ValidationError(ValidationMsgs.IdEmpty);
-    }
-
-    await OrganisationAdminService.deleteDepartmentById(depId);
-}
-
-exports.postAddBonus = async(req,res,next) =>{
-   const reqBody = req.body;
-   const empId = req.params[TableFields.ID];
-   if(!reqBody[TableFields.bonusType].trim()){
-    throw new ValidationError(ValidationMsgs.BonusTypeEmpty);
-   }
-   if(!Util.ValidationMsgsLength(reqBody[TableFields.bonusType],30,0,'bonus type').flag){
-        throw new ValidationError(Util.ValidationMsgsLength(reqBody[TableFields.bonusType],30,0,'bonus type').message);
-   }
-   if(!reqBody[TableFields.bonusAmount].trim()){
-    throw new ValidationError(ValidationMsgs.BonusAmountEmpty);
-   }
-   if(!Util.isDigit(reqBody[TableFields.bonusAmount].trim())){
-    throw new ValidationError(ValidationMsgs.NumericInvalid)
-   }
-   if(!Util.ValidationMsgsLength(reqBody[TableFields.bonusAmount],7,0,'bonus amount').flag){
-    throw new ValidationError(Util.ValidationMsgsLength(reqBody[TableFields.bonusAmount],7,0,'bonus amount').message);
-   }
-   if(!reqBody[TableFields.dateGranted].trim()){
-    throw new ValidationError(ValidationMsgs.DateEmpty);
-   }
-   if(!Util.isDate(reqBody[TableFields.dateGranted]).trim()){
-    throw new ValidationError(ValidationMsgs.DateInvalid); 
-   }
-   if(!Util.dateGrantedInvalid(reqBody[TableFields.dateGranted].trim()).success){
-    throw new ValidationError(Util.dateGrantedInvalid(reqBody[TableFields.dateGranted]).msg);
-   }
-   if(!MongoUtil.isValidObjectID(empId)){
-    throw new ValidationError(ValidationMsgs.IdEmpty) ;
-   }
-   //let empObj= await OrganisationAdminService.findEmpById(empId).withBasicInfoDep().execute();
-   await OrganisationAdminService.addBonus(empId,reqBody[TableFields.bonusType].trim(),reqBody[TableFields.bonusAmount].trim(),reqBody[TableFields.dateGranted].trim());
-}
-
-exports.postUpdateBonus = async(req,res,next) => {
-        const reqBody = req.body;
-        const bonusId = req.params[TableFields.ID];
-
-       if(!reqBody[TableFields.bonusType]){
-        throw new ValidationError(ValidationMsgs.BonusTypeEmpty);
-       }
-       if(!Util.ValidationMsgsLength(reqBody[TableFields.bonusType],30,0,'bonus type').flag){
-            throw new ValidationError(Util.ValidationMsgsLength(reqBody[TableFields.bonusType],30,0,'bonus type').message);
-       }
-       if(!reqBody[TableFields.bonusAmount]){
-        throw new ValidationError(ValidationMsgs.BonusAmountEmpty);
-       }
-       if(!Util.isDigit(reqBody[TableFields.bonusAmount])){
-        throw new ValidationError(ValidationMsgs.NumericInvalid)
-       }
-       if(!Util.ValidationMsgsLength(reqBody[TableFields.bonusAmount],7,0,'bonus amount').flag){
-        throw new ValidationError(Util.ValidationMsgsLength(reqBody[TableFields.bonusAmount],7,0,'bonus amount').message);
-       }
-       if(!reqBody[TableFields.dateGranted]){
-        throw new ValidationError(ValidationMsgs.DateEmpty);
-       }
-       if(!Util.isDate(reqBody[TableFields.dateGranted])){
-        throw new ValidationError(ValidationMsgs.DateInvalid); 
-       }
-       if(!Util.dateGrantedInvalid(reqBody[TableFields.dateGranted]).success){
-        throw new ValidationError(Util.dateGrantedInvalid(reqBody[TableFields.dateGranted]).msg);
-       }
-       if(!MongoUtil.isValidObjectID(reqBody[TableFields.empId])){
-        throw new ValidationError(ValidationMsgs.IdEmpty) ;
-       }
-       if(!MongoUtil.isValidObjectID(bonusId)){
-        throw new ValidationError(ValidationMsgs.IdEmpty) ;
-       }
-       await OrganisationAdminService.updateBonus(bonusId,reqBody[TableFields.bonusType],reqBody[TableFields.bonusAmount],reqBody[TableFields.dateGranted],reqBody[TableFields.empId]);
-
-}
-
-
-exports.postDeleteBonus = async(req,res,next) =>{
-console.log(req.params.idString);
-console.log(req.params);
-
-const str =  req.params[TableFields.idString];
-let arr = str.split('+');
-const bonusId = arr[0];
-const empId = arr[1];
-await OrganisationAdminService.deleteBonus(empId,bonusId);
 }
 
 exports.postEditEmployee = async(req,res,next)=>{
@@ -512,7 +301,7 @@ exports.postEditEmployee = async(req,res,next)=>{
     if(!Util.ValidationMsgsLength(reqBody[TableFields.depName],30,0,'department name').flag){
         throw new ValidationError(Util.ValidationMsgsLength(reqBody[TableFields.depName],30,0,'department name').message);
     }
-    let departmentNameArr =await OrganisationAdminService.findDepByOrgId(orgId).withBasicInfoDep().execute();
+    let departmentNameArr =await DepartmentService.findDepByOrgId(orgId).withBasicInfoDep().execute();
     let flag = false;
     for(let dep of departmentNameArr ){
         
@@ -527,7 +316,7 @@ exports.postEditEmployee = async(req,res,next)=>{
         throw new ValidationError(ValidationMsgs.IdEmpty);
     }
     let depId;
-    let employee = await OrganisationAdminService.findEmpById(reqBody[TableFields.empId]).withBasicInfoEmp().execute();
+    let employee = await EmployeeService.findEmpById(reqBody[TableFields.empId]).withBasicInfoEmp().execute();
     for(let dep of departmentNameArr ){
         if(dep[TableFields.departmentName] === reqBody[TableFields.depName].toUpperCase()){
             console.log('##2');
@@ -558,7 +347,10 @@ exports.postEditEmployee = async(req,res,next)=>{
         [TableFields.organisationId]:orgId
         
     };
-    await OrganisationAdminService.editEmployee(bool,empObject,reqBody[TableFields.empId]);
+    await EmployeeService.editEmployee(empObject,reqBody[TableFields.empId]);
+    if(bool){
+        emailUtil.addEmployeeEmail(empObject[TableFields.email],empObject[TableFields.password], empObject[TableFields.workEmail])
+    }
 }
 
 exports.postDeleteEmployee = async(req,res,next) =>{
@@ -566,6 +358,5 @@ exports.postDeleteEmployee = async(req,res,next) =>{
     if(!MongoUtil.isValidObjectID(empId) ){
         throw new ValidationError(ValidationMsgs.IdEmpty);
     }
-    await OrganisationAdminService.deleteEmployee(empId);
-
+    await EmployeeService.deleteEmployee(empId);
 }

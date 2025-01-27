@@ -34,6 +34,34 @@ const Util = class {
     return { success: true };
   }
 
+  static subscriptionStartInvalidEdit(value){
+    let trialDate = new Date().toISOString();
+    let arr = trialDate.split("T");
+    let currDate = arr[0];
+    let year = currDate.split("-");
+    let num = +year[0];
+    //console.log("this is value", value);
+    const grantedDate = new Date(value);
+    //console.log("grantedDate", grantedDate);
+
+    const minDate = new Date(`${num-5}-01-01`);
+    //console.log("minDate", minDate);
+
+    const maxDate = new Date(`${num}-12-31`);
+
+    let s = "";
+
+    if (grantedDate < minDate) {
+      s = `The date must not be before than January 01,${num-5}`;
+      return { success: false, msg: s };
+    }
+    if (grantedDate > maxDate) {
+      s = `The date must not be after December 31,${num}`;
+      return { success: false, msg: s };
+    }
+    return { success: true };
+  } 
+
   static isUrlValid(userInput) {
     //  var res = userInput.match(/^(http(s)?:\/\/)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-zA-Z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)$/);
     var res = userInput.match(/^(http(s)?:\/\/)?(www\.)?[-a-zA-Z0-9:%._\+~#=]{2,256}\.[a-zA-Z]{2,6}\b([-a-zA-Z0-9:%_\+.~#?&//=]*)$/);
