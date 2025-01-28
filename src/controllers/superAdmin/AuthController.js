@@ -68,7 +68,7 @@ exports.postForgotPassword = async (req, res) => {
 
   if (!receiverEmail) throw new ValidationError(ValidationMsgs.EmailEmpty);
 
-  if (Util.isEmail(receiverEmail)) {
+  if (!Util.isEmail(receiverEmail)) {
     throw new ValidationError(ValidationMsgs.EmailInvalid);
   }
 
@@ -76,5 +76,5 @@ exports.postForgotPassword = async (req, res) => {
     throw new ValidationError(ValidationMsgs.EmailLength);
   }
 
-  emailUtil.SendForgotPasswordEmail(receiverEmail);
+  await emailUtil.SendForgotPasswordEmail(receiverEmail);
 };

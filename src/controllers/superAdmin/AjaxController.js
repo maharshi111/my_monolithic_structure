@@ -9,7 +9,7 @@ const OrganisationService = require("../../db/services/OrganisationService");
 const EmployeeService = require("../../db/services/EmployeeService");
 const emailUtil = require("../../utils/email");
 const Util = require("../../utils/util");
-
+var mongoose = require("mongoose");
 exports.postAjaxValidation = async (req, res, next) => {
   let email = req.body[TableFields.email].trim().toLowerCase();
   if (!email) throw new ValidationError(ValidationMsgs.RequiredField);
@@ -74,7 +74,7 @@ exports.postAjaxAddCeo = async (req, res, next) => {
 };
 
 exports.postAjaxAddAdmin = async (req, res, next) => {
-  const adminEmail = req.body[TableFields.adminEmail].trim().toLowerCase();
+  const adminEmail = req.body[TableFields.adminEmail].trim().toLowerCase(); //PERSONAL EMAIL
   const ceoEmail = req.body[TableFields.email].trim().toLowerCase();
   if (!adminEmail) {
     throw new ValidationError(ValidationMsgs.AdminEmailEmpty);

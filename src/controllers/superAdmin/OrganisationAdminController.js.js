@@ -48,7 +48,7 @@ exports.postAddEditAdmin = async (req, res, next) => {
     );
   }
   let org = await OrganisationService.findOneOrgByEmail(
-    reqBody[TableFields.ceoEmail]
+    reqBody[TableFields.ceoEmail].trim().toLowerCase()
   )
     .withOrgCeo()
     .withOrgAdmin()
@@ -57,10 +57,12 @@ exports.postAddEditAdmin = async (req, res, next) => {
     throw new ValidationError(ValidationMsgs.CeoEmalExist);
   }
   let employee = await EmployeeService.findOneEmpByEmail(
-    reqBody[TableFields.adminEmail].trim()
+    reqBody[TableFields.adminEmail].trim().toLowerCase()
   )
     .withEmployeeBasicInfo()
     .execute();
+  console.log("////", employee);
+
   if (!employee) {
     throw new ValidationError(ValidationMsgs.EmployeeEmailExist);
   }
@@ -72,7 +74,7 @@ exports.postAddEditAdmin = async (req, res, next) => {
 
   if (
     org[TableFields.orgCEO][TableFields.email] !==
-    reqBody[TableFields.ceoEmail].trim()
+    reqBody[TableFields.ceoEmail].trim().toLowerCase()
   ) {
     throw new ValidationError(ValidationMsgs.EmpOrgMismatch);
   }

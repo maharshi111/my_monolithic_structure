@@ -84,7 +84,7 @@ exports.postAjaxOrgId = async (req, res, next) => {
 };
 
 exports.postAjaxManagerEmail = async (req, res, next) => {
-  const managerEmail = req.body[TableFields.email].trim().toLowerCase();
+  const managerEmail = req.body[TableFields.email].trim().toLowerCase();//wwork email
   const managerName = req.body[TableFields.name_].trim();
 
   if (!managerEmail) {

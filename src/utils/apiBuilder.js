@@ -1,12 +1,9 @@
 const express = require("express");
-// const auth = require("../middleware/auth");
-const adminAuth = require("../middleware/adminAuth");
-// const collegeAuth = require("../middleware/collegeAuth");
 const Util = require("../utils/util");
 const { ApiResponseCode, ResponseStatus } = require("../utils/constants");
 const ValidationError = require("../utils/ValidationError");
 const superAdminAuth = require("../middleware/superAdminAuth");
-const organisationAuth = require('../middleware/orgAdminAuth');
+const organisationAuth = require("../middleware/orgAdminAuth");
 class API {
   static configRoute(root) {
     let router = new express.Router();
@@ -112,38 +109,37 @@ const Builder = class {
     };
 
     this.useSuperAdminAuth = () => {
-        return new Builder(
-          methodType,
-          root,
-          subPath,
-          executer,
-          router,
-          false,
-          duplicateErrorHandler,
-          middlewaresList,
-          useAdminAuth,
-          useCollegeAuth,
-          true
-        );
-      };
+      return new Builder(
+        methodType,
+        root,
+        subPath,
+        executer,
+        router,
+        false,
+        duplicateErrorHandler,
+        middlewaresList,
+        useAdminAuth,
+        useCollegeAuth,
+        true
+      );
+    };
 
-
-      this.useOrganisationAuth = () => {
-        return new Builder(
-          methodType,
-          root,
-          subPath,
-          executer,
-          router,
-          false,
-          duplicateErrorHandler,
-          middlewaresList,
-          useAdminAuth,
-          useCollegeAuth,
-          useSuperAdminAuth,
-          true
-        );
-      };
+    this.useOrganisationAuth = () => {
+      return new Builder(
+        methodType,
+        root,
+        subPath,
+        executer,
+        router,
+        false,
+        duplicateErrorHandler,
+        middlewaresList,
+        useAdminAuth,
+        useCollegeAuth,
+        useSuperAdminAuth,
+        true
+      );
+    };
     // this.useAuthForGetRequest = () => {
     //     return new Builder(
     //         methodType,
@@ -193,8 +189,8 @@ const Builder = class {
     this.build = () => {
       let controller = async (req, res) => {
         try {
-            //console.log('inside controller');
-            
+          //console.log('inside controller');
+
           let response = await executer(req, res);
           res.status(ResponseStatus.Success).send(response);
         } catch (e) {
@@ -206,9 +202,7 @@ const Builder = class {
             if (e && e.name != ValidationError.name) {
               console.log(e);
             }
-            res
-              .status(ResponseStatus.BadRequest)
-              .send(Util.getErrorMessage(e));
+            res.status(ResponseStatus.BadRequest).send(Util.getErrorMessage(e));
           }
         }
       };
@@ -226,14 +220,21 @@ const Builder = class {
           ...middlewaresList,
           controller
         );
-      } 
-      else if(useSuperAdminAuth){
-        router[methodType](root + subPath,superAdminAuth, ...middlewaresList,controller);
-      }
-      else if(useOrganisationAuth){
-        router[methodType](root + subPath,organisationAuth, ...middlewaresList,controller);  
-      }
-      else {
+      } else if (useSuperAdminAuth) {
+        router[methodType](
+          root + subPath,
+          superAdminAuth,
+          ...middlewaresList,
+          controller
+        );
+      } else if (useOrganisationAuth) {
+        router[methodType](
+          root + subPath,
+          organisationAuth,
+          ...middlewaresList,
+          controller
+        );
+      } else {
         router[methodType](root + subPath, ...middlewaresList, controller);
       }
       return new PathBuilder(root, router);

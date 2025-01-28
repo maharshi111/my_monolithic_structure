@@ -25,6 +25,8 @@ class EmployeeService {
 
   static findOneEmpByEmail = (adminEmail) => {
     return new ProjectionBuilder(async function () {
+      console.log(">>", adminEmail);
+
       return await Employee.findOne(
         { [`${TableFields.email}`]: adminEmail },
         this
@@ -121,7 +123,7 @@ class EmployeeService {
   };
 
   static editEmployee = async (empObject, empId) => {
-    Employee.findByIdAndUpdate(empId, { $set: { ...empObject } });
+    await Employee.findByIdAndUpdate(empId, { $set: { ...empObject } });
   };
 
   static deleteEmployee = async (empId) => {

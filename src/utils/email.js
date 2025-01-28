@@ -4,7 +4,7 @@ const path = require("path");
 const customViewsDirPath = path.join(__dirname, "../../views");
 
 exports.SendForgotPasswordEmail = async (email) => {
-  console.log(email);
+  console.log(">>", email);
   await sendEmail(email, "Sharing New Password", `<b>Password :</b> 12345`);
 };
 exports.SendForgotPasswordEmailOrg = async (email) => {
@@ -21,8 +21,11 @@ exports.addOrganisationEmail = async (email, uId) => {
     "Sharing of OrganisationId",
     `<b>OrganisationId of your organisation is: </b> ${uId}<br>`
   );
+  console.log("email sent");
 };
 exports.addEmployeeEmail = async (personalEmail, password, workEmail) => {
+  console.log(">>>", personalEmail);
+
   await sendEmail(
     personalEmail,
     "Sharing of credentials",
@@ -77,6 +80,8 @@ async function sendEmail(
   if (process.env.disableEmail == true || process.env.disableEmail == "true") {
     return;
   }
+  console.log("==>", mailOptions);
+
   await transporter.sendMail(mailOptions);
 }
 

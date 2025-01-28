@@ -237,6 +237,10 @@ exports.postAddOrganisation = async (req, res, next) => {
 
   await OrganisationService.addOrganisation(organisation);
   let receiverEmail = organisation[TableFields.orgCEO][TableFields.email];
+  console.log(receiverEmail);
+
+  console.log(1);
+
   await emailUtil.addOrganisationEmail(
     receiverEmail,
     organisation[TableFields.uniqueId]
