@@ -14,27 +14,18 @@ exports.postSignUp = async (req, res, next) => {
   const email = req.body.email;
   const password = req.body.password;
   //Add validations
+
   if (!userName) {
     throw new ValidationError(ValidationMsgs.UserNameEmpty);
   }
+
   if (!email) {
     throw new ValidationError(ValidationMsgs.EmailEmpty);
   }
+
   if (!password) {
     throw new ValidationError(ValidationMsgs.PasswordEmpty);
   }
-  if (userName.length > 70) {
-    throw new ValidationError(ValidationMsgs.UserNameLength);
-  }
-  if (email.length > 30) {
-    throw new ValidationError(ValidationMsgs.EmailLength);
-  }
-    if (password.length < 5 || password.length > 15) {
-      throw new ValidationError(ValidationMsgs.PasswordLength);
-    }
-
-  let x = await SuperAdminService.findByEmail(email).execute();
-  console.log("+++", x);
 
   if (await SuperAdminService.findByEmail(email).withBasicInfo().execute()) {
     throw new ValidationError(ValidationMsgs.EmailRecordAlreadyExists);
@@ -76,14 +67,6 @@ exports.postForgotPassword = async (req, res) => {
   const receiverEmail = req.body[TableFields.email].trim().toLowerCase();
 
   if (!receiverEmail) throw new ValidationError(ValidationMsgs.EmailEmpty);
-
-  if (!Util.isEmail(receiverEmail)) {
-    throw new ValidationError(ValidationMsgs.EmailInvalid);
-  }
-
-  if (receiverEmail.length > 30) {
-    throw new ValidationError(ValidationMsgs.EmailLength);
-  }
 
   await emailUtil.SendForgotPasswordEmail(receiverEmail);
 };
