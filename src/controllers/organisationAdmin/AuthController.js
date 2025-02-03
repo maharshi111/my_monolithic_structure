@@ -19,9 +19,6 @@ exports.postLogin = async (req, res, next) => {
     throw new ValidationError(ValidationMsgs.EmailEmpty);
   }
 
-  if (!Util.isEmail(reqBody[TableFields.email].trim().toLowerCase())) {
-    throw new ValidationError(ValidationMsgs.EmailInvalid);
-  }
 
   let org = await OrganisationService.findOneOrgByEmail(
     reqBody[TableFields.email].trim().toLowerCase()
@@ -103,14 +100,6 @@ exports.postForgotPassword = async (req, res) => {
   const receiverEmail = req.body[TableFields.email].trim().toLowerCase();
 
   if (!receiverEmail) throw new ValidationError(ValidationMsgs.EmailEmpty);
-
-  if (!Util.isEmail(receiverEmail)) {
-    throw new ValidationError(ValidationMsgs.EmailInvalid);
-  }
-
-  if (receiverEmail.length > 30) {
-    throw new ValidationError(ValidationMsgs.EmailLength);
-  }
 
   emailUtil.SendForgotPasswordEmailOrg(receiverEmail);
 };
