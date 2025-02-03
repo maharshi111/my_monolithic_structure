@@ -190,6 +190,17 @@ const Util = class {
     return { success: true };
   }
 
+  static trimLeadingZeros(stringValue) {
+    if (stringValue) {
+      try {
+        stringValue = stringValue.replace(/^0+/, "");
+      } catch (error) {
+        throw error;
+      }
+    }
+    return stringValue;
+  }
+
   /////###############################################################################////////////////
   static isImageFile(fileOriginalName) {
     return fileOriginalName
@@ -354,8 +365,12 @@ const Util = class {
     return content;
   }
 
-  static isValidMobileNumber(v) {
-    return v.length >= 9 && v.length <= 12;
+//   static isValidMobileNumber(v) {
+//     return v.length >= 9 && v.length <= 12;
+//   }
+
+static isValidMobileNumber(v) {
+    return v.length == 10;
   }
 
   static trimLeadingZeros(stringValue) {

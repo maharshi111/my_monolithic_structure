@@ -38,6 +38,8 @@ const superAdminSchema = new Schema(
     [TableFields.password]: {
       type: String,
       trim: true,
+      minlength: [5, ValidationMsgs.PasswordLength],
+      maxlength: [15,ValidationMsgs.PasswordLength],
       required: [true, ValidationMsgs.PasswordEmpty],
     },
     [TableFields.tokens]: [
@@ -84,7 +86,7 @@ superAdminSchema.pre("save", async function (next) {
     this[TableFields.password] = await bcrypt.hash(
       this[TableFields.password],
       8
-    ); 
+    );
   }
   next();
 });

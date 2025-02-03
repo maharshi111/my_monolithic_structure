@@ -16,33 +16,65 @@ const { MongoUtil } = require("../../db/mongoose");
 
 exports.postAddDepartment = async(req,res,next)=>{
     const reqBody = req.body;
-    if(!reqBody[TableFields.depName].trim()){
+    
+    await parseAndValidateDepartment(reqBody,undefined,false,async(updatedFields)=>{
+        await DepartmentService.addDepartment(updatedFields)
+    },req) ;
+   
+}
+
+exports.postEditDepartment = async(req,res,next) =>{
+    const reqBody = req.body;
+    
+    if(!reqBody[TableFields.depId]){
+        throw new ValidationError(ValidationMsgs.DepIdEmpty);
+    }
+    let existingDepartment = await DepartmentService.findDepByDepId(reqBody[TableFields.depId]).execute();
+    if(!existingDepartment){
+        throw new ValidationError(ValidationMsgs.RecordNotFound);
+    }
+    await parseAndValidateDepartment(reqBody,existingDepartment,true,async(updatedFields)=>{
+        await DepartmentService.editDepartment(reqBody[TableFields.depId],updatedFields);
+    },req)
+      
+}
+
+
+exports.postDeleteDepartment = async(req,res,next) =>{
+    const depId =( req.params[TableFields.ID]);
+
+    if(!MongoUtil.isValidObjectID(depId) ){
+        throw new ValidationError(ValidationMsgs.IdEmpty);
+    }
+
+    await DepartmentService.deleteDepartmentById(depId);
+}
+
+
+async function parseAndValidateDepartment(
+    reqBody,
+    existingDepartment = {},
+    isUpdate = false,
+    onValidationCompleted = async () => {},
+    req
+){
+    if(isFieldEmpty(reqBody[TableFields.depName])){
         throw new ValidationError(ValidationMsgs.DepNameEmpty);
     }
-    if(!Util.ValidationMsgsLength(reqBody[TableFields.depName],30,0,'department name').flag){
-        throw new ValidationError(Util.ValidationMsgsLength(reqBody[TableFields.depName],30,0,'department name').message);
-    }
-    if(!reqBody[TableFields.managerName].trim()){
+    
+    if(isFieldEmpty(reqBody[TableFields.managerName])){
         throw new ValidationError(ValidationMsgs.ManagerNameEmpty); 
     }
-    if(!Util.ValidationMsgsLength(reqBody[TableFields.managerName],71,0,'manager name').flag){
-        throw new ValidationError(Util.ValidationMsgsLength(reqBody[TableFields.managerName],71,0,'department name').message);
-    }
-    if(!reqBody[TableFields.email].trim()){
+    
+    if(isFieldEmpty(reqBody[TableFields.email])){
         throw new ValidationError(ValidationMsgs.EmailEmpty);
     }
-    if(!Util.isEmail(reqBody[TableFields.email].trim().toLowerCase())){
-        throw new ValidationError(ValidationMsgs.EmailInvalid);
-    }
-    if(reqBody[TableFields.email].trim().length>30){
-        throw new ValidationError(ValidationMsgs.EmailLength);
-    }
+    
     let emp = await EmployeeService.findEmpByWorkEmail(reqBody[TableFields.email].trim().toLowerCase()).withNameInfoEmp().execute();
     if(!emp){
         throw new ValidationError(ValidationMsgs.WorkEmailNotExists);
     }
-    console.log('emp:',emp);
-    
+    try{
     let fullName = reqBody[TableFields.managerName].trim();
     let arr = fullName.split(' ');
     let ln = arr[0].toUpperCase();
@@ -66,76 +98,19 @@ exports.postAddDepartment = async(req,res,next)=>{
         },
         [TableFields.organisationId]:orgId
     };
-    await DepartmentService.addDepartment(depObject)
+    await onValidationCompleted(depObject);
+    }catch(error){
+        throw error;
+    }
 }
 
-exports.postEditDepartment = async(req,res,next) =>{
-    const reqBody = req.body;
-    if(!reqBody[TableFields.depName].trim().toUpperCase()){
-        throw new ValidationError(ValidationMsgs.DepNameEmpty);
+function isFieldEmpty(providedField, existingField) {
+    if (providedField != undefined) {
+        if (providedField) {
+            return false;
+        }
+    } else if (existingField) {
+        return false;
     }
-    if(!Util.ValidationMsgsLength(reqBody[TableFields.depName],30,0,'department name').flag){
-        throw new ValidationError(Util.ValidationMsgsLength(reqBody[TableFields.depName],30,0,'department name').message);
-    }
-    if(!reqBody[TableFields.managerName].trim().toUpperCase()){
-        throw new ValidationError(ValidationMsgs.ManagerNameEmpty); 
-    }
-    if(!Util.ValidationMsgsLength(reqBody[TableFields.managerName],71,0,'manager name').flag){
-        throw new ValidationError(Util.ValidationMsgsLength(reqBody[TableFields.managerName],71,0,'department name').message);
-    }
-    if(!reqBody[TableFields.email].trim().toLowerCase()){
-        throw new ValidationError(ValidationMsgs.EmailEmpty);
-    }
-    if(!Util.isEmail(reqBody[TableFields.email].trim().toLowerCase())){
-        throw new ValidationError(ValidationMsgs.EmailInvalid);
-    }
-    if(reqBody[TableFields.email].trim().length>30){
-        throw new ValidationError(ValidationMsgs.EmailLength);
-    }
-    if(!reqBody[TableFields.depId]){
-        throw new ValidationError(ValidationMsgs.DepartmentNotExists);
-    }
-    let emp = await EmployeeService.findEmpByWorkEmail(reqBody[TableFields.email].trim().toLowerCase()).withNameInfoEmp().execute();
-    if(!emp){
-        throw new ValidationError(ValidationMsgs.WorkEmailNotExists);
-    }
-    console.log('emp:',emp);
-    
-    let fullName = reqBody[TableFields.managerName].trim();
-    let arr = fullName.split(' ');
-    let ln = arr[0].toUpperCase();
-    let fn = arr.pop().toUpperCase();
-    console.log(fn);
-    console.log(ln);
-    if(fn!==emp[TableFields.firstName] || ln!==emp[TableFields.lastName]){
-        throw new ValidationError(ValidationMsgs.NameAndEmailMistmatch);    
-    }
-    let mName = ln+' '+fn;
-    const empId = new mongoose.Types.ObjectId(emp[TableFields.ID]);
-    const orgId = new mongoose.Types.ObjectId(req.orgId);
-    let depObject = {
-        [TableFields.departmentName]:reqBody[TableFields.depName].trim().toUpperCase(),
-        [TableFields.manager]:{
-            [TableFields.reference]:empId,
-            [TableFields.name_]:mName.trim(),
-            [TableFields.email]:reqBody[TableFields.email].trim().toLowerCase()
-        },
-        [TableFields.organisationId]:orgId
-    };
-   
-    await DepartmentService.editDepartment(reqBody[TableFields.depId],depObject);
-     
+    return true;
 }
-
-
-exports.postDeleteDepartment = async(req,res,next) =>{
-    const depId =( req.params[TableFields.ID]);
-
-    if(!MongoUtil.isValidObjectID(depId) ){
-        throw new ValidationError(ValidationMsgs.IdEmpty);
-    }
-
-    await DepartmentService.deleteDepartmentById(depId);
-}
-
-

@@ -136,6 +136,11 @@ const ProjectionBuilder = class {
       projection[TableFields.orgAdmin] = 1;
       return this;
     };
+    this.withoutSuperAdminAndUniqueId=()=>{
+        projection[TableFields.superAdminResponsible] = 0;
+        projection[TableFields.uniqueId]=0;
+        return this;
+    }
     this.execute = async () => {
       return await methodToExecute.call(projection);
     };

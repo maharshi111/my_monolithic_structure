@@ -50,24 +50,29 @@ const organisationSchema = new Schema(
     [TableFields.orgHeadOffice]: {
       [TableFields.city]: {
         type: String,
+        trim: true,
         required: [true, ValidationMsgs.CityEmpty],
       },
       [TableFields.street]: {
         type: String,
+        trim: true,
         required: [true, ValidationMsgs.StreetEmpty],
       },
       [TableFields.country]: {
         type: String,
+        trim: true,
         required: [true, ValidationMsgs.CountryEmpty],
       },
       [TableFields.postalCode]: {
         type: String,
+        trim: true,
         required: [true, ValidationMsgs.PostalCodeEmpty],
       },
     },
     [TableFields.orgCEO]: {
       [TableFields.name_]: {
         type: String,
+        trim: true,
         required: [true, ValidationMsgs.OrgCeoEmpty],
       },
       [TableFields.email]: {
@@ -109,6 +114,7 @@ const organisationSchema = new Schema(
     },
     [TableFields.uniqueId]: {
       type: String,
+      trim: true,
       required: [true, ValidationMsgs.UniqueIdEmpty],
     },
     [TableFields.tokens]: [

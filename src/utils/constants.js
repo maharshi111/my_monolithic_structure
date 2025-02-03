@@ -127,6 +127,10 @@ const ValidationMsgs = (function () {
     "The following work email already exists, please try a new email";
   ValidationMsgs.PhoneAlreadyExists =
     "The following phone number already exists, please try different phone number";
+  ValidationMsgs.RecordNotFound = "Record not found!";
+  ValidationMsgs.DepIdEmpty = "Department Id is missing!!";
+  ValidationMsgs.EmailRecordAlreadyExists =
+    "Super admin of this email already exists";
   return ValidationMsgs;
 })();
 

@@ -7,15 +7,17 @@ const {
   TableFields,
   UserTypes,
 } = require("../../utils/constants");
-
+const Util = require("../../utils/util");
 const employeeSchema = new Schema(
   {
     [TableFields.firstName]: {
       type: String,
+      trim: true,
       required: [true, ValidationMsgs.FirstNameEmpty],
     },
     [TableFields.lastName]: {
       type: String,
+      trim: true,
       required: [true, ValidationMsgs.LastNameEmpty],
     },
     [TableFields.email]: {
@@ -45,15 +47,28 @@ const employeeSchema = new Schema(
     [TableFields.password]: {
       type: String,
       trim: true,
+      maxlength :15,
+      minlength:5,
       required: [true, ValidationMsgs.PasswordEmpty],
     },
     [TableFields.phone]: {
       type: String,
+      trim: true,
+      lowercase: true,
+      validate: {
+        validator: function (v) {
+            return v ? Util.isValidMobileNumber(v) : true;
+        },
+        message: (props) => ValidationMsgs.PhoneInvalid,
+    },
+    set: (v) => Util.trimLeadingZeros(v),
       required: [true, ValidationMsgs.PhoneEmpty],
       unique: true,
+      // set: (v) => Util.trimLeadingZeros(v),
     },
     [TableFields.address]: {
       type: String,
+      trim: true,
       required: [true, ValidationMsgs.AddressEmpty],
     },
     [TableFields.dateOfBirth]: {
@@ -62,13 +77,15 @@ const employeeSchema = new Schema(
     },
     [TableFields.basicSalary]: {
       type: Number,
+      default: 0,
       required: [true, ValidationMsgs.SalaryEmpty],
     },
     [TableFields.bonuses]: [
       {
-        [TableFields.bonusType]: { type: String },
+        [TableFields.bonusType]: { type: String, trim: true },
         [TableFields.bonusAmount]: {
           type: Number,
+          default: 0,
         },
         [TableFields.dateGranted]: {
           type: Date,
@@ -87,11 +104,13 @@ const employeeSchema = new Schema(
       },
       [TableFields.name_]: {
         type: String,
+        trim: true,
         required: [true, ValidationMsgs.DepNameEmpty],
       },
     },
     [TableFields.role]: {
       type: String,
+      trim: true,
       required: [true, ValidationMsgs.RoleEmpty],
     },
     [TableFields.organisationId]: {
@@ -106,7 +125,7 @@ const employeeSchema = new Schema(
     [TableFields._updatedAt]: {
       type: Date,
       default: Date.now(),
-    }
+    },
   },
   {
     timestamps: false,

@@ -60,6 +60,18 @@ class EmployeeService {
     });
   };
 
+  static findBonus = (empId, bonusId) => {
+    console.log("empid", empId);
+    console.log("bonusId", bonusId);
+
+    return new ProjectionBuilder(async function () {
+      return await Employee.findOne({
+        [TableFields.ID]: empId,
+        [`${TableFields.bonuses}.${TableFields.ID}`]: bonusId,
+      },this);
+    });
+  };
+
   static addEmployee = async (empObject) => {
     if (!empObject[TableFields.email]) {
       throw new ValidationError(ValidationMsgs.EmailEmpty);

@@ -23,6 +23,15 @@ class DepartmentService {
     });
   };
 
+  static findDepByDepId = (depId) => {
+    return new ProjectionBuilder(async function () {
+      return await Department.findById(
+        { [TableFields.ID]: depId },
+        this
+      );
+    });
+  };
+
   static addDepartment = async (depObj) => {
     if (!depObj[TableFields.manager][TableFields.email]) {
       throw new ValidationError(ValidationMsgs.EmailEmpty);

@@ -12,6 +12,7 @@ const departmentSchema = new Schema(
   {
     [TableFields.departmentName]: {
       type: String,
+      trim: true,
       required: [true, ValidationMsgs.DepNameEmpty],
     },
     [TableFields.manager]: {
@@ -23,6 +24,7 @@ const departmentSchema = new Schema(
       },
       [TableFields.name_]: {
         type: String,
+        trim: true,
         required: [true, ValidationMsgs.ManagerNameEmpty],
       },
       [TableFields.email]: {

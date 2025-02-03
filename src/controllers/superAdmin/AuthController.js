@@ -8,6 +8,8 @@ const SuperAdminService = require("../../db/services/SuperAdminServices");
 const emailUtil = require("../../utils/email");
 const Util = require("../../utils/util");
 exports.postSignUp = async (req, res, next) => {
+  console.log("==>", req.body);
+
   const userName = req.body.userName;
   const email = req.body.email;
   const password = req.body.password;
@@ -27,8 +29,15 @@ exports.postSignUp = async (req, res, next) => {
   if (email.length > 30) {
     throw new ValidationError(ValidationMsgs.EmailLength);
   }
-  if (password.length < 5 || password.length > 15) {
-    throw new ValidationError(ValidationMsgs.PasswordLength);
+    if (password.length < 5 || password.length > 15) {
+      throw new ValidationError(ValidationMsgs.PasswordLength);
+    }
+
+  let x = await SuperAdminService.findByEmail(email).execute();
+  console.log("+++", x);
+
+  if (await SuperAdminService.findByEmail(email).withBasicInfo().execute()) {
+    throw new ValidationError(ValidationMsgs.EmailRecordAlreadyExists);
   }
 
   const superAdmin = {
