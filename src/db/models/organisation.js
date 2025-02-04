@@ -94,6 +94,7 @@ const organisationSchema = new Schema(
     },
     [TableFields.employeeStrength]: {
       type: Number,
+      default: 0,
       required: [true, ValidationMsgs.EmployeeStrengthEmpty],
     },
     [TableFields.startDateOfSubscription]: {
@@ -160,4 +161,14 @@ organisationSchema.methods.createAuthToken = function (org) {
 
   return token;
 };
+
+organisationSchema.index(
+  { [`${TableFields.orgAdmin}.${TableFields.email}`]: 1 },
+  {
+    unique: true,
+    partialFilterExpression: {
+      [`${TableFields.orgAdmin}.${TableFields.email}`]: { $exists: true },
+    },
+  }
+);
 module.exports = mongoose.model(TableNames.Organisation, organisationSchema);

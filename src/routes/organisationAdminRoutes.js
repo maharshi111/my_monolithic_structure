@@ -17,34 +17,34 @@ const router = API.configRoute("/orgAdmin")
   .build()
 
   // Employee routes
-  .addPath("/addEmployee")
+  .addPath("/add-employee")
   .asPOST(EmployeeController.postAddEmployee)
   .useOrganisationAuth()
   .build()
 
-  .addPath("/editEmployee")
+  .addPath("/edit-employee")
   .asPOST(EmployeeController.postEditEmployee)
   .useOrganisationAuth()
   .build()
 
-  .addPath(`/deleteEmployee/:${TableFields.ID}`)
+  .addPath(`/delete-employee/:${TableFields.ID}`)
   .asPOST(EmployeeController.postDeleteEmployee)
   .useOrganisationAuth()
   .build()
 
   //Department routes
 
-  .addPath("/addDepartment")
+  .addPath("/add-department")
   .asPOST(DepartmentController.postAddDepartment)
   .useOrganisationAuth()
   .build()
 
-  .addPath("/editDepartment")
+  .addPath("/edit-department")
   .asPOST(DepartmentController.postEditDepartment)
   .useOrganisationAuth()
   .build()
 
-  .addPath(`/deleteDepartment/:${TableFields.ID}`)
+  .addPath(`/delete-department/:${TableFields.ID}`)
   .asPOST(DepartmentController.postDeleteDepartment)
   .useOrganisationAuth()
   .build()
@@ -60,7 +60,7 @@ const router = API.configRoute("/orgAdmin")
   .asPOST(EmployeeBonusController.postUpdateBonus)
   .useOrganisationAuth()
   .build()
-
+ 
   .addPath(`/delete-bonus/:${TableFields.idString}`)
   .asPOST(EmployeeBonusController.postDeleteBonus)
   .useOrganisationAuth()

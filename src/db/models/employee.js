@@ -47,8 +47,8 @@ const employeeSchema = new Schema(
     [TableFields.password]: {
       type: String,
       trim: true,
-      maxlength :15,
-      minlength:5,
+      maxlength: [15, ValidationMsgs.PasswordLength],
+      minlength: [5, ValidationMsgs.PasswordLength],
       required: [true, ValidationMsgs.PasswordEmpty],
     },
     [TableFields.phone]: {
@@ -57,11 +57,11 @@ const employeeSchema = new Schema(
       lowercase: true,
       validate: {
         validator: function (v) {
-            return v ? Util.isValidMobileNumber(v) : true;
+          return v ? Util.isValidMobileNumber(v) : true;
         },
         message: (props) => ValidationMsgs.PhoneInvalid,
-    },
-    set: (v) => Util.trimLeadingZeros(v),
+      },
+      set: (v) => Util.trimLeadingZeros(v),
       required: [true, ValidationMsgs.PhoneEmpty],
       unique: true,
       // set: (v) => Util.trimLeadingZeros(v),
@@ -138,4 +138,8 @@ const employeeSchema = new Schema(
     },
   }
 );
+employeeSchema.index({ [TableFields.email]: 1 }, { unique: true });
+employeeSchema.index({ [TableFields.workEmail]: 1 }, { unique: true });
+employeeSchema.index({ [TableFields.phone]: 1 }, { unique: true });
+
 module.exports = mongoose.model(TableNames.Employee, employeeSchema);

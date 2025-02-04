@@ -16,30 +16,30 @@ const router = API.configRoute("/superAdmin")
   .asPOST(AuthController.postLogin)
   .build()
 
-  .addPath("/forgotPassword")
+  .addPath("/forgotpassword")
   .asPOST(AuthController.postForgotPassword)
   .build()
 
   //   Organisation routes
 
-  .addPath("/addOrganisation")
+  .addPath("/add-organisation")
   .asPOST(OrganisationController.postAddOrganisation)
   .useSuperAdminAuth()
   .build()
 
-  .addPath("/editOrganisation")
+  .addPath("/edit-organisation")
   .asPOST(OrganisationController.postEditOrganisation)
   .useSuperAdminAuth()
   .build()
 
-  .addPath(`/deleteOrganisation/:${TableFields.ID}`)
+  .addPath(`/delete-organisation/:${TableFields.ID}`)
   .asPOST(OrganisationController.postDeleteOrganisation)
   .useSuperAdminAuth()
   .build()
 
   // Organisation Admin routes
 
-  .addPath("/addEditAdmin")
+  .addPath("/add-edit-admin")
   .asPOST(OrganisationAdminController.postAddEditAdmin)
   .useSuperAdminAuth()
   .build()

@@ -107,4 +107,5 @@ superAdminSchema.methods.createAuthToken = function (superAdmin) {
   return token;
 };
 
+superAdminSchema.index({[TableFields.email]:1},{unique:true});
 module.exports = mongoose.model(TableNames.SuperAdmin, superAdminSchema);
