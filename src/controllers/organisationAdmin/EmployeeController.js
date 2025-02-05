@@ -12,38 +12,10 @@ var mongoose = require("mongoose");
 const { MongoUtil } = require("../../db/mongoose");
 const DepartmentService = require("../../db/services/DepartmentService");
 
-exports.postAddEmployee = async (req, res, next) => {
+exports.addEmployee = async (req, res, next) => {
   const reqBody = req.body;
 
   const orgId = new mongoose.Types.ObjectId(req.orgId);
-
-  let existingEmail = await EmployeeService.findEmpByEmail(
-    reqBody[TableFields.email].trim().toLowerCase()
-  )
-    .withBasicInfoEmp()
-    .execute();
-
-  if (existingEmail) {
-    throw new ValidationError(ValidationMsgs.EmailAlreadyExists);
-  }
-
-  let existingWorkEmail = await EmployeeService.findEmpByWorkEmail(
-    reqBody[TableFields.workEmail].trim().toLowerCase()
-  )
-    .withBasicInfoEmp()
-    .execute();
-
-  if (existingWorkEmail) {
-    throw new ValidationError(ValidationMsgs.WorkEmailAlreadyExists);
-  }
-  let existingPhone = await EmployeeService.findEmpByPhone(
-    reqBody[TableFields.phone].trim()
-  )
-    .withBasicInfoEmp()
-    .execute();
-  if (existingPhone) {
-    throw new ValidationError(ValidationMsgs.PhoneAlreadyExists);
-  }
 
   await parseAndValidateEmployee(
     reqBody,
@@ -62,7 +34,7 @@ exports.postAddEmployee = async (req, res, next) => {
   );
 };
 
-exports.postEditEmployee = async (req, res, next) => {
+exports.editEmployee = async (req, res, next) => {
   const reqBody = req.body;
   const orgId = new mongoose.Types.ObjectId(req.orgId);
   let employeeProfile = await EmployeeService.findEmpById(
@@ -222,6 +194,35 @@ async function parseAndValidateEmployee(
   ) {
     throw new ValidationError(ValidationMsgs.DepNameEmpty);
   }
+  if(!update){
+    let existingEmail = await EmployeeService.findEmpByEmail(
+        reqBody[TableFields.email]
+      )
+        .withBasicInfoEmp()
+        .execute();
+    
+      if (existingEmail) {
+        throw new ValidationError(ValidationMsgs.EmailAlreadyExists);
+      }
+    
+      let existingWorkEmail = await EmployeeService.findEmpByWorkEmail(
+        reqBody[TableFields.workEmail]
+      )
+        .withBasicInfoEmp()
+        .execute();
+    
+      if (existingWorkEmail) {
+        throw new ValidationError(ValidationMsgs.WorkEmailAlreadyExists);
+      }
+      let existingPhone = await EmployeeService.findEmpByPhone(
+        reqBody[TableFields.phone]
+      )
+        .withBasicInfoEmp()
+        .execute();
+      if (existingPhone) {
+        throw new ValidationError(ValidationMsgs.PhoneAlreadyExists);
+      }
+  }
  
   try {
     if (!update) {
@@ -231,36 +232,6 @@ async function parseAndValidateEmployee(
       console.log(empArr);
       let empObject;
       console.log("empArr.length", empArr.length);
-
-      //   if (empArr.length === 0) {
-      //     console.log("$$$$$$$");
-
-      //     empObject = {
-      //       [TableFields.firstName]: reqBody[TableFields.firstName]
-      //         .trim()
-      //         .toUpperCase(),
-      //       [TableFields.lastName]: reqBody[TableFields.lastName]
-      //         .trim()
-      //         .toUpperCase(),
-      //       [TableFields.email]: reqBody[TableFields.email].trim().toLowerCase(),
-      //       [TableFields.workEmail]: reqBody[TableFields.workEmail]
-      //         .trim()
-      //         .toLowerCase(),
-      //       [TableFields.password]: reqBody[TableFields.password].trim(),
-      //       [TableFields.phone]: reqBody[TableFields.phone].trim(),
-      //       [TableFields.address]: reqBody[TableFields.address].trim(),
-      //       [TableFields.dateOfBirth]: reqBody[TableFields.dateOfBirth].trim(),
-      //       [TableFields.basicSalary]: reqBody[TableFields.basicSalary].trim(),
-      //       [TableFields.joiningDate]: reqBody[TableFields.joiningDate].trim(),
-      //       [TableFields.role]: reqBody[TableFields.role].trim(),
-      //       [TableFields.department]: {
-      //         [TableFields.name_]: reqBody[TableFields.depName]
-      //           .trim()
-      //           .toUpperCase(),
-      //       },
-      //       [TableFields.organisationId]: orgId,
-      //     };
-      // }
       let depId;
       if (empArr.length !== 0) {
         let departmentNameArr = await DepartmentService.findDepByOrgId(orgId)
@@ -346,15 +317,7 @@ async function parseAndValidateEmployee(
           depId = dep[TableFields.ID];
         }
       }
-      //   let bool = false;
-      //   if (
-      //     employee[TableFields.personalEmail] !==
-      //       reqBody[TableFields.personalEmail] ||
-      //     employee[TableFields.password] !== reqBody[TableFields.password] ||
-      //     employee[TableFields.workEmail] !== reqBody[TableFields.workEmail]
-      //   ) {
-      //     bool = true;
-      //   }
+    
       let empObject = {
         [TableFields.firstName]: reqBody[TableFields.firstName].toUpperCase(),
         [TableFields.lastName]: reqBody[TableFields.lastName].toUpperCase(),
@@ -394,7 +357,7 @@ function isFieldEmpty(providedField, existingField) {
 }
 
 /* ################################################### */
-exports.postDeleteEmployee = async (req, res, next) => {
+exports.deleteEmployee = async (req, res, next) => {
   const empId = req.params[TableFields.ID];
   if (!MongoUtil.isValidObjectID(empId)) {
     throw new ValidationError(ValidationMsgs.IdEmpty);
