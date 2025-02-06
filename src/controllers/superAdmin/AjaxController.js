@@ -10,9 +10,10 @@ const EmployeeService = require("../../db/services/EmployeeService");
 const emailUtil = require("../../utils/email");
 const Util = require("../../utils/util");
 var mongoose = require("mongoose");
-exports.postAjaxValidation = async (req, res, next) => {
+exports.ajaxValidation = async (req, res, next) => {
+ 
+  if (!req.body[TableFields.email]) throw new ValidationError(ValidationMsgs.RequiredField);
   let email = req.body[TableFields.email].trim().toLowerCase();
-  if (!email) throw new ValidationError(ValidationMsgs.RequiredField);
   let superAdmin = await SuperAdminService.findByEmail(email)
     .withBasicInfo()
     .execute();
@@ -21,12 +22,12 @@ exports.postAjaxValidation = async (req, res, next) => {
   }
 };
 
-exports.postAjaxPassValidation = async (req, res, next) => {
+exports.ajaxPassValidation = async (req, res, next) => {
   const reqBody = req.body;
-  if (!reqBody[TableFields.password].trim()) {
+  if (!reqBody[TableFields.password]) {
     throw new ValidationError(ValidationMsgs.RequiredField);
   }
-  if (!reqBody[TableFields.email].trim().toLowerCase()) {
+  if (!reqBody[TableFields.email]) {
     throw new ValidationError(ValidationMsgs.EmailThenPass);
   }
   let superAdmin = await SuperAdminService.findByEmail(
@@ -60,11 +61,12 @@ exports.postAjaxPassValidation = async (req, res, next) => {
   //return res.json({ success: true});
 };
 
-exports.postAjaxAddCeo = async (req, res, next) => {
-  const ceoEmail = req.body[TableFields.ceoEmail].trim().toLowerCase();
-  if (!ceoEmail) {
+exports.ajaxAddCeo = async (req, res, next) => {
+  
+  if (!req.body[TableFields.ceoEmail]) {
     throw new ValidationError(ValidationMsgs.CeoEmailEmpty);
   }
+  const ceoEmail = req.body[TableFields.ceoEmail].trim().toLowerCase();
   let org = await OrganisationService.findOneOrgByEmail(ceoEmail)
     .withOrgCeo()
     .execute();
@@ -73,21 +75,22 @@ exports.postAjaxAddCeo = async (req, res, next) => {
   }
 };
 
-exports.postAjaxAddAdmin = async (req, res, next) => {
-  const adminEmail = req.body[TableFields.adminEmail].trim().toLowerCase(); //PERSONAL EMAIL
-  const ceoEmail = req.body[TableFields.email].trim().toLowerCase();
-  if (!adminEmail) {
+exports.ajaxAddAdmin = async (req, res, next) => {
+  
+  if (!req.body[TableFields.adminEmail]) {
     throw new ValidationError(ValidationMsgs.AdminEmailEmpty);
   }
+  const adminEmail = req.body[TableFields.adminEmail].trim().toLowerCase(); //PERSONAL EMAIL
   let emp = await EmployeeService.findOneEmpByEmail(adminEmail)
     .withEmployeeBasicInfo()
     .execute();
   if (!emp) {
     throw new ValidationError(ValidationMsgs.EmployeeEmailExist);
   }
-  if (!ceoEmail) {
+  if (!req.body[TableFields.email]) {
     throw new ValidationError(ValidationMsgs.CeoEmailEmpty);
   }
+  const ceoEmail = req.body[TableFields.email].trim().toLowerCase();
   const ceoOrg = await OrganisationService.findOneOrgByEmail(ceoEmail)
     .withOrgCeo()
     .execute();

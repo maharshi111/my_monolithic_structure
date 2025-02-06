@@ -13,11 +13,11 @@ var mongoose = require("mongoose");
 const { MongoUtil } = require("../../db/mongoose");
 const DepartmentService = require("../../db/services/DepartmentService");
 
-exports.postAjaxCeo = async (req, res, next) => {
-  const ceoEmail = req.body[TableFields.ceoEmail].trim().toLowerCase();
-  if (!ceoEmail) {
+exports.ajaxCeo = async (req, res, next) => {
+  if (!req.body[TableFields.ceoEmail]) {
     throw new ValidationError(ValidationMsgs.RequiredField);
   }
+  const ceoEmail = req.body[TableFields.ceoEmail].trim().toLowerCase();
   let org = await OrganisationService.findOneOrgByEmail(ceoEmail)
     .withBasicInfoOrg()
     .execute();
@@ -26,12 +26,11 @@ exports.postAjaxCeo = async (req, res, next) => {
   }
 };
 
-exports.postAjaxOrgName = async (req, res, next) => {
-  const orgName = req.body[TableFields.companyName].toUpperCase();
-  const ceoEmail = req.body[TableFields.ceoEmail].trim().toLowerCase();
-  if (!orgName) {
+exports.ajaxOrgName = async (req, res, next) => {
+  if (!req.body[TableFields.companyName]) {
     throw new ValidationError(ValidationMsgs.RequiredField);
   }
+  const orgName = req.body[TableFields.companyName].toUpperCase();
   let companyName = await OrganisationService.findOneByOrgName(orgName)
     .withBasicInfoOrg()
     .execute();
@@ -41,26 +40,27 @@ exports.postAjaxOrgName = async (req, res, next) => {
     throw new ValidationError(ValidationMsgs.CompanyNameNotFound);
   }
 
-  if (!ceoEmail) {
+  if (!req.body[TableFields.ceoEmail]) {
     throw new ValidationError(ValidationMsgs.CeoEmailThanCompanyName);
   }
-
+  const ceoEmail = req.body[TableFields.ceoEmail].trim().toLowerCase();
   if (companyName[TableFields.orgCEO][TableFields.email] !== ceoEmail) {
     throw new ValidationError(ValidationMsgs.VerifyAndRewriteCeoEmail);
   }
 };
 
-exports.postAjaxOrgId = async (req, res, next) => {
-  const ceoEmail = req.body[TableFields.ceoEmail].trim().toLowerCase();
+exports.ajaxOrgId = async (req, res, next) => {
   const orgId = req.body[TableFields.orgId];
 
-  if (orgId === "") {
+  if (!orgId) {
     throw new ValidationError(ValidationMsgs.RequiredField);
   }
 
-  if (!ceoEmail) {
+  if (!req.body[TableFields.ceoEmail]) {
     throw new ValidationError(ValidationMsgs.CeoEmailThanOrgId);
   }
+
+  const ceoEmail = req.body[TableFields.ceoEmail].trim().toLowerCase();
 
   let companyNameArr = await OrganisationService.findOrgByEmail(ceoEmail)
     .withBasicInfoOrg()
@@ -70,30 +70,38 @@ exports.postAjaxOrgId = async (req, res, next) => {
     throw new ValidationError(ValidationMsgs.FirstCorrectCeoEmail);
   }
 
-  let count = false;
+ // let count = false;
 
-  for (let companyName of companyNameArr) {
-    if (companyName[TableFields.uniqueId].toString() === orgId) {
-      count = true;
-    }
-  }
-
-  if (count === false) {
+//   for (let companyName of companyNameArr) {
+//     if (companyName[TableFields.uniqueId].toString() === orgId) {
+//       count = true;
+//     }
+//   }
+// if (count === false) {
+//     throw new ValidationError(ValidationMsgs.InvalidOrgId);
+//   }
+const exist =   companyNameArr.some((companyName)=>{
+    return companyName[TableFields.uniqueId].toString() === orgId;
+});
+if (!exist) {
     throw new ValidationError(ValidationMsgs.InvalidOrgId);
-  }
+  } 
+
 };
 
-exports.postAjaxManagerEmail = async (req, res, next) => {
-  const managerEmail = req.body[TableFields.email].trim().toLowerCase();//wwork email
-  const managerName = req.body[TableFields.name_].trim();
+exports.ajaxManagerEmail = async (req, res, next) => {
+ 
 
-  if (!managerEmail) {
+  if (!req.body[TableFields.email]) {
     throw new ValidationError(ValidationMsgs.RequiredField);
   }
 
-  if (!managerName) {
+  if (!req.body[TableFields.name_]) {
     throw new ValidationError(ValidationMsgs.FirstFillManagerName);
   }
+
+  const managerEmail = req.body[TableFields.email].trim().toLowerCase(); //wwork email
+  const managerName = req.body[TableFields.name_].trim();
 
   let emp = await EmployeeService.findEmpByWorkEmail(managerEmail)
     .withNameInfoEmp()
@@ -112,12 +120,12 @@ exports.postAjaxManagerEmail = async (req, res, next) => {
   }
 };
 
-exports.postAjaxDepName = async (req, res, next) => {
-  const depName = req.body[TableFields.departmentName].trim().toUpperCase();
+exports.ajaxDepName = async (req, res, next) => {
 
-  if (!depName) {
+  if (!req.body[TableFields.departmentName]) {
     throw new ValidationError(ValidationMsgs.RequiredField);
   }
+  const depName = req.body[TableFields.departmentName].trim().toUpperCase();
 
   const orgId = new mongoose.Types.ObjectId(req.orgId);
 
@@ -129,16 +137,21 @@ exports.postAjaxDepName = async (req, res, next) => {
     let departmentNameArr = await DepartmentService.findDepByOrgId(orgId)
       .withBasicInfoDep()
       .execute();
-    let flag = false;
+    // let flag = false;
 
-    for (let dep of departmentNameArr) {
-      if (dep[TableFields.departmentName] === depName) {
-        flag = true;
+    // for (let dep of departmentNameArr) {
+    //   if (dep[TableFields.departmentName] === depName) {
+    //     flag = true;
+    //   }
+    // }
+    // if (flag === false) {
+    //     throw new ValidationError(ValidationMsgs.DepartmentNotExists);
+    //   }
+    const exist = departmentNameArr.some((dep)=>{
+        return dep[TableFields.departmentName] === depName;
+    })
+       if (!exist) {
+        throw new ValidationError(ValidationMsgs.DepartmentNotExists);
       }
-    }
-
-    if (flag === false) {
-      throw new ValidationError(ValidationMsgs.DepartmentNotExists);
-    }
   }
 };

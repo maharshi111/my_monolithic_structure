@@ -11,9 +11,9 @@ const Util = require("../../utils/util");
 var mongoose = require("mongoose");
 const { MongoUtil } = require("../../db/mongoose");
 
-exports.postAddEditAdmin = async (req, res, next) => {
+exports.addEditAdmin = async (req, res, next) => {
   const reqBody = req.body;
-  if (!reqBody[TableFields.ceoEmail].trim()) {
+  if (!reqBody[TableFields.ceoEmail]) {
     throw new ValidationError(ValidationMsgs.EmailEmpty);
   }
   if (!Util.isEmail(reqBody[TableFields.ceoEmail].trim().toLowerCase())) {
@@ -26,11 +26,11 @@ exports.postAddEditAdmin = async (req, res, next) => {
   ) {
     throw new ValidationError(
       Util.ValidationMsgsLength(reqBody[TableFields.ceoEmail], 30, 0, [
-        TableFields.ceoEmail,
+        [TableFields.ceoEmail],
       ]).message
     );
   }
-  if (!reqBody[TableFields.adminEmail].trim()) {
+  if (!reqBody[TableFields.adminEmail]) {
     throw new ValidationError(ValidationMsgs.EmailEmpty);
   }
   if (!Util.isEmail(reqBody[TableFields.adminEmail].trim())) {

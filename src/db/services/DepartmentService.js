@@ -54,6 +54,50 @@ class DepartmentService {
   static deleteDepartmentById = async (depId) => {
     await Department.findByIdAndDelete(depId);
   };
+
+  static deleteMyReferences = async (cascadeDeleteMethodReference, tableName, ...referenceId) => {
+      let records = undefined;
+      console.log('Department');
+      
+      // console.log(cascadeDeleteMethodReference, tableName, ...referenceId);
+      switch (tableName) {
+          case TableNames.Organisation:
+            console.log('switch dep');
+              records = await Department.find({
+                  [TableFields.organisationId]: {
+                      $in: referenceId,
+                  },
+              });
+              break;
+      }
+      if (records && records.length > 0) {
+          let deleteRecordIds = records.map((a) => a[TableFields.ID]);
+          console.log('deleteRecordIds department',deleteRecordIds);
+          
+          await Department.deleteMany({
+              [TableFields.ID]: {
+                  $in: deleteRecordIds,
+              },
+          });
+  
+          // if (tableName != TableNames.College) {
+          //     //It means that the above objects are deleted on request from model's references (And not from model itself)
+          //     cascadeDeleteMethodReference.call(
+          //         {
+          //             ignoreSelfCall: true,
+          //         },
+          //         TableNames.College,
+          //         ...deleteRecordIds
+          //     ); //So, let's remove references which points to this model
+          // }
+      }
+  };
+
+
+
+
+
+
 }
 
 const ProjectionBuilder = class {

@@ -14,7 +14,7 @@ const { MongoUtil } = require("../../db/mongoose");
 
 
 
-exports.postAddDepartment = async(req,res,next)=>{
+exports.addDepartment = async(req,res,next)=>{
     const reqBody = req.body;
     
     await parseAndValidateDepartment(reqBody,undefined,false,async(updatedFields)=>{
@@ -23,7 +23,7 @@ exports.postAddDepartment = async(req,res,next)=>{
    
 }
 
-exports.postEditDepartment = async(req,res,next) =>{
+exports.editDepartment = async(req,res,next) =>{
     const reqBody = req.body;
     
     if(!reqBody[TableFields.depId]){
@@ -40,7 +40,7 @@ exports.postEditDepartment = async(req,res,next) =>{
 }
 
 
-exports.postDeleteDepartment = async(req,res,next) =>{
+exports.deleteDepartment = async(req,res,next) =>{
     const depId =( req.params[TableFields.ID]);
 
     if(!MongoUtil.isValidObjectID(depId) ){

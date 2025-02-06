@@ -11,7 +11,7 @@ const EmployeeService = require("../../db/services/EmployeeService");
 var mongoose = require("mongoose");
 const { MongoUtil } = require("../../db/mongoose");
 
-exports.postAddBonus = async (req, res, next) => {
+exports.addBonus = async (req, res, next) => {
   const reqBody = req.body;
   const empId = req.params[TableFields.ID];
   if (!MongoUtil.isValidObjectID(empId)) {
@@ -24,15 +24,15 @@ exports.postAddBonus = async (req, res, next) => {
     async (updatedFields) => {
       await EmployeeService.addBonus(
         empId,
-        updatedFields[TableFields.bonusType].trim(),
-        updatedFields[TableFields.bonusAmount].trim(),
-        updatedFields[TableFields.dateGranted].trim()
+        updatedFields[TableFields.bonusType],
+        updatedFields[TableFields.bonusAmount],
+        updatedFields[TableFields.dateGranted]
       );
     }
   );
 };
 
-exports.postUpdateBonus = async (req, res, next) => {
+exports.updateBonus = async (req, res, next) => {
   const reqBody = req.body;
   const bonusId = req.params[TableFields.ID];
 
@@ -85,7 +85,7 @@ exports.postUpdateBonus = async (req, res, next) => {
 
 
 
-exports.postDeleteBonus = async (req, res, next) => {
+exports.deleteBonus = async (req, res, next) => {
   console.log(req.params.idString);
   console.log(req.params);
 

@@ -59,6 +59,22 @@ class SuperAdminService {
     );
   };
 
+  static removeAuth = async (adminId, authToken) => {
+    console.log("--->", authToken);
+    console.log("->>>", adminId);
+
+    await SuperAdmin.updateOne(
+      {
+        [TableFields.ID]: adminId,
+      },
+      {
+        $pull: {
+          [TableFields.tokens]: { [TableFields.token]: authToken },
+        },
+      }
+    );
+  };
+
   static findOneSuperAdminByPassWord = (password) => {
     return new ProjectionBuilder(async function () {
       return await SuperAdmin.findOne(

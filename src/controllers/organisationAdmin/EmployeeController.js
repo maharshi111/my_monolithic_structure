@@ -238,19 +238,33 @@ async function parseAndValidateEmployee(
           .withBasicInfoDep()
           .execute();
         console.log(departmentNameArr);
-        let flag = false;
-        for (let dep of departmentNameArr) {
-          if (
-            dep[TableFields.departmentName] ===
-            reqBody[TableFields.depName].trim().toUpperCase()
-          ) {
-            flag = true;
-            depId = dep[TableFields.ID];
-          }
-        }
-        if (flag === false) {
+        //let flag = false;
+        // for (let dep of departmentNameArr) {
+        //   if (
+        //     dep[TableFields.departmentName] ===
+        //     reqBody[TableFields.depName].trim().toUpperCase()
+        //   ) {
+        //     flag = true;
+        //     depId = dep[TableFields.ID];
+        //   }
+        // }
+         // if (flag === false) {
+        //   throw new ValidationError(ValidationMsgs.DepartmentNotExists);
+        // }
+        const exists = departmentNameArr.some((dep)=>{
+          if( dep[TableFields.departmentName] ===
+            reqBody[TableFields.depName].trim().toUpperCase())
+            {
+                depId = dep[TableFields.ID];
+                return true; 
+            }
+            return false;
+        })
+
+        if (!exists) {
           throw new ValidationError(ValidationMsgs.DepartmentNotExists);
         }
+       
       }
       empObject = {
         [TableFields.firstName]: reqBody[TableFields.firstName]
@@ -286,37 +300,52 @@ async function parseAndValidateEmployee(
       let departmentNameArr = await DepartmentService.findDepByOrgId(orgId)
         .withBasicInfoDep()
         .execute();
-      let flag = false;
-      for (let dep of departmentNameArr) {
-        if (
-          dep[TableFields.departmentName] ===
-          reqBody[TableFields.depName].toUpperCase()
-        ) {
-          flag = true;
-        }
-      }
-      if (flag === false) {
+    //   let flag = false;
+    //   for (let dep of departmentNameArr) {
+    //     if (
+    //       dep[TableFields.departmentName] ===
+    //       reqBody[TableFields.depName].toUpperCase()
+    //     ) {
+    //       flag = true;
+    //     }
+    //   }
+    // if (flag === false) {
+    //     throw new ValidationError(ValidationMsgs.DepartmentNotExists);
+    //   }
+    let depId;
+    const exists = departmentNameArr.some((dep)=>{
+        if( dep[TableFields.departmentName] ===
+          reqBody[TableFields.depName].trim().toUpperCase())
+          {
+              depId = dep[TableFields.ID];
+              return true; 
+          }
+          return false;
+      })
+
+      if (!exists) {
         throw new ValidationError(ValidationMsgs.DepartmentNotExists);
       }
+      
       if (!MongoUtil.isValidObjectID(reqBody[TableFields.empId])) {
         throw new ValidationError(ValidationMsgs.IdEmpty);
       }
-      let depId;
+      
       let employee = await EmployeeService.findEmpById(
         reqBody[TableFields.empId]
       )
         .withBasicInfoEmp()
         .execute();
-      for (let dep of departmentNameArr) {
-        if (
-          dep[TableFields.departmentName] ===
-          reqBody[TableFields.depName].toUpperCase()
-        ) {
-          console.log("##2");
+    //   for (let dep of departmentNameArr) {
+    //     if (
+    //       dep[TableFields.departmentName] ===
+    //       reqBody[TableFields.depName].toUpperCase()
+    //     ) {
+    //       console.log("##2");
 
-          depId = dep[TableFields.ID];
-        }
-      }
+    //       depId = dep[TableFields.ID];
+    //     }
+    //  }
     
       let empObject = {
         [TableFields.firstName]: reqBody[TableFields.firstName].toUpperCase(),

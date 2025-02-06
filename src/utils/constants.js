@@ -131,6 +131,8 @@ const ValidationMsgs = (function () {
   ValidationMsgs.DepIdEmpty = "Department Id is missing!!";
   ValidationMsgs.EmailRecordAlreadyExists =
     "Super admin of this email already exists";
+  ValidationMsgs.EmailRecordNotExists =
+    "No such email is found in our record, please recheck the email entered!!";
   return ValidationMsgs;
 })();
 
@@ -155,7 +157,7 @@ const ResponseMessages = (function () {
 
 const TableNames = (function () {
   function TableNames() {}
-  TableNames.SuperAdmin = "superadmins";
+  TableNames.SuperAdmin = "super-admins";
   TableNames.Organisation = "organisations";
   TableNames.Employee = "employees";
   TableNames.Department = "departments";

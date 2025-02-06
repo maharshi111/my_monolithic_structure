@@ -2,6 +2,7 @@ const {
   TableFields,
   ValidationMsgs,
   InterfaceTypes,
+  TableNames,
 } = require("../../utils/constants");
 const ValidationError = require("../../utils/ValidationError");
 const OrganisationService = require("../../db/services/OrganisationService");
@@ -9,8 +10,9 @@ const emailUtil = require("../../utils/email");
 const Util = require("../../utils/util");
 var mongoose = require("mongoose");
 const { MongoUtil } = require("../../db/mongoose");
+const ServiceManager = require("../../db/serviceManager");
 
-exports.postAddOrganisation = async (req, res, next) => {
+exports.addOrganisation = async (req, res, next) => {
   const reqBody = req.body;
 
   await pasrseAndValidateOrganisation(
@@ -33,7 +35,7 @@ exports.postAddOrganisation = async (req, res, next) => {
   );
 };
 
-exports.postEditOrganisation = async (req, res) => {
+exports.editOrganisation = async (req, res) => {
   const reqBody = req.body;
   console.log("this is req:", reqBody);
 
@@ -46,7 +48,7 @@ exports.postEditOrganisation = async (req, res) => {
   if (!existingOrganisation) {
     throw new ValidationError(ValidationMsgs.RecordNotFound);
   }
- 
+
   await pasrseAndValidateOrganisation(
     reqBody,
     req,
@@ -73,12 +75,19 @@ exports.postEditOrganisation = async (req, res) => {
   );
 };
 
-exports.postDeleteOrganisation = async (req, res, next) => {
+exports.deleteOrganisation = async (req, res, next) => {
   const orgId = req.params[TableFields.ID];
   if (!MongoUtil.isValidObjectID(orgId)) {
     throw new ValidationError(ValidationMsgs.IdEmpty);
   }
-  await OrganisationService.deleteOrganisation(orgId);
+  
+  if (!(await OrganisationService.findByIdOrgId(orgId).withBasicInfoOrg().execute())) {
+    throw new ValidationError(ValidationMsgs.RecordNotFound);
+  }
+  console.log("&&&");
+
+  //await OrganisationService.deleteOrganisation(orgId);
+  await ServiceManager.cascadeDelete(TableNames.Organisation, orgId);
 };
 
 async function pasrseAndValidateOrganisation(
@@ -115,7 +124,7 @@ async function pasrseAndValidateOrganisation(
   if (isFieldEmpty(reqBody[TableFields.ceoName])) {
     throw new ValidationError(ValidationMsgs.OrgCeoEmpty);
   }
-  
+
   if (isFieldEmpty(reqBody[TableFields.postalCode])) {
     throw new ValidationError(ValidationMsgs.PostalCodeEmpty);
   }
@@ -129,7 +138,7 @@ async function pasrseAndValidateOrganisation(
   if (isFieldEmpty(reqBody[TableFields.ceoEmail])) {
     throw new ValidationError(ValidationMsgs.EmailEmpty);
   }
-  
+
   if (isFieldEmpty(reqBody[TableFields.empStrength])) {
     throw new ValidationError(ValidationMsgs.EmployeeStrengthEmpty);
   }
@@ -137,7 +146,7 @@ async function pasrseAndValidateOrganisation(
   if (isFieldEmpty(reqBody[TableFields.subscriptionStart])) {
     throw new ValidationError(ValidationMsgs.DateEmpty);
   }
-  //check 
+  //check
   const result = Util.subscriptionStartInvalid(
     reqBody[TableFields.subscriptionStart].trim()
   );
@@ -149,7 +158,7 @@ async function pasrseAndValidateOrganisation(
   if (isFieldEmpty(reqBody[TableFields.subscriptionPeriod])) {
     throw new ValidationError(ValidationMsgs.SubscriptionPeriodEmpty);
   }
-//check 
+  //check
   if (
     reqBody[TableFields.subscriptionPeriod].trim() <= 0 ||
     reqBody[TableFields.subscriptionPeriod].trim() > 60
@@ -160,7 +169,7 @@ async function pasrseAndValidateOrganisation(
   if (isFieldEmpty(reqBody[TableFields.charge])) {
     throw new ValidationError(ValidationMsgs.SubscriptionChargeEmpty);
   }
-//check 
+  //check
   if (+reqBody[TableFields.charge].trim() > 999999) {
     throw new ValidationError(ValidationMsgs.SubscriptionChargeInvalid);
   }
@@ -174,7 +183,7 @@ async function pasrseAndValidateOrganisation(
       );
     }
     const uId = uuidv4();
-   // console.log("this is superAdminId:", req.superAdminId);
+    // console.log("this is superAdminId:", req.superAdminId);
 
     const organisation = {
       [TableFields.orgName]: reqBody[TableFields.orgName].toUpperCase(),

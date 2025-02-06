@@ -60,6 +60,22 @@ class OrganisationService {
     );
   };
 
+  static removeAuth = async (adminId, authToken) => {
+    await Organisation.updateOne(
+        {
+            [TableFields.ID]: adminId,
+        },
+        {
+            $pull: {
+                [TableFields.tokens]: {[TableFields.token]: authToken},
+            },
+        }
+    );
+};
+
+
+
+
   static getUserByIdAndToken = (orgId, token, lean = false) => {
     return new ProjectionBuilder(async function () {
       return await Organisation.findOne(
@@ -84,7 +100,7 @@ class OrganisationService {
 
   static addOrganisation = async (orgObject) => {
     const organisation = new Organisation(orgObject);
-    
+
     if (!orgObject[TableFields.orgCEO][TableFields.email]) {
       throw new ValidationError(ValidationMsgs.EmailEmpty);
     }
@@ -105,6 +121,52 @@ class OrganisationService {
       { $set: { [TableFields.orgAdmin]: { ...orgObject } } },
       { new: true }
     );
+  };
+
+  static deleteMyReferences = async (
+    cascadeDeleteMethodReference,
+    tableName,
+    ...referenceId
+  ) => {
+    console.log('Organisation');
+    
+    let records = undefined;
+    // console.log(cascadeDeleteMethodReference, tableName, ...referenceId);
+    switch (tableName) {
+      case TableNames.Organisation:
+        console.log('switch org');
+        
+        records = await Organisation.find({
+          [TableFields.ID]: {
+            $in: referenceId,
+          },
+        });
+        console.log("records org", records);
+        break;
+    }
+    if (records && records.length > 0) {
+      let deleteRecordIds = records.map((a) => a[TableFields.ID]);
+      console.log("deleteRecordIds org", deleteRecordIds);
+
+      await Organisation.deleteMany({
+        [TableFields.ID]: {
+          $in: deleteRecordIds,
+        },
+      });
+
+      if (tableName != TableNames.Organisation) {
+        //It means that the above objects are deleted on request from model's references (And not from model itself)
+        console.log("======");
+
+        cascadeDeleteMethodReference.call(
+          {
+            ignoreSelfCall: true,
+          },
+          TableNames.College,
+          ...deleteRecordIds
+        ); //So, let's remove references which points to this model
+      }
+    }
   };
 }
 
@@ -136,11 +198,11 @@ const ProjectionBuilder = class {
       projection[TableFields.orgAdmin] = 1;
       return this;
     };
-    this.withoutSuperAdminAndUniqueId=()=>{
-        projection[TableFields.superAdminResponsible] = 0;
-        projection[TableFields.uniqueId]=0;
-        return this;
-    }
+    this.withoutSuperAdminAndUniqueId = () => {
+      projection[TableFields.superAdminResponsible] = 0;
+      projection[TableFields.uniqueId] = 0;
+      return this;
+    };
     this.execute = async () => {
       return await methodToExecute.call(projection);
     };

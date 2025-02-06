@@ -9,87 +9,92 @@ const router = API.configRoute("/orgAdmin")
 
   // Auth routes
   .addPath("/login")
-  .asPOST(AuthController.postLogin)
+  .asPOST(AuthController.login)
   .build()
 
   .addPath("/forgotpassword")
-  .asPOST(AuthController.postForgotPassword)
+  .asPOST(AuthController.forgotPassword)
+  .build()
+
+  .addPath("/logout")
+  .asPOST(AuthController.logout)
+  .useOrganisationAuth()
   .build()
 
   // Employee routes
   .addPath("/add-employee")
-  .asPOST(EmployeeController.postAddEmployee)
+  .asPOST(EmployeeController.addEmployee)
   .useOrganisationAuth()
   .build()
 
   .addPath("/edit-employee")
-  .asPOST(EmployeeController.postEditEmployee)
+  .asPOST(EmployeeController.editEmployee)
   .useOrganisationAuth()
   .build()
 
   .addPath(`/delete-employee/:${TableFields.ID}`)
-  .asPOST(EmployeeController.postDeleteEmployee)
+  .asPOST(EmployeeController.deleteEmployee)
   .useOrganisationAuth()
   .build()
 
   //Department routes
 
   .addPath("/add-department")
-  .asPOST(DepartmentController.postAddDepartment)
+  .asPOST(DepartmentController.addDepartment)
   .useOrganisationAuth()
   .build()
 
   .addPath("/edit-department")
-  .asPOST(DepartmentController.postEditDepartment)
+  .asPOST(DepartmentController.editDepartment)
   .useOrganisationAuth()
   .build()
 
   .addPath(`/delete-department/:${TableFields.ID}`)
-  .asPOST(DepartmentController.postDeleteDepartment)
+  .asPOST(DepartmentController.deleteDepartment)
   .useOrganisationAuth()
   .build()
 
   // Bonus routes
 
   .addPath(`/add-bonus/:${TableFields.ID}`)
-  .asPOST(EmployeeBonusController.postAddBonus)
+  .asPOST(EmployeeBonusController.addBonus)
   .useOrganisationAuth()
   .build()
 
   .addPath(`/update-bonus/:${TableFields.ID}`)
-  .asPOST(EmployeeBonusController.postUpdateBonus)
+  .asPOST(EmployeeBonusController.updateBonus)
   .useOrganisationAuth()
   .build()
  
   .addPath(`/delete-bonus/:${TableFields.idString}`)
-  .asPOST(EmployeeBonusController.postDeleteBonus)
+  .asPOST(EmployeeBonusController.deleteBonus)
   .useOrganisationAuth()
   .build()
 
   // Ajax rutes
 
   .addPath(`/ajax-ceo`)
-  .asPOST(AjaxController.postAjaxCeo)
+  .asPOST(AjaxController.ajaxCeo)
   .useOrganisationAuth()
   .build()
 
   .addPath(`/ajax-org-name`)
-  .asPOST(AjaxController.postAjaxOrgName)
+  .asPOST(AjaxController.ajaxOrgName)
   .useOrganisationAuth()
   .build()
 
   .addPath(`/ajax-org-Id`)
-  .asPOST(AjaxController.postAjaxOrgId)
+  .asPOST(AjaxController.ajaxOrgId)
   .useOrganisationAuth()
   .build()
 
   .addPath("/ajax-manager-email")
-  .asPOST(AjaxController.postAjaxManagerEmail)
+  .asPOST(AjaxController.ajaxManagerEmail)
   .useOrganisationAuth()
   .build()
 
   .addPath("/ajax-dep-name")
-  .asPOST(AjaxController.postAjaxDepName)
+  .asPOST(AjaxController.ajaxDepName)
   .useOrganisationAuth()
   .build()
 

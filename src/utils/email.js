@@ -68,7 +68,7 @@ async function sendEmail(
   receiverEmail,
   subject,
   htmlBodyContents,
-  fromAddress = "extradrive1519@gmail.com"
+  fromAddress
 ) {
   let transporter = getTransportInfo();
   let mailOptions = {

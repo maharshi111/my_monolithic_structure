@@ -7,7 +7,7 @@ const ValidationError = require("../../utils/ValidationError");
 const SuperAdminService = require("../../db/services/SuperAdminServices");
 const emailUtil = require("../../utils/email");
 const Util = require("../../utils/util");
-exports.postSignUp = async (req, res, next) => {
+exports.signUp = async (req, res, next) => {
   console.log("==>", req.body);
 
   const userName = req.body.userName;
@@ -41,7 +41,7 @@ exports.postSignUp = async (req, res, next) => {
   await SuperAdminService.saveSuperAdmim(superAdmin);
 };
 
-exports.postLogin = async (req, res, next) => {
+exports.login = async (req, res, next) => {
   let email = req.body[TableFields.email];
 
   if (!email) throw new ValidationError(ValidationMsgs.EmailEmpty);
@@ -63,10 +63,19 @@ exports.postLogin = async (req, res, next) => {
   } else throw new ValidationError(ValidationMsgs.UnableToLogin);
 };
 
-exports.postForgotPassword = async (req, res) => {
+exports.forgotPassword = async (req, res) => {
+  
+  if (!req.body[TableFields.email]) throw new ValidationError(ValidationMsgs.EmailEmpty);
+
   const receiverEmail = req.body[TableFields.email].trim().toLowerCase();
 
-  if (!receiverEmail) throw new ValidationError(ValidationMsgs.EmailEmpty);
-
+  if (!await SuperAdminService.findByEmail(receiverEmail).withBasicInfo().execute()){
+     throw new ValidationError(ValidationMsgs.EmailRecordNotExists);
+  }
   await emailUtil.SendForgotPasswordEmail(receiverEmail);
+};
+
+exports.logout = async (req) => {
+  const headerToken = req.header("Authorization").replace("Bearer ", "");
+  SuperAdminService.removeAuth(req.superAdminId, headerToken);
 };

@@ -39,7 +39,7 @@ const superAdminSchema = new Schema(
       type: String,
       trim: true,
       minlength: [5, ValidationMsgs.PasswordLength],
-      maxlength: [15,ValidationMsgs.PasswordLength],
+      maxlength: [15, ValidationMsgs.PasswordLength],
       required: [true, ValidationMsgs.PasswordEmpty],
     },
     [TableFields.tokens]: [
@@ -107,5 +107,5 @@ superAdminSchema.methods.createAuthToken = function (superAdmin) {
   return token;
 };
 
-superAdminSchema.index({[TableFields.email]:1},{unique:true});
+superAdminSchema.index({ [TableFields.email]: 1 }, { unique: true });
 module.exports = mongoose.model(TableNames.SuperAdmin, superAdminSchema);

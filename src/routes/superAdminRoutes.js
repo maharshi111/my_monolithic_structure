@@ -9,60 +9,64 @@ const router = API.configRoute("/superAdmin")
   // Auth routes
 
   .addPath("/signup")
-  .asPOST(AuthController.postSignUp)
+  .asPOST(AuthController.signUp)
   .build()
 
   .addPath("/login")
-  .asPOST(AuthController.postLogin)
+  .asPOST(AuthController.login)
   .build()
 
   .addPath("/forgotpassword")
-  .asPOST(AuthController.postForgotPassword)
+  .asPOST(AuthController.forgotPassword)
   .build()
 
+  .addPath("/logout")
+  .asPOST(AuthController.logout)
+  .useSuperAdminAuth()
+  .build()
   //   Organisation routes
 
   .addPath("/add-organisation")
-  .asPOST(OrganisationController.postAddOrganisation)
+  .asPOST(OrganisationController.addOrganisation)
   .useSuperAdminAuth()
   .build()
 
   .addPath("/edit-organisation")
-  .asPOST(OrganisationController.postEditOrganisation)
+  .asPOST(OrganisationController.editOrganisation)
   .useSuperAdminAuth()
   .build()
 
   .addPath(`/delete-organisation/:${TableFields.ID}`)
-  .asPOST(OrganisationController.postDeleteOrganisation)
+  .asPOST(OrganisationController.deleteOrganisation)
   .useSuperAdminAuth()
   .build()
 
   // Organisation Admin routes
 
   .addPath("/add-edit-admin")
-  .asPOST(OrganisationAdminController.postAddEditAdmin)
+  .asPOST(OrganisationAdminController.addEditAdmin)
   .useSuperAdminAuth()
   .build()
 
   // Ajax routes
 
   .addPath("/ajax-validation")
-  .asPOST(AjaxController.postAjaxValidation)
+  .asPOST(AjaxController.ajaxValidation)
   .useSuperAdminAuth()
   .build()
 
   .addPath("/ajax-pass-validation")
-  .asPOST(AjaxController.postAjaxPassValidation)
+  .asPOST(AjaxController.ajaxPassValidation)
   .useSuperAdminAuth()
   .build()
 
   .addPath("/ajax-org-ceo")
-  .asPOST(AjaxController.postAjaxAddCeo)
+  .asPOST(AjaxController.ajaxAddCeo)
   .useSuperAdminAuth()
   .build()
 
   .addPath("/ajax-admin-validation")
-  .asPOST(AjaxController.postAjaxAddAdmin)
+  .asPOST(AjaxController.ajaxAddAdmin)
   .useSuperAdminAuth()
   .build()
 
