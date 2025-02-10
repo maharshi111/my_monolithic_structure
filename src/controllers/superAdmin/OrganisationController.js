@@ -81,7 +81,7 @@ exports.deleteOrganisation = async (req, res, next) => {
     throw new ValidationError(ValidationMsgs.IdEmpty);
   }
   
-  if (!(await OrganisationService.findByIdOrgId(orgId).withBasicInfoOrg().execute())) {
+  if (!(await OrganisationService.recordExists(orgId))) {
     throw new ValidationError(ValidationMsgs.RecordNotFound);
   }
   console.log("&&&");

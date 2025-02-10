@@ -12,8 +12,16 @@ const Employee = require("../models/employee");
 const Department = require("../models/department");
 const emailUtil = require("../../utils/email");
 const employee = require("../models/employee");
+const { MongoUtil } = require("../mongoose");
 
 class OrganisationService {
+
+ static recordExists = async (recordId) => {
+        return await Organisation.exists({
+            [TableFields.ID]: MongoUtil.toObjectId(recordId),
+        });
+    };
+
   static findOneOrgByEmail = (ceoEmail) => {
     return new ProjectionBuilder(async function () {
       return await Organisation.findOne(
@@ -156,7 +164,7 @@ class OrganisationService {
 
       if (tableName != TableNames.Organisation) {
         //It means that the above objects are deleted on request from model's references (And not from model itself)
-        console.log("======");
+        console.log("check org service");
 
         cascadeDeleteMethodReference.call(
           {

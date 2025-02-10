@@ -12,8 +12,14 @@ const Employee = require("../models/employee");
 const Department = require("../models/department");
 const emailUtil = require("../../utils/email");
 const employee = require("../models/employee");
-
+const { MongoUtil } = require("../mongoose");
 class EmployeeService {
+  static recordExists = async (recordId) => {
+    return await Employee.exists({
+      [TableFields.ID]: MongoUtil.toObjectId(recordId),
+    });
+  };
+
   static findEmpByOrgId = (orgId) => {
     return new ProjectionBuilder(async function () {
       return await Employee.find(
@@ -65,10 +71,13 @@ class EmployeeService {
     console.log("bonusId", bonusId);
 
     return new ProjectionBuilder(async function () {
-      return await Employee.findOne({
-        [TableFields.ID]: empId,
-        [`${TableFields.bonuses}.${TableFields.ID}`]: bonusId,
-      },this);
+      return await Employee.findOne(
+        {
+          [TableFields.ID]: empId,
+          [`${TableFields.bonuses}.${TableFields.ID}`]: bonusId,
+        },
+        this
+      );
     });
   };
 
@@ -142,45 +151,57 @@ class EmployeeService {
     await Employee.findByIdAndDelete(empId);
   };
 
-  
-  static deleteMyReferences = async (cascadeDeleteMethodReference, tableName, ...referenceId) => {
+  static deleteMyReferences = async (
+    cascadeDeleteMethodReference,
+    tableName,
+    ...referenceId
+  ) => {
     let records = undefined;
-    console.log('Employee');
+    console.log("Employee");
     // console.log(cascadeDeleteMethodReference, tableName, ...referenceId);
     switch (tableName) {
-        case TableNames.Organisation:
-            console.log('switch emp');
-            
-            records = await Employee.find({
-                [TableFields.organisationId]: {
-                    $in: referenceId,
-                },
-            });
-            break;
+      case TableNames.Organisation:
+        console.log("switch emp org");
+
+        records = await Employee.find({
+          [TableFields.organisationId]: {
+            $in: referenceId,
+          },
+        });
+        break;
+
+      case TableNames.Employee:
+        console.log("switch emp emp");
+        records = await Employee.find({
+          [TableFields.ID]: {
+            $in: referenceId,
+          },
+        });
+        break;
     }
     if (records && records.length > 0) {
-        let deleteRecordIds = records.map((a) => a[TableFields.ID]);
-        console.log('deleteRecordIds Employee',deleteRecordIds);
-        await Employee.deleteMany({
-            [TableFields.ID]: {
-                $in: deleteRecordIds,
-            },
-        });
+      let deleteRecordIds = records.map((a) => a[TableFields.ID]);
+      console.log("deleteRecordIds Employee", deleteRecordIds);
+      await Employee.deleteMany({
+        [TableFields.ID]: {
+          $in: deleteRecordIds,
+        },
+      });
+      
+      if (tableName != TableNames.Employee) {
+        //It means that the above objects are deleted on request from model's references (And not from model itself)
+        console.log("check emp service");
 
-        // if (tableName != TableNames.College) {
-        //     //It means that the above objects are deleted on request from model's references (And not from model itself)
-        //     cascadeDeleteMethodReference.call(
-        //         {
-        //             ignoreSelfCall: true,
-        //         },
-        //         TableNames.College,
-        //         ...deleteRecordIds
-        //     ); //So, let's remove references which points to this model
-        // }
+        cascadeDeleteMethodReference.call(
+          {
+            ignoreSelfCall: true,
+          },
+          TableNames.Employee,
+          ...deleteRecordIds
+        ); //So, let's remove references which points to this model
+      }
     }
-};
-
-
+  };
 }
 
 const ProjectionBuilder = class {

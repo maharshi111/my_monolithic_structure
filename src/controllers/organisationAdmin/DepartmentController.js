@@ -1,6 +1,7 @@
 const {
     TableFields,
     ValidationMsgs,
+    TableNames,
     InterfaceTypes,
 } = require("../../utils/constants");
 const ValidationError = require("../../utils/ValidationError");
@@ -11,6 +12,7 @@ const EmployeeService = require("../../db/services/EmployeeService");
 const DepartmentService = require('../../db/services/DepartmentService');
 var mongoose = require('mongoose');
 const { MongoUtil } = require("../../db/mongoose");
+const ServiceManager = require("../../db/serviceManager");
 
 
 
@@ -47,7 +49,15 @@ exports.deleteDepartment = async(req,res,next) =>{
         throw new ValidationError(ValidationMsgs.IdEmpty);
     }
 
-    await DepartmentService.deleteDepartmentById(depId);
+    // await DepartmentService.deleteDepartmentById(depId);
+
+    if (!(await DepartmentService.recordExists(depId))) {
+        throw new ValidationError(ValidationMsgs.RecordNotFound);
+    }
+
+    await ServiceManager.cascadeDelete(TableNames.Department,depId);
+
+
 }
 
 
