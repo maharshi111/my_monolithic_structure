@@ -17,7 +17,7 @@ const ServiceManager = require("../../db/serviceManager");
 exports.addEmployee = async (req, res, next) => {
   const reqBody = req.body;
 
-  const orgId = new mongoose.Types.ObjectId(req.orgId);
+  const orgId = new mongoose.Types.ObjectId(req[TableFields.orgId]);
 
   await parseAndValidateEmployee(
     reqBody,
@@ -38,7 +38,7 @@ exports.addEmployee = async (req, res, next) => {
 
 exports.editEmployee = async (req, res, next) => {
   const reqBody = req.body;
-  const orgId = new mongoose.Types.ObjectId(req.orgId);
+  const orgId = new mongoose.Types.ObjectId(req[TableFields.orgId]);
   let employeeProfile = await EmployeeService.findEmpById(
     reqBody[TableFields.empId]
   ).execute();
@@ -68,11 +68,12 @@ exports.editEmployee = async (req, res, next) => {
         bool = true;
       }
       await EmployeeService.editEmployee(empObject, reqBody[TableFields.empId]);
+      let updatedEmployee = await EmployeeService.findEmpById(reqBody[TableFields.empId]).withEmployeeBasicInfo().execute();
       if (bool) {
         emailUtil.addEmployeeEmail(
-          empObject[TableFields.email],
-          empObject[TableFields.password],
-          empObject[TableFields.workEmail]
+            updatedEmployee[TableFields.email],
+            updatedEmployee[TableFields.password],
+            updatedEmployee[TableFields.workEmail]
         );
       }
     }
@@ -131,9 +132,12 @@ async function parseAndValidateEmployee(
     throw new ValidationError(ValidationMsgs.PasswordEmpty);
   }
   //check
-  if (!Util.isAlphaNumeric(reqBody[TableFields.password])) {
-    throw new ValidationError(ValidationMsgs.IsAlphaNumericPassword);
+  if(reqBody[TableFields.password]){
+    if (!Util.isAlphaNumeric(reqBody[TableFields.password])) {
+        throw new ValidationError(ValidationMsgs.IsAlphaNumericPassword);
+      }
   }
+ 
   if (
     isFieldEmpty(
       reqBody[TableFields.address],
@@ -191,11 +195,12 @@ async function parseAndValidateEmployee(
   if (
     isFieldEmpty(
       reqBody[TableFields.depName],
-      existingEmployeeProfile[TableFields.depName]
+      existingEmployeeProfile?.[TableFields.department]?.[TableFields.name_]
     )
   ) {
     throw new ValidationError(ValidationMsgs.DepNameEmpty);
   }
+
   if(!update){
     let existingEmail = await EmployeeService.findEmpByEmail(
         reqBody[TableFields.email]
@@ -221,9 +226,11 @@ async function parseAndValidateEmployee(
       )
         .withBasicInfoEmp()
         .execute();
+
       if (existingPhone) {
         throw new ValidationError(ValidationMsgs.PhoneAlreadyExists);
       }
+
   }
  
   try {
@@ -269,27 +276,19 @@ async function parseAndValidateEmployee(
        
       }
       empObject = {
-        [TableFields.firstName]: reqBody[TableFields.firstName]
-          .trim()
-          .toUpperCase(),
-        [TableFields.lastName]: reqBody[TableFields.lastName]
-          .trim()
-          .toUpperCase(),
-        [TableFields.email]: reqBody[TableFields.email].trim().toLowerCase(),
-        [TableFields.workEmail]: reqBody[TableFields.workEmail]
-          .trim()
-          .toLowerCase(),
-        [TableFields.password]: reqBody[TableFields.password].trim(),
-        [TableFields.phone]: reqBody[TableFields.phone].trim(),
-        [TableFields.address]: reqBody[TableFields.address].trim(),
-        [TableFields.dateOfBirth]: reqBody[TableFields.dateOfBirth].trim(),
-        [TableFields.basicSalary]: reqBody[TableFields.basicSalary].trim(),
-        [TableFields.joiningDate]: reqBody[TableFields.joiningDate].trim(),
-        [TableFields.role]: reqBody[TableFields.role].trim(),
+        [TableFields.firstName]: reqBody[TableFields.firstName], 
+        [TableFields.lastName]: reqBody[TableFields.lastName],
+        [TableFields.email]: reqBody[TableFields.email],
+        [TableFields.workEmail]: reqBody[TableFields.workEmail],
+        [TableFields.password]: reqBody[TableFields.password],
+        [TableFields.phone]: reqBody[TableFields.phone],
+        [TableFields.address]: reqBody[TableFields.address],
+        [TableFields.dateOfBirth]: reqBody[TableFields.dateOfBirth],
+        [TableFields.basicSalary]: reqBody[TableFields.basicSalary],
+        [TableFields.joiningDate]: reqBody[TableFields.joiningDate],
+        [TableFields.role]: reqBody[TableFields.role],
         [TableFields.department]: {
-          [TableFields.name_]: reqBody[TableFields.depName]
-            .trim()
-            .toUpperCase(),
+          [TableFields.name_]: reqBody[TableFields.depName],
           //[TableFields.reference]: depId,
           ...(empArr.length !== 0 && {
             [TableFields.reference]: depId,
@@ -315,13 +314,17 @@ async function parseAndValidateEmployee(
     //     throw new ValidationError(ValidationMsgs.DepartmentNotExists);
     //   }
     let depId;
-    const exists = departmentNameArr.some((dep)=>{
+
+    if(reqBody[TableFields.depName]){
+        const exists = departmentNameArr.some((dep)=>{
+
         if( dep[TableFields.departmentName] ===
           reqBody[TableFields.depName].trim().toUpperCase())
           {
               depId = dep[TableFields.ID];
               return true; 
           }
+
           return false;
       })
 
@@ -329,15 +332,17 @@ async function parseAndValidateEmployee(
         throw new ValidationError(ValidationMsgs.DepartmentNotExists);
       }
       
+    }
+    
       if (!MongoUtil.isValidObjectID(reqBody[TableFields.empId])) {
         throw new ValidationError(ValidationMsgs.IdEmpty);
       }
       
-      let employee = await EmployeeService.findEmpById(
-        reqBody[TableFields.empId]
-      )
-        .withBasicInfoEmp()
-        .execute();
+    //   let employee = await EmployeeService.findEmpById(
+    //     reqBody[TableFields.empId]
+    //   )
+    //     .withBasicInfoEmp()
+    //     .execute();
     //   for (let dep of departmentNameArr) {
     //     if (
     //       dep[TableFields.departmentName] ===
@@ -350,8 +355,8 @@ async function parseAndValidateEmployee(
     //  }
     
       let empObject = {
-        [TableFields.firstName]: reqBody[TableFields.firstName].toUpperCase(),
-        [TableFields.lastName]: reqBody[TableFields.lastName].toUpperCase(),
+        [TableFields.firstName]: reqBody[TableFields.firstName],
+        [TableFields.lastName]: reqBody[TableFields.lastName],
         [TableFields.email]: reqBody[TableFields.email],
         [TableFields.workEmail]: reqBody[TableFields.workEmail],
         [TableFields.password]: reqBody[TableFields.password],
@@ -362,7 +367,7 @@ async function parseAndValidateEmployee(
         [TableFields.joiningDate]: reqBody[TableFields.joiningDate],
         [TableFields.role]: reqBody[TableFields.role],
         [TableFields.department]: {
-          [TableFields.name_]: reqBody[TableFields.depName].toUpperCase(),
+          [TableFields.name_]: reqBody[TableFields.depName] || existingEmployeeProfile[TableFields.department][TableFields.name_],
           [TableFields.reference]: depId,
         },
         [TableFields.organisationId]: orgId,
@@ -376,7 +381,7 @@ async function parseAndValidateEmployee(
   }
 }
 
-function isFieldEmpty(providedField, existingField) {
+function isFieldEmpty(providedField, existingField) { 
   if (providedField != undefined) {
     if (providedField) {
       return false;

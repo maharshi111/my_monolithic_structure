@@ -77,5 +77,5 @@ exports.forgotPassword = async (req, res) => {
 
 exports.logout = async (req) => {
   const headerToken = req.header("Authorization").replace("Bearer ", "");
-  SuperAdminService.removeAuth(req.superAdminId, headerToken);
+  SuperAdminService.removeAuth(req[TableFields.superAdminId], headerToken);
 };

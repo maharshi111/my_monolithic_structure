@@ -14,7 +14,10 @@ const ServiceManager = require("../../db/serviceManager");
 
 exports.addOrganisation = async (req, res, next) => {
   const reqBody = req.body;
-
+  if (reqBody[TableFields.subscriptionStart]) {
+    reqBody[TableFields.subscriptionStart] =
+     new Date(reqBody[TableFields.subscriptionStart]).toISOString();
+  }
   await pasrseAndValidateOrganisation(
     reqBody,
     req,
@@ -48,13 +51,20 @@ exports.editOrganisation = async (req, res) => {
   if (!existingOrganisation) {
     throw new ValidationError(ValidationMsgs.RecordNotFound);
   }
-
+  console.log("===}}", existingOrganisation);
+  if (reqBody[TableFields.subscriptionStart]) {
+    reqBody[TableFields.subscriptionStart] = new Date(
+      reqBody[TableFields.subscriptionStart]
+    ).toISOString();
+  }
   await pasrseAndValidateOrganisation(
     reqBody,
     req,
     existingOrganisation,
     true,
     async (updatedFields) => {
+      console.log("this is updatedFields", updatedFields);
+
       let pastOrgCeo = await OrganisationService.findByIdOrgId(orgId)
         .withOrgCeo()
         .withUniqueId()
@@ -62,14 +72,16 @@ exports.editOrganisation = async (req, res) => {
 
       await OrganisationService.editOrganisation(updatedFields, orgId);
 
-      if (
-        pastOrgCeo[TableFields.orgCEO][TableFields.email] !==
-        reqBody[TableFields.ceoEmail].trim().toLowerCase()
-      ) {
-        await emailUtil.addOrganisationEmail(
-          reqBody[TableFields.ceoEmail].trim().toLowerCase(),
-          pastOrgCeo[TableFields.uniqueId]
-        );
+      if (reqBody[TableFields.ceoEmail]) {
+        if (
+          pastOrgCeo[TableFields.orgCEO][TableFields.email] !==
+          reqBody[TableFields.ceoEmail]
+        ) {
+          await emailUtil.addOrganisationEmail(
+            reqBody[TableFields.ceoEmail],
+            pastOrgCeo[TableFields.uniqueId]
+          );
+        }
       }
     }
   );
@@ -80,7 +92,7 @@ exports.deleteOrganisation = async (req, res, next) => {
   if (!MongoUtil.isValidObjectID(orgId)) {
     throw new ValidationError(ValidationMsgs.IdEmpty);
   }
-  
+
   if (!(await OrganisationService.recordExists(orgId))) {
     throw new ValidationError(ValidationMsgs.RecordNotFound);
   }
@@ -97,82 +109,166 @@ async function pasrseAndValidateOrganisation(
   isUpdate = false,
   onValidationCompleted = async () => {}
 ) {
-  if (isFieldEmpty(reqBody[TableFields.orgName])) {
+  if (
+    isFieldEmpty(
+      reqBody[TableFields.orgName],
+      existingOrganisation[TableFields.orgName]
+    )
+  ) {
     throw new ValidationError(ValidationMsgs.OrgNameEmpty);
   }
+  console.log("---------<>", existingOrganisation[TableFields.orgLinkedinUrl]);
 
-  if (isFieldEmpty(reqBody[TableFields.linkedinUrl])) {
+  if (
+    isFieldEmpty(
+      reqBody[TableFields.linkedinUrl],
+      existingOrganisation[TableFields.orgLinkedinUrl]
+    )
+  ) {
     throw new ValidationError(ValidationMsgs.LinkedinUrlEmpty);
   }
 
-  if (isFieldEmpty(reqBody[TableFields.websiteUrl])) {
+  if (
+    isFieldEmpty(
+      reqBody[TableFields.websiteUrl],
+      existingOrganisation[TableFields.orgWebsiteUrl]
+    )
+  ) {
     throw new ValidationError(ValidationMsgs.WebsiteUrlEmpty);
   }
 
-  if (isFieldEmpty(reqBody[TableFields.country])) {
+//   console.log(
+//     "!!!",
+//     existingOrganisation[TableFields.orgHeadOffice][TableFields.country]
+//   );
+  if (
+    isFieldEmpty(
+      reqBody[TableFields.country],
+      existingOrganisation?.[TableFields.orgHeadOffice]?.[TableFields.country]
+    )
+  ) {
     throw new ValidationError(ValidationMsgs.CountryEmpty);
   }
 
-  if (isFieldEmpty(reqBody[TableFields.city])) {
+  if (
+    isFieldEmpty(
+      reqBody[TableFields.city],
+      existingOrganisation?.[TableFields.orgHeadOffice]?.[TableFields.city]
+    )
+  ) {
     throw new ValidationError(ValidationMsgs.CityEmpty);
   }
 
-  if (isFieldEmpty(reqBody[TableFields.street])) {
+  if (
+    isFieldEmpty(
+      reqBody[TableFields.street],
+      existingOrganisation?.[TableFields.orgHeadOffice]?.[TableFields.street]
+    )
+  ) {
     throw new ValidationError(ValidationMsgs.StreetEmpty);
   }
 
-  if (isFieldEmpty(reqBody[TableFields.ceoName])) {
+  if (
+    isFieldEmpty(
+      reqBody[TableFields.ceoName],
+      existingOrganisation?.[TableFields.orgCEO]?.[TableFields.name_]
+    )
+  ) {
     throw new ValidationError(ValidationMsgs.OrgCeoEmpty);
   }
 
-  if (isFieldEmpty(reqBody[TableFields.postalCode])) {
+//   console.log(
+//     ">>>>>>>-",
+//     existingOrganisation[TableFields.orgHeadOffice][TableFields.postalCode]
+//   );
+
+  if (
+    isFieldEmpty(
+      reqBody[TableFields.postalCode],
+      existingOrganisation?.[TableFields.orgHeadOffice]?.[TableFields.postalCode]
+    )
+  ) {
     throw new ValidationError(ValidationMsgs.PostalCodeEmpty);
   }
 
-  if (reqBody[TableFields.postalCode].trim().length != 6) {
-    console.log("inside");
+  if (reqBody[TableFields.postalCode]) {
+    if (reqBody[TableFields.postalCode].length != 6) {
+      console.log("inside");
 
-    throw new ValidationError(ValidationMsgs.PostalCodeInvalid);
+      throw new ValidationError(ValidationMsgs.PostalCodeInvalid);
+    }
   }
 
-  if (isFieldEmpty(reqBody[TableFields.ceoEmail])) {
+  if (
+    isFieldEmpty(
+      reqBody[TableFields.ceoEmail],
+      existingOrganisation?.[TableFields.orgCEO]?.[TableFields.email]
+    )
+  ) {
     throw new ValidationError(ValidationMsgs.EmailEmpty);
   }
 
-  if (isFieldEmpty(reqBody[TableFields.empStrength])) {
+  if (
+    isFieldEmpty(
+      reqBody[TableFields.empStrength],
+      existingOrganisation[TableFields.employeeStrength]
+    )
+  ) {
     throw new ValidationError(ValidationMsgs.EmployeeStrengthEmpty);
   }
 
-  if (isFieldEmpty(reqBody[TableFields.subscriptionStart])) {
+  if (
+    isFieldEmpty(
+      reqBody[TableFields.subscriptionStart],
+      existingOrganisation[TableFields.startDateOfSubscription]
+    )
+  ) {
     throw new ValidationError(ValidationMsgs.DateEmpty);
   }
   //check
-  const result = Util.subscriptionStartInvalid(
-    reqBody[TableFields.subscriptionStart].trim()
-  );
-  console.log("this is start date", reqBody[TableFields.subscriptionStart]);
-  if (!result.success) {
-    throw new ValidationError(result.msg);
+  if (reqBody[TableFields.subscriptionStart]) {
+    const result = Util.subscriptionStartInvalid(
+      reqBody[TableFields.subscriptionStart].trim()
+    );
+    console.log("this is start date", reqBody[TableFields.subscriptionStart]);
+    if (!result.success) {
+      throw new ValidationError(result.msg);
+    }
   }
 
-  if (isFieldEmpty(reqBody[TableFields.subscriptionPeriod])) {
+  if (
+    isFieldEmpty(
+      reqBody[TableFields.subscriptionPeriod],
+      existingOrganisation[TableFields.subscriptionPeriod]
+    )
+  ) {
     throw new ValidationError(ValidationMsgs.SubscriptionPeriodEmpty);
   }
   //check
-  if (
-    reqBody[TableFields.subscriptionPeriod].trim() <= 0 ||
-    reqBody[TableFields.subscriptionPeriod].trim() > 60
-  ) {
-    throw new ValidationError(ValidationMsgs.SubscriptionPeriodInvalid);
+  if (reqBody[TableFields.subscriptionPeriod]) {
+    if (
+      reqBody[TableFields.subscriptionPeriod].trim() <= 0 ||
+      reqBody[TableFields.subscriptionPeriod].trim() > 60
+    ) {
+      throw new ValidationError(ValidationMsgs.SubscriptionPeriodInvalid);
+    }
   }
 
-  if (isFieldEmpty(reqBody[TableFields.charge])) {
+  if (
+    isFieldEmpty(
+      reqBody[TableFields.charge],
+      existingOrganisation[TableFields.subscriptionCharge]
+    )
+  ) {
     throw new ValidationError(ValidationMsgs.SubscriptionChargeEmpty);
   }
   //check
-  if (+reqBody[TableFields.charge].trim() > 999999) {
-    throw new ValidationError(ValidationMsgs.SubscriptionChargeInvalid);
+  if (reqBody[TableFields.charge]) {
+    if (+reqBody[TableFields.charge].trim() > 999999) {
+      throw new ValidationError(ValidationMsgs.SubscriptionChargeInvalid);
+    }
   }
+
   try {
     function uuidv4() {
       return "10000000-1000-4000-8000-100000000000".replace(/[018]/g, (c) =>
@@ -186,33 +282,40 @@ async function pasrseAndValidateOrganisation(
     // console.log("this is superAdminId:", req.superAdminId);
 
     const organisation = {
-      [TableFields.orgName]: reqBody[TableFields.orgName].toUpperCase(),
-      [TableFields.orgLinkedinUrl]: reqBody[TableFields.linkedinUrl].trim(),
-      [TableFields.orgWebsiteUrl]: reqBody[TableFields.websiteUrl].trim(),
+      [TableFields.orgName]: reqBody[TableFields.orgName],
+      [TableFields.orgLinkedinUrl]: reqBody[TableFields.linkedinUrl],
+      [TableFields.orgWebsiteUrl]: reqBody[TableFields.websiteUrl],
       [TableFields.orgHeadOffice]: {
-        [TableFields.city]: reqBody[TableFields.city].trim(),
-        [TableFields.street]: reqBody[TableFields.street].trim(),
-        [TableFields.country]: reqBody[TableFields.country].trim(),
-        [TableFields.postalCode]: reqBody[TableFields.postalCode].trim(),
+        [TableFields.city]:
+          reqBody[TableFields.city] ||
+          existingOrganisation[TableFields.orgHeadOffice][TableFields.city],
+        [TableFields.street]:
+          reqBody[TableFields.street] ||
+          existingOrganisation[TableFields.orgHeadOffice][TableFields.street],
+        [TableFields.country]:
+          reqBody[TableFields.country] ||
+          existingOrganisation[TableFields.orgHeadOffice][TableFields.country],
+        [TableFields.postalCode]:
+          reqBody[TableFields.postalCode] ||
+          existingOrganisation[TableFields.orgHeadOffice][
+            TableFields.postalCode
+          ],
       },
       [TableFields.orgCEO]: {
-        [TableFields.name_]: reqBody[TableFields.ceoName].trim(),
-        [TableFields.email]: reqBody[TableFields.ceoEmail].trim().toLowerCase(),
+        [TableFields.name_]:
+          reqBody[TableFields.ceoName] ||
+          existingOrganisation[TableFields.orgCEO][TableFields.name_],
+        [TableFields.email]:
+          reqBody[TableFields.ceoEmail] ||
+          existingOrganisation[TableFields.orgCEO][TableFields.email],
       },
-      [TableFields.employeeStrength]: Number(
-        reqBody[TableFields.empStrength].trim()
-      ),
-      [TableFields.startDateOfSubscription]: new Date(
-        reqBody[TableFields.subscriptionStart].trim()
-      ).toISOString(),
-      [TableFields.subscriptionPeriod]: Number(
-        reqBody[TableFields.subscriptionPeriod].trim()
-      ),
-      [TableFields.subscriptionCharge]: Number(
-        reqBody[TableFields.charge].trim()
-      ),
+      [TableFields.employeeStrength]: reqBody[TableFields.empStrength],
+      [TableFields.startDateOfSubscription]:
+        reqBody[TableFields.subscriptionStart],
+      [TableFields.subscriptionPeriod]: reqBody[TableFields.subscriptionPeriod],
+      [TableFields.subscriptionCharge]: reqBody[TableFields.charge],
       ...(!isUpdate && {
-        [TableFields.superAdminResponsible]: req.superAdminId,
+        [TableFields.superAdminResponsible]: req[TableFields.superAdminId],
         [TableFields.uniqueId]: uId,
       }),
     };

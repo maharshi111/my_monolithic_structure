@@ -34,7 +34,7 @@ const orgAuth = async (req, res, next) => {
     if (!orgAdmin) {
       throw new ValidationError();
     }
-    req.orgId = orgAdmin[TableFields.ID];
+    req[TableFields.orgId] = orgAdmin[TableFields.ID];
     next();
   } catch (e) {
     if (!(e instanceof ValidationError)) {

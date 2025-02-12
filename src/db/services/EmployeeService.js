@@ -144,7 +144,11 @@ class EmployeeService {
   };
 
   static editEmployee = async (empObject, empId) => {
-    await Employee.findByIdAndUpdate(empId, { $set: { ...empObject } });
+    await Employee.findByIdAndUpdate(
+      empId,
+      { ...empObject },
+      { runValidators: true }
+    );
   };
 
   static deleteEmployee = async (empId) => {
@@ -187,7 +191,7 @@ class EmployeeService {
           $in: deleteRecordIds,
         },
       });
-      
+
       if (tableName != TableNames.Employee) {
         //It means that the above objects are deleted on request from model's references (And not from model itself)
         console.log("check emp service");
@@ -253,6 +257,7 @@ const ProjectionBuilder = class {
       projection[TableFields.workEmail] = 1;
       projection[TableFields.ID] = 1;
       projection[TableFields.organisationId] = 1;
+      projection[TableFields.password]=1;
       return this;
     };
     this.execute = async () => {

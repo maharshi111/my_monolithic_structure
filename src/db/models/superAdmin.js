@@ -99,7 +99,7 @@ superAdminSchema.methods.createAuthToken = function (superAdmin) {
   const token = jwt.sign(
     {
       [TableFields.email]: superAdmin[TableFields.email],
-      superAdminId: superAdmin[TableFields.ID],
+      [TableFields.superAdminId]: superAdmin[TableFields.ID],
     },
     process.env.JWT_ADMIN_PK,
     { expiresIn: "5h" }

@@ -25,7 +25,7 @@ const superAdminAuth = async (req, res, next) => {
       throw new ValidationError(ValidationMsgs.DecodedTokenFail);
     }
     const superAdmin = await SuperAdminService.getUserByIdAndToken(
-      decoded.superAdminId,
+      decoded[TableFields.superAdminId],
       headerToken
     )
       .withBasicInfo()
@@ -35,7 +35,7 @@ const superAdminAuth = async (req, res, next) => {
     if (!superAdmin) {
       throw new ValidationError();
     }
-    req.superAdminId = superAdmin[TableFields.ID];
+    req[TableFields.superAdminId] = superAdmin[TableFields.ID];
     next();
   } catch (e) {
     if (!(e instanceof ValidationError)) {

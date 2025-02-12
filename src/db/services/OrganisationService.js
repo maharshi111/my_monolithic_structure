@@ -15,12 +15,11 @@ const employee = require("../models/employee");
 const { MongoUtil } = require("../mongoose");
 
 class OrganisationService {
-
- static recordExists = async (recordId) => {
-        return await Organisation.exists({
-            [TableFields.ID]: MongoUtil.toObjectId(recordId),
-        });
-    };
+  static recordExists = async (recordId) => {
+    return await Organisation.exists({
+      [TableFields.ID]: MongoUtil.toObjectId(recordId),
+    });
+  };
 
   static findOneOrgByEmail = (ceoEmail) => {
     return new ProjectionBuilder(async function () {
@@ -70,19 +69,16 @@ class OrganisationService {
 
   static removeAuth = async (adminId, authToken) => {
     await Organisation.updateOne(
-        {
-            [TableFields.ID]: adminId,
+      {
+        [TableFields.ID]: adminId,
+      },
+      {
+        $pull: {
+          [TableFields.tokens]: { [TableFields.token]: authToken },
         },
-        {
-            $pull: {
-                [TableFields.tokens]: {[TableFields.token]: authToken},
-            },
-        }
+      }
     );
-};
-
-
-
+  };
 
   static getUserByIdAndToken = (orgId, token, lean = false) => {
     return new ProjectionBuilder(async function () {
@@ -119,8 +115,14 @@ class OrganisationService {
     await organisation.save();
   };
 
-  static editOrganisation = async (orgObj, orgId) => {
-    await Organisation.findByIdAndUpdate(orgId, { $set: { ...orgObj } });
+  static editOrganisation = async (orgObj, orgId = {}) => {
+    console.log("=====+++", orgObj);
+
+    await Organisation.findByIdAndUpdate(
+      orgId,
+      { ...orgObj },
+      {runValidators:true}
+    );
   };
 
   static addEditAdmin = async (orgObject, orgId) => {
@@ -136,14 +138,14 @@ class OrganisationService {
     tableName,
     ...referenceId
   ) => {
-    console.log('Organisation');
-    
+    console.log("Organisation");
+
     let records = undefined;
     // console.log(cascadeDeleteMethodReference, tableName, ...referenceId);
     switch (tableName) {
       case TableNames.Organisation:
-        console.log('switch org');
-        
+        console.log("switch org");
+
         records = await Organisation.find({
           [TableFields.ID]: {
             $in: referenceId,

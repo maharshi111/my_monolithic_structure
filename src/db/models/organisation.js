@@ -13,6 +13,7 @@ const organisationSchema = new Schema(
     [TableFields.orgName]: {
       type: String,
       trim: true,
+      uppercase: true,
       required: [true, ValidationMsgs.OrgNameEmpty],
     },
     [TableFields.orgAdmin]: {

@@ -127,7 +127,7 @@ exports.ajaxDepName = async (req, res, next) => {
   }
   const depName = req.body[TableFields.departmentName].trim().toUpperCase();
 
-  const orgId = new mongoose.Types.ObjectId(req.orgId);
+  const orgId = new mongoose.Types.ObjectId(req[TableFields.orgId]);
 
   let empArr = await EmployeeService.findEmpByOrgId(orgId)
     .withBasicInfoEmp()

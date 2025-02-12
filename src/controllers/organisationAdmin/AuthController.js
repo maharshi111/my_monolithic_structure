@@ -69,19 +69,18 @@ exports.login = async (req, res, next) => {
   //     }
   //   }
   const exists = companyNameArr.some((companyName) => {
-    
-    return  companyName[TableFields.uniqueId].toString() ===
+    return (
+      companyName[TableFields.uniqueId].toString() ===
       reqBody[TableFields.orgId].trim()
-    
+    );
   });
 
-//   if (count === false) {
-//     throw new ValidationError(ValidationMsgs.InvalidOrgId);
-//   }
-if(!exists){
-    throw new ValidationError(ValidationMsgs.InvalidOrgId); 
-}
- else {
+  //   if (count === false) {
+  //     throw new ValidationError(ValidationMsgs.InvalidOrgId);
+  //   }
+  if (!exists) {
+    throw new ValidationError(ValidationMsgs.InvalidOrgId);
+  } else {
     let orgObject = await OrganisationService.findOrgByUniqueId(
       reqBody[TableFields.orgId].trim()
     )
@@ -123,5 +122,5 @@ exports.forgotPassword = async (req, res) => {
 
 exports.logout = async (req) => {
   const headerToken = req.header("Authorization").replace("Bearer ", "");
-  OrganisationService.removeAuth(req.orgId, headerToken);
+  OrganisationService.removeAuth(req[TableFields.orgId], headerToken);
 };

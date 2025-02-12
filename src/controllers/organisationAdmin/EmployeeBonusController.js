@@ -53,13 +53,18 @@ exports.updateBonus = async (req, res, next) => {
 
   console.log("--->", existingData);
 
-  if (!existingData) {
+  let particularBonus = existingData.bonuses.filter(
+    (bonus) => bonus[TableFields.ID] == bonusId
+  );
+  console.log("<<<<<<<<", particularBonus[0]);
+
+  if (!particularBonus[0]) {
     throw new ValidationError(ValidationMsgs.RecordNotFound);
   }
 
   await parseAndValidateBonus(
     reqBody,
-    existingData,
+    particularBonus[0],
     true,
     async (updatedFields) => {
       console.log(
@@ -83,8 +88,6 @@ exports.updateBonus = async (req, res, next) => {
   );
 };
 
-
-
 exports.deleteBonus = async (req, res, next) => {
   console.log(req.params.idString);
   console.log(req.params);
@@ -93,60 +96,56 @@ exports.deleteBonus = async (req, res, next) => {
   let arr = str.split("+");
   const bonusId = arr[0];
   const empId = arr[1];
+  
   await EmployeeService.deleteBonus(empId, bonusId);
 };
 
 async function parseAndValidateBonus(
-    reqBody,
-    existingBonus = {},
-    isUpdate = false,
-    onValidationCompleted = async () => {}
-  ) {
-    if (
-      isFieldEmpty(
-        reqBody[TableFields.bonusType],
-        existingBonus[TableFields.bonusType]
-      )
-    ) {
-      throw new ValidationError(ValidationMsgs.BonusTypeEmpty);
-    }
-   
-    if (
-      isFieldEmpty(
-        reqBody[TableFields.bonusAmount],
-        existingBonus[TableFields.bonusAmount]
-      )
-    ) {
-      throw new ValidationError(ValidationMsgs.BonusAmountEmpty);
-    }
-    
-    
-    if (
-      isFieldEmpty(
-        reqBody[TableFields.dateGranted],
-        existingBonus[TableFields.dateGranted]
-      )
-    ) {
-      throw new ValidationError(ValidationMsgs.DateEmpty);
-    }
+  reqBody,
+  existingBonus = {},
+  isUpdate = false,
+  onValidationCompleted = async () => {}
+) {
+  console.log("hello",existingBonus[TableFields.bonusType]);
 
-   
-  
-    try {
-      let response = await onValidationCompleted({
-        [TableFields.bonusType]: reqBody[TableFields.bonusType].trim(),
-        [TableFields.bonusAmount]: reqBody[TableFields.bonusAmount].trim(),
-        [TableFields.dateGranted]: reqBody[TableFields.dateGranted],
-      });
-      return response;
-    } catch (error) {
-      throw error;
-    }
+  if (
+    isFieldEmpty(
+      reqBody[TableFields.bonusType],
+      existingBonus?.[TableFields.bonusType]
+    )
+  ) {
+    throw new ValidationError(ValidationMsgs.BonusTypeEmpty);
   }
 
+  if (
+    isFieldEmpty(
+      reqBody[TableFields.bonusAmount],
+      existingBonus?.[TableFields.bonusAmount]
+    )
+  ) {
+    throw new ValidationError(ValidationMsgs.BonusAmountEmpty);
+  }
 
+  if (
+    isFieldEmpty(
+      reqBody[TableFields.dateGranted],
+      existingBonus?.[TableFields.dateGranted]
+    )
+  ) {
+    throw new ValidationError(ValidationMsgs.DateEmpty);
+  }
 
-
+  try {
+    let response = await onValidationCompleted({
+      [TableFields.bonusType]: reqBody[TableFields.bonusType] ,
+      [TableFields.bonusAmount]: reqBody[TableFields.bonusAmount],
+      [TableFields.dateGranted]: reqBody[TableFields.dateGranted],
+    });
+    return response;
+  } catch (error) {
+    throw error;
+  }
+}
 
 function isFieldEmpty(providedField, existingField) {
   if (providedField != undefined) {

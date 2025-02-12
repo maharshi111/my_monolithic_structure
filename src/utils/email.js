@@ -68,7 +68,7 @@ async function sendEmail(
   receiverEmail,
   subject,
   htmlBodyContents,
-  fromAddress
+  fromAddress = "Onward"
 ) {
   let transporter = getTransportInfo();
   let mailOptions = {

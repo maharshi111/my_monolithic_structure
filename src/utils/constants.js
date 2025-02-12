@@ -230,6 +230,7 @@ const TableFields = (function () {
   TableFields.departmentId = "departmentId";
   TableFields.empId = "empId";
   TableFields.idString = "idString";
+  TableFields.superAdminId = 'superAdminId';
   TableFields._createdAt = "createdAt";
   TableFields._updatedAt = "updatedAt";
   return TableFields;

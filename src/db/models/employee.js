@@ -13,11 +13,13 @@ const employeeSchema = new Schema(
     [TableFields.firstName]: {
       type: String,
       trim: true,
+      uppercase: true,
       required: [true, ValidationMsgs.FirstNameEmpty],
     },
     [TableFields.lastName]: {
       type: String,
       trim: true,
+      uppercase: true,
       required: [true, ValidationMsgs.LastNameEmpty],
     },
     [TableFields.email]: {
@@ -63,8 +65,7 @@ const employeeSchema = new Schema(
       },
       set: (v) => Util.trimLeadingZeros(v),
       required: [true, ValidationMsgs.PhoneEmpty],
-      unique: true,
-      // set: (v) => Util.trimLeadingZeros(v),
+      unique: true
     },
     [TableFields.address]: {
       type: String,
@@ -105,6 +106,7 @@ const employeeSchema = new Schema(
       [TableFields.name_]: {
         type: String,
         trim: true,
+        uppercase: true,
         required: [true, ValidationMsgs.DepNameEmpty],
       },
     },

@@ -13,6 +13,7 @@ const departmentSchema = new Schema(
     [TableFields.departmentName]: {
       type: String,
       trim: true,
+      uppercase: true,
       required: [true, ValidationMsgs.DepNameEmpty],
     },
     [TableFields.manager]: {
