@@ -42,6 +42,11 @@ const superAdminSchema = new Schema(
       maxlength: [15, ValidationMsgs.PasswordLength],
       required: [true, ValidationMsgs.PasswordEmpty],
     },
+    [TableFields.organisationCount]: {
+      type: Number,
+      default: 0,
+      required: true,
+    },
     [TableFields.tokens]: [
       {
         _id: false,

@@ -13,6 +13,7 @@ const Department = require("../models/department");
 const emailUtil = require("../../utils/email");
 const employee = require("../models/employee");
 const { MongoUtil } = require("../mongoose");
+const organisation = require("../models/organisation");
 
 class OrganisationService {
   static recordExists = async (recordId) => {
@@ -121,7 +122,7 @@ class OrganisationService {
     await Organisation.findByIdAndUpdate(
       orgId,
       { ...orgObj },
-      {runValidators:true}
+      { runValidators: true }
     );
   };
 
@@ -177,6 +178,39 @@ class OrganisationService {
         ); //So, let's remove references which points to this model
       }
     }
+  };
+
+  static organisationListnerForSuperAdmin = async (superAdminReference) => {
+    return await organisation.aggregate([
+      {
+        $match: {
+          [TableFields.superAdminResponsible]:
+            MongoUtil.toObjectId(superAdminReference),
+        },
+      },
+      {
+        $group: {
+          [TableFields.ID]:"$"+ TableFields.superAdminResponsible,
+          [TableFields.totalOrganisation]: {
+            $sum: 1,
+          },
+        },
+      },
+      {
+        $project: {
+          [TableFields.totalOrganisation]: 1,   
+          [TableFields.ID]:1
+        },
+      },
+      {
+        $merge: {
+          into: TableNames.SuperAdmin,
+          on: "_id",
+          whenMatched: "merge",
+          whenNotMatched: "fail",
+        },
+      },
+    ]);
   };
 }
 

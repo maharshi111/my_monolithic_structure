@@ -233,6 +233,8 @@ const TableFields = (function () {
   TableFields.superAdminId = 'superAdminId';
   TableFields._createdAt = "createdAt";
   TableFields._updatedAt = "updatedAt";
+  TableFields.totalOrganisation = "totalOrganisation";
+  TableFields.organisationCount = "organisationCount";
   return TableFields;
 })();
 

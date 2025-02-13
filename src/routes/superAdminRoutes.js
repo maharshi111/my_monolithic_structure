@@ -3,6 +3,7 @@ const AuthController = require("../controllers/superAdmin/AuthController");
 const OrganisationAdminController = require("../controllers/superAdmin/OrganisationAdminController.js");
 const OrganisationController = require("../controllers/superAdmin/OrganisationController.js");
 const AjaxController = require("../controllers/superAdmin/AjaxController.js");
+const DahboardController = require('../controllers/superAdmin/DashboardController.js');
 const { TableFields } = require("../utils/constants");
 const router = API.configRoute("/superAdmin")
 
@@ -67,6 +68,13 @@ const router = API.configRoute("/superAdmin")
 
   .addPath("/ajax-admin-validation")
   .asPOST(AjaxController.ajaxAddAdmin)
+  .useSuperAdminAuth()
+  .build()
+
+  // superadmin dashboard routes
+
+  .addPath('/dashboard')
+  .asPOST(DahboardController.superAdminDashboard)
   .useSuperAdminAuth()
   .build()
 
