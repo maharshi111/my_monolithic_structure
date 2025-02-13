@@ -135,6 +135,14 @@ const organisationSchema = new Schema(
       type: Date,
       default: Date.now(),
     },
+    [TableFields.totalEmployeeCount]: {
+      type: Number,
+      default: 0,
+    },
+    [TableFields.totalDepartmentCount]: {
+      type: Number,
+      default: 0,
+    },
   },
   {
     timestamps: false,

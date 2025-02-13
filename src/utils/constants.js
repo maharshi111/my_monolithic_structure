@@ -235,6 +235,8 @@ const TableFields = (function () {
   TableFields._updatedAt = "updatedAt";
   TableFields.totalOrganisation = "totalOrganisation";
   TableFields.organisationCount = "organisationCount";
+  TableFields.totalEmployeeCount = "totalEmployeeCount";
+  TableFields.totalDepartmentCount = "totalDepartmentCount";
   return TableFields;
 })();
 

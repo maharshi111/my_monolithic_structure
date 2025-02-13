@@ -206,6 +206,34 @@ class EmployeeService {
       }
     }
   };
+
+  static employeeListnerForOrganisation = async (orgId) => {
+    await Employee.aggregate([
+      {
+        $match: {
+          [TableFields.organisationId]: MongoUtil.toObjectId(orgId),
+        },
+      },
+      {
+        $group: {
+          [TableFields.ID]: "$" + TableFields.organisationId,
+          totalEmployeeCount: {
+            $sum: 1,
+          },
+        },
+      },
+      {
+        $merge: {
+          into: TableNames.Organisation,
+          on: "_id",
+          whenMatched: "merge",
+          whenNotMatched: "fail",
+        },
+      },
+    ]);
+  };
+
+  
 }
 
 const ProjectionBuilder = class {
@@ -257,7 +285,7 @@ const ProjectionBuilder = class {
       projection[TableFields.workEmail] = 1;
       projection[TableFields.ID] = 1;
       projection[TableFields.organisationId] = 1;
-      projection[TableFields.password]=1;
+      projection[TableFields.password] = 1;
       return this;
     };
     this.execute = async () => {

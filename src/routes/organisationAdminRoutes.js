@@ -4,6 +4,7 @@ const EmployeeController = require("../controllers/organisationAdmin/EmployeeCon
 const DepartmentController = require("../controllers/organisationAdmin/DepartmentController");
 const EmployeeBonusController = require("../controllers/organisationAdmin/EmployeeBonusController");
 const AjaxController = require("../controllers/organisationAdmin/AjaxController");
+const DashboardController = require("../controllers/organisationAdmin/DashboardController");
 const { TableFields } = require("../utils/constants");
 const router = API.configRoute("/orgAdmin")
 
@@ -98,6 +99,15 @@ const router = API.configRoute("/orgAdmin")
   .useOrganisationAuth()
   .build()
 
+
+// DashBoard routes
+  .addPath('/employee-count')
+  .asPOST(DashboardController.employeeCount)
+  .useOrganisationAuth()
+  .build()
+
+
+  
   .getRouter();
 
 module.exports = router;
