@@ -14,6 +14,7 @@ const ServiceManager = require("../../db/serviceManager");
 
 exports.addOrganisation = async (req, res, next) => {
   const reqBody = req.body;
+  let superAdminReference =  req[TableFields.superAdminId];
   if (reqBody[TableFields.subscriptionStart]) {
     reqBody[TableFields.subscriptionStart] =
      new Date(reqBody[TableFields.subscriptionStart]).toISOString();
@@ -36,6 +37,7 @@ exports.addOrganisation = async (req, res, next) => {
       );
     }
   );
+   OrganisationService.organisationListnerForSuperAdmin(superAdminReference);
 };
 
 exports.editOrganisation = async (req, res) => {
@@ -89,6 +91,8 @@ exports.editOrganisation = async (req, res) => {
 
 exports.deleteOrganisation = async (req, res, next) => {
   const orgId = req.params[TableFields.ID];
+  let superAdminReference =  req[TableFields.superAdminId];
+
   if (!MongoUtil.isValidObjectID(orgId)) {
     throw new ValidationError(ValidationMsgs.IdEmpty);
   }
@@ -99,7 +103,13 @@ exports.deleteOrganisation = async (req, res, next) => {
   console.log("&&&");
 
   //await OrganisationService.deleteOrganisation(orgId);
+  console.log(1);
   await ServiceManager.cascadeDelete(TableNames.Organisation, orgId);
+  console.log('outside listner'); 
+  setTimeout(()=>{
+    OrganisationService.organisationListnerForSuperAdmin(superAdminReference);
+  },2000);
+
 };
 
 async function pasrseAndValidateOrganisation(

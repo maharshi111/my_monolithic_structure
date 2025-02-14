@@ -72,7 +72,7 @@ const router = API.configRoute("/orgAdmin")
   .useOrganisationAuth()
   .build()
 
-  // Ajax rutes
+  // Ajax routes
 
   .addPath(`/ajax-ceo`)
   .asPOST(AjaxController.ajaxCeo)
@@ -106,8 +106,12 @@ const router = API.configRoute("/orgAdmin")
   .useOrganisationAuth()
   .build()
 
-
+  .addPath('/department-count')
+  .asPOST(DashboardController.departmentCount)
+  .useOrganisationAuth()
+  .build()
   
+
   .getRouter();
 
 module.exports = router;

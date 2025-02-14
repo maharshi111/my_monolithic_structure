@@ -1,4 +1,5 @@
 const OrganisationService = require("../../db/services/OrganisationService");
+const SuperAdminService = require("../../db/services/SuperAdminServices");
 const {
     TableFields,
     ValidationMsgs,
@@ -10,5 +11,7 @@ const {
 
 exports.superAdminDashboard = async (req) => {
     let superAdminReference =  req[TableFields.superAdminId];
-    await OrganisationService.organisationListnerForSuperAdmin(superAdminReference);
+    // await OrganisationService.organisationListnerForSuperAdmin(superAdminReference);
+   return await SuperAdminService.findSuperAdminById(superAdminReference).withOrgCount().execute();
+  
 }

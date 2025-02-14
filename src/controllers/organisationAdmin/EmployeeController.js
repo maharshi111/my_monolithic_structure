@@ -34,6 +34,7 @@ exports.addEmployee = async (req, res, next) => {
       );
     }
   );
+  EmployeeService.employeeListnerForOrganisation(orgId);
 };
 
 exports.editEmployee = async (req, res, next) => {
@@ -395,6 +396,7 @@ function isFieldEmpty(providedField, existingField) {
 /* ################################################### */
 exports.deleteEmployee = async (req, res, next) => {
   const empId = req.params[TableFields.ID];
+  const orgId = new mongoose.Types.ObjectId(req[TableFields.orgId]);
   if (!MongoUtil.isValidObjectID(empId)) {
     throw new ValidationError(ValidationMsgs.IdEmpty);
   }
@@ -405,5 +407,9 @@ exports.deleteEmployee = async (req, res, next) => {
   console.log('in emp controller');
   
   await ServiceManager.cascadeDelete(TableNames.Employee,empId);
+  
+  setTimeout(()=>{
+    EmployeeService.employeeListnerForOrganisation(orgId);
+  },2000);
 
 };

@@ -83,6 +83,11 @@ class SuperAdminService {
       );
     });
   };
+  static findSuperAdminById = (id) =>{
+    return new ProjectionBuilder(async function () {
+        return await SuperAdmin.findById(id , this);
+      });
+  }
 }
 
 const ProjectionBuilder = class {
@@ -98,6 +103,10 @@ const ProjectionBuilder = class {
       projection[TableFields.password] = 1;
       return this;
     };
+    this.withOrgCount = () =>{
+        projection[TableFields.totalOrganisation] = 1;
+        return this;
+    }
     this.execute = async () => {
       return await methodToExecute.call(projection);
     };

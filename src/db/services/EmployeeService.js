@@ -208,7 +208,7 @@ class EmployeeService {
   };
 
   static employeeListnerForOrganisation = async (orgId) => {
-    await Employee.aggregate([
+    let count = await Employee.aggregate([
       {
         $match: {
           [TableFields.organisationId]: MongoUtil.toObjectId(orgId),
@@ -217,20 +217,26 @@ class EmployeeService {
       {
         $group: {
           [TableFields.ID]: "$" + TableFields.organisationId,
-          totalEmployeeCount: {
+          [TableFields.totalEmployeeCount]: {
             $sum: 1,
           },
         },
       },
-      {
-        $merge: {
-          into: TableNames.Organisation,
-          on: "_id",
-          whenMatched: "merge",
-          whenNotMatched: "fail",
-        },
-      },
+    //   {
+    //     $merge: {
+    //       into: TableNames.Organisation,
+    //       on: "_id",
+    //       whenMatched: "merge",
+    //       whenNotMatched: "fail",
+    //     },
+    //   },
     ]);
+    const  totalCount = count.length>0?count[0] [TableFields.totalEmployeeCount]:0;
+    await Organisation.updateOne(
+        {[TableFields.ID]:orgId},
+        {$set:{[TableFields.totalEmployeeCount]:totalCount}}
+    );
+
   };
 
   

@@ -16,7 +16,7 @@ const ServiceManager = require("../../db/serviceManager");
 
 exports.addDepartment = async (req, res, next) => {
   const reqBody = req.body;
-
+  let organisationReference =   req[TableFields.orgId];
   await parseAndValidateDepartment(
     reqBody,
     undefined,
@@ -26,6 +26,7 @@ exports.addDepartment = async (req, res, next) => {
     },
     req
   );
+  DepartmentService.departmentListnerForOrganisation(organisationReference);
 };
 
 exports.editDepartment = async (req, res, next) => {
@@ -59,7 +60,7 @@ exports.editDepartment = async (req, res, next) => {
 
 exports.deleteDepartment = async (req, res, next) => {
   const depId = req.params[TableFields.ID];
-
+  let organisationReference =   req[TableFields.orgId];
   if (!MongoUtil.isValidObjectID(depId)) {
     throw new ValidationError(ValidationMsgs.IdEmpty);
   }
@@ -71,6 +72,9 @@ exports.deleteDepartment = async (req, res, next) => {
   }
 
   await ServiceManager.cascadeDelete(TableNames.Department, depId);
+  setTimeout(()=>{
+    DepartmentService.departmentListnerForOrganisation(organisationReference);
+  },2000);
 };
 
 async function parseAndValidateDepartment(

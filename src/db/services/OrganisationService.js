@@ -181,7 +181,8 @@ class OrganisationService {
   };
 
   static organisationListnerForSuperAdmin = async (superAdminReference) => {
-    return await organisation.aggregate([
+    console.log('inside listner', superAdminReference);
+    let count =   await organisation.aggregate([
       {
         $match: {
           [TableFields.superAdminResponsible]:
@@ -190,30 +191,44 @@ class OrganisationService {
       },
       {
         $group: {
-          [TableFields.ID]:"$"+ TableFields.superAdminResponsible,
+          [TableFields.ID]: "$" + TableFields.superAdminResponsible,
           [TableFields.totalOrganisation]: {
             $sum: 1,
           },
         },
-      },
+      },  
       {
         $project: {
-          [TableFields.totalOrganisation]: 1,   
-          [TableFields.ID]:1
+          [TableFields.totalOrganisation]: 1,
+          [TableFields.ID]: 1,
         },
       },
-      {
-        $merge: {
-          into: TableNames.SuperAdmin,
-          on: "_id",
-          whenMatched: "merge",
-          whenNotMatched: "fail",
-        },
-      },
+    //   {
+    //     $merge: {
+    //       into: TableNames.SuperAdmin,
+    //       on: "_id",
+    //       whenMatched: "merge",
+    //       whenNotMatched: "fail",
+    //     },
+    //   }, 
     ]);
+    console.log('--->>',count);
+    
+    const totalCount = count.length>0?count[0][TableFields.totalOrganisation]:0;
+    await SuperAdmin.updateOne(
+        {[TableFields.ID]:MongoUtil.toObjectId(superAdminReference)},
+        {$set:{[TableFields.totalOrganisation]:totalCount}}
+    )  
+
+    // console.log('======>>>>?',[TableFields.totalOrganisation]);
+    // return true;
   };
 }
 
+// setTimeout(async() => {
+//     const demo = await OrganisationService.organisationListnerForSuperAdmin("67a481e434e6d45034cb4f58")
+//     console.log('de', demo)    
+// }, 2000);
 const ProjectionBuilder = class {
   constructor(methodToExecute) {
     const projection = {};
@@ -247,6 +262,14 @@ const ProjectionBuilder = class {
       projection[TableFields.uniqueId] = 0;
       return this;
     };
+    this.withTotalEmployeeCount = () =>{
+        projection[TableFields.totalEmployeeCount]=1;
+        return this;
+    }
+    this.withTotalDepartmentCount = () =>{
+        projection[TableFields.totalDepartmentCount]= 1;
+        return this;
+    }
     this.execute = async () => {
       return await methodToExecute.call(projection);
     };

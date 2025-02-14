@@ -5,6 +5,8 @@ const allServices = [
     [TableNames.Department, require("./services/DepartmentService").deleteMyReferences],
 ];
 const mCascadeDelete = async function (tableName, ...deletedRecordIds) {
+    console.log('hello cascade');
+    
     deletedRecordIds = deletedRecordIds.filter((a) => a != undefined);
     if (deletedRecordIds.length > 0) {
         console.log('++>',this.ignoreSelfCall);
@@ -38,3 +40,5 @@ const mCascadeDelete = async function (tableName, ...deletedRecordIds) {
     }
 };
 exports.cascadeDelete = mCascadeDelete;
+
+

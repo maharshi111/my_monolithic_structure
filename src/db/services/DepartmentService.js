@@ -109,6 +109,42 @@ class DepartmentService {
       }
     }
   };
+
+
+  static departmentListnerForOrganisation = async(orgId) =>{
+    let count = await Department.aggregate([
+            {
+                $match:{
+                    [TableFields.organisationId]:orgId
+                }
+            },
+            {
+                $group:{
+                    [TableFields.ID]:"$" + TableFields.organisationId,
+                    [TableFields.totalDepartmentCount]:{
+                        $sum:1
+                    }
+                }
+            },
+            {
+                $project:{
+                    [TableFields.ID]:1,
+                    [TableFields.totalDepartmentCount]:1
+                }
+            },
+            // {
+            //     $merge:{
+            //         into: TableNames.Organisation,
+            //         on:"_id",
+            //         whenMatched: "merge",
+            //         whenNotMatched: "fail",
+            //     }
+            // }
+    ]);
+    let totalCount = count.length>0?count[0][TableFields.totalDepartmentCount] : 0;
+    await Organisation.updateOne({[TableFields.ID]:orgId},{$set:{[TableFields.totalDepartmentCount]:totalCount}});
+  }
+
 }
 
 const ProjectionBuilder = class {
