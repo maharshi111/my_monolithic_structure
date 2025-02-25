@@ -72,9 +72,9 @@ exports.deleteDepartment = async (req, res, next) => {
   }
 
   await ServiceManager.cascadeDelete(TableNames.Department, depId);
-  setTimeout(()=>{
-    DepartmentService.departmentListnerForOrganisation(organisationReference);
-  },2000);
+//   setTimeout(()=>{
+//     DepartmentService.departmentListnerForOrganisation(organisationReference);
+//   },2000);
 };
 
 async function parseAndValidateDepartment(

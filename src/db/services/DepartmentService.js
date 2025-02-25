@@ -94,6 +94,12 @@ class DepartmentService {
           $in: deleteRecordIds,
         },
       });
+     console.log('deletion of department completed');
+      //console.log('this is record',records);
+      
+      await DepartmentService.departmentListnerForOrganisation(records[0][TableFields.organisationId]);
+      console.log('listner completed in service');
+      
 
       if (tableName != TableNames.Department) {
         console.log('check dep service');
@@ -143,8 +149,10 @@ class DepartmentService {
     ]);
     let totalCount = count.length>0?count[0][TableFields.totalDepartmentCount] : 0;
     await Organisation.updateOne({[TableFields.ID]:orgId},{$set:{[TableFields.totalDepartmentCount]:totalCount}});
+    console.log('inside listner over');
+    
   }
-
+  
 }
 
 const ProjectionBuilder = class {
