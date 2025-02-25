@@ -191,7 +191,12 @@ class EmployeeService {
           $in: deleteRecordIds,
         },
       });
-
+      console.log('deletion of employee completed');
+      console.log('record=',records);
+      
+      await EmployeeService.employeeListnerForOrganisation(records[0][TableFields.organisationId]);
+      console.log('employee listner completed');
+      
       if (tableName != TableNames.Employee) {
         //It means that the above objects are deleted on request from model's references (And not from model itself)
         console.log("check emp service");
@@ -236,7 +241,8 @@ class EmployeeService {
         {[TableFields.ID]:orgId},
         {$set:{[TableFields.totalEmployeeCount]:totalCount}}
     );
-
+    console.log('employee listner over');
+    
   };
 
   

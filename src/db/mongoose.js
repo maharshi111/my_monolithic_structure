@@ -37,7 +37,7 @@ const initConnection = (callback) => {
         // useCreateIndex: true,
         // useFindAndModify: false, // It will stop displaying deprecation warnings.
     });
-    // mongoose.set('debug', true);
+     mongoose.set('debug', true);
     var db = mongoose.connection;
     db.once("open", function () {
         callback();

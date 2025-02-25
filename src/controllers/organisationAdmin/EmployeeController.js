@@ -407,9 +407,9 @@ exports.deleteEmployee = async (req, res, next) => {
   console.log('in emp controller');
   
   await ServiceManager.cascadeDelete(TableNames.Employee,empId);
-  
-  setTimeout(()=>{
-    EmployeeService.employeeListnerForOrganisation(orgId);
-  },2000);
+ // await EmployeeService.employeeListnerForOrganisation(orgId);
+//   setTimeout(()=>{
+//     EmployeeService.employeeListnerForOrganisation(orgId);
+//   },2000);
 
 };
