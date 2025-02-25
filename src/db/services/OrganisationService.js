@@ -164,6 +164,10 @@ class OrganisationService {
           $in: deleteRecordIds,
         },
       });
+      console.log('organisation deletion completed');
+      await OrganisationService.organisationListnerForSuperAdmin(records[0][TableFields.superAdminResponsible]);
+      console.log('listner completed in service');
+      
 
       if (tableName != TableNames.Organisation) {
         //It means that the above objects are deleted on request from model's references (And not from model itself)
@@ -219,7 +223,8 @@ class OrganisationService {
         {[TableFields.ID]:MongoUtil.toObjectId(superAdminReference)},
         {$set:{[TableFields.totalOrganisation]:totalCount}}
     )  
-
+    console.log('inside listner over');
+    
     // console.log('======>>>>?',[TableFields.totalOrganisation]);
     // return true;
   };

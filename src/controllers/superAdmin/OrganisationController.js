@@ -105,10 +105,10 @@ exports.deleteOrganisation = async (req, res, next) => {
   //await OrganisationService.deleteOrganisation(orgId);
   console.log(1);
   await ServiceManager.cascadeDelete(TableNames.Organisation, orgId);
-  console.log('outside listner'); 
-  setTimeout(()=>{
-    OrganisationService.organisationListnerForSuperAdmin(superAdminReference);
-  },2000);
+  //console.log('outside listner'); 
+//   setTimeout(()=>{
+//     OrganisationService.organisationListnerForSuperAdmin(superAdminReference);
+//   },2000);
 
 };
 
